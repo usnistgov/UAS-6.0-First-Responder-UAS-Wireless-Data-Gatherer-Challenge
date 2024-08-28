@@ -1,5 +1,5 @@
 /*
- * NIST-PSCR Chic.Odell@nist.gov - UAS 6.0 Prize Challenge - "Fox-Node" HTTP IoT Client  
+ * NIST-PSCR psprizes@nist.gov - UAS 6.0 First Responder UAS Data Gatherer Challenge - "Fox-Node" HTTP IoT Client  
  * https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/index.html
  * https://github.com/espressif/arduino-esp32
  * https://datatracker.ietf.org/doc/html/rfc2616 
@@ -12,8 +12,8 @@
 
 const char* serverName = "http://192.168.1.1/update";               // URI for POST Server  
 const int httpPort = 80;                                            // def port assignment 
-const char* ssid = "UAS 6.0 ";                                      // UAS 6.0 Test Network SSID
-const char* password = "UAS 6.0 ";                                  // UAS 6.0 Test Network PSW
+const char* ssid = "UAS6";                                      // UAS 6.0 Test Network SSID
+const char* password = "UAS6";                                  // UAS 6.0 Test Network PSW
 char* http_payload = "NULL";                                        // Var for HTTP payload storage
 long pkt_count = 0;                                                 // Client packet counter
 int httpResponseCode = -1;                                          // Client resp codes
@@ -30,7 +30,7 @@ Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);     // Use dedic
 DynamicJsonDocument doc(2048);                                      // Create an empty document
 
 unsigned long lastTime = 0;             // easy mode time var setup
-unsigned long timerDelay = 10000;        // Timer set to 1 seconds (10000) Update this var for POST msg loop timing
+unsigned long timerDelay = 10000;        // Timer set to 10 seconds (10000) Update this var for POST msg loop timing
 
 void tft_display(int disp_update){ 
 /*disp key 
