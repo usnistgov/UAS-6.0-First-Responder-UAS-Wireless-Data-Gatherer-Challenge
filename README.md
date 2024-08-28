@@ -80,19 +80,19 @@ Fox-Node display states:
 
 - 3, on sent POST,                   (GREEN)
 
-![Fox Node State Diagram](pics/FoxNode_disp3_tight.jpg){width=100 height=100px}
+![Fox Node State Diagram](pics/FoxNode_disp3_tight.jpg)
 
 - 2, no connection to HTTP server,   (Orange)
 
-![Fox Node State Diagram](pics/FoxNode_disp2_tight.jpg){width=100 height=100px}
+![Fox Node State Diagram](pics/FoxNode_disp2_tight.jpg)
 
 - 1, On WiFi got IP,                 (Blue)
 
-![Fox Node State Diagram](pics/FoxNode_disp1_tight.jpg){width=100 height=100px}
+![Fox Node State Diagram](pics/FoxNode_disp1_tight.jpg)
 
 - 0, TFT init code,                  (Green)
 
-![Fox Node State Diagram](pics/FoxNode_disp0_tight.jpg){width=100 height=100px}
+![Fox Node State Diagram](pics/FoxNode_disp0_tight.jpg)
 
 ## Branch List 
 
