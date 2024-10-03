@@ -1,0 +1,5 @@
+# 3D Printer Model Instructions
+.3mf files are included if you choose to do your own slicing for your specific 3D printer or application
+.gcodes are included for both PLA and PETG filament types, specifically for the Prusa 3D Printer
+.dfx CAD files are included for the fabrication of the case window, so the LCD is visible
+Any printer with a .4mm nozzle that uses 1.75mm filament shall work as long as it can accommodate .15mm tall layers
