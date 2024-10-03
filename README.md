@@ -1,5 +1,16 @@
 # [UAS 6.0 First Responder UAS Wireless Data Gatherer Challenge](https://www.nist.gov/ctl/pscr/open-innovation-prize-challenges/current-and-upcoming-prize-challenges/2024-first-responder)
 
+## Disclaimer
+Any references to commercial entities, products, services, or other non-governmental
+organizations or individuals in this repository are provided solely for the information of
+individuals using this document. These references are not intended to reflect the opinion of
+NIST, the Department of Commerce or the United States, or its officers or employees. Such
+references are not an official or personal endorsement of any product, person, or service, nor
+are they intended to imply that the entities, materials, or equipment are necessarily the best
+available for the purpose. Such references may not be quoted or reproduced for the purpose of
+stating or implying an endorsement, recommendation, or approval of any product, person, or
+service. 
+
 ## Scope
 This repository contains the IoT-Client or "Sensor Module" reference software for the NIST-PSCR UAS6.0: First Responder UAS Data Gatherer Challenge "**Fox Hunt**" Stage 2 & 3 events. These IoT nodes/Sensor Modules will be referred to herein as "Fox-Node(s)".
 
@@ -102,6 +113,13 @@ Fox-Node display states:
 **Live_Sensors**: 
 - Support for live data via I2C (sending real sensor data as payload via I2C --> ESP --> HTTP-POST)
 
+## 3D Printer Models
+
+- .3mf files are included if you choose to do your own slicing for your specific 3D printer or application
+- .gcodes are included for both PLA and PETG filament types, specifically for the Prusa 3D Printer
+- .dfx CAD files are included for the fabrication of the case window, so the LCD is visible
+- Any printer with a .4mm nozzle that uses 1.75mm filament shall work as long as it can accommodate .15mm tall layers
+
 ## Project status
 Development targets PSCR - UAS 6.0 First Responder UAS Data Gatherer Challenge
 - Working Proof of concept w/ HTTP.POST "Fox-Nodes" w/real-time and dummy data.
@@ -114,7 +132,8 @@ Implement:
 
 ## License
 - Arduino ESP32 stack - LGPL-2.1 license
-    - ArduinoJson - MIT license
+- ArduinoJson - MIT license
+- 3D Printer Models - NIST License (See License.md)
 
 ## Contact
 psprizes@nist.gov
