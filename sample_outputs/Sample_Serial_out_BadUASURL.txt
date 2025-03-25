@@ -1,0 +1,43 @@
+NOTE: This example serial output shows code output for a WiFi-connection w/ incorrect endpoint
+- see "httpComms.h" check line 15 ... "#define UAS_Server "http://192.168.40.20"	// Target Drone Server UPDATE TODO"
+-- the above address is the target endpoint of the "Fox-Node" client i.e. the target UAS
+
+
+11:39:52.050 -> **FN-NTP RV-3032 Setup Initiated**
+11:39:52.050 -> Entering init
+11:39:52.050 -> Found RV3032
+11:39:52.050 -> RTC init Success
+11:39:52.050 -> RTC type = RV-3032
+11:39:52.050 -> Set ESP time to RTC mem:
+11:39:52.050 -> 2025-3-25 17:39:51
+11:39:52.050 -> Atempting NTP-WiFi Connection to SSID UAS_NTP
+11:39:52.050 -> password iswhatTime!
+11:39:52.593 -> ........................................
+11:40:12.091 -> Timeout reached, proceeding with regular code flow. NTP unable to set
+11:40:13.138 -> **Fox-Node Init**
+11:40:13.138 -> FoxNode ID: 4
+11:40:13.138 -> **I2C**
+11:40:13.171 -> Latched interrupt configured.
+11:40:13.171 -> setup_webserver_routing() done
+11:40:13.171 -> RingBuffer DataPayload Size: 106
+11:40:13.171 -> Estimated max number of entries possible in Ringbuffer: 1186
+11:40:13.171 -> Allocating 90 RingBuffer max entries.
+11:40:13.212 -> WiFiInit() Starting WiFi
+11:40:13.212 -> WiFiInit() Looking for SSID: uas6
+11:40:13.212 -> WiFiInit()    with Password: hello123
+11:40:14.247 -> WiFiStationConnected () - WiFi-STA Tx Power: 28
+11:40:14.247 -> WiFiInit(): Exiting
+11:40:14.247 -> 
+11:40:14.285 -> takeSaveSensorData() Pushed data to RingBuffer, next sample in:30000 mS
+11:40:14.285 -> MSM 0  Idle: Have connection to WiFi Net, going to state 1
+11:40:14.285 -> MSM 1  POST hi: POSTing 'core' JSON to drone, ccmd='hi'
+11:40:14.980 -> MSM 1  got unknown server reply 'null', procTime=696 mS
+11:40:14.980 -> MSM 28: 
+11:40:15.013 -> MSM 28: 
+11:40:15.013 -> MSM 28: 
+11:40:15.013 -> MSM 28: 
+11:40:15.046 -> MSM 28: 
+11:40:15.046 -> MSM 28: 
+.
+.
+.

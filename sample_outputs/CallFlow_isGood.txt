@@ -1,0 +1,53 @@
+NOTE: Working call flow serial output. "Fox-Node" client is connected to UAS-Base Station and will respond with data as requested
+
+
+11:33:27.077 -> **FN-NTP RV-3032 Setup Initiated**
+11:33:27.077 -> Entering init
+11:33:27.077 -> Found RV3032
+11:33:27.077 -> RTC init Success
+11:33:27.077 -> RTC type = RV-3032
+11:33:27.077 -> Set ESP time to RTC mem:
+11:33:27.077 -> 2025-3-25 17:33:26
+11:33:27.077 -> Atempting NTP-WiFi Connection to SSID UAS_NTP
+11:33:27.077 -> password iswhatTime!
+11:33:27.626 -> .........................................
+11:33:47.637 -> Timeout reached, proceeding with regular code flow. NTP unable to set
+11:33:48.641 -> **Fox-Node Init**
+11:33:48.642 -> FoxNode ID: 4
+11:33:48.642 -> **I2C**
+11:33:48.674 -> Latched interrupt configured.
+11:33:48.711 -> setup_webserver_routing() done
+11:33:48.711 -> RingBuffer DataPayload Size: 106
+11:33:48.711 -> Estimated max number of entries possible in Ringbuffer: 1186
+11:33:48.711 -> Allocating 90 RingBuffer max entries.
+11:33:48.711 -> WiFiInit() Starting WiFi
+11:33:48.711 -> WiFiInit() Looking for SSID: uas6
+11:33:48.711 -> WiFiInit()    with Password: hello123
+11:33:49.724 -> WiFiStationConnected () - WiFi-STA Tx Power: 28
+11:33:49.724 -> WiFiInit(): Exiting
+11:33:49.724 -> 
+11:33:49.763 -> takeSaveSensorData() Pushed data to RingBuffer, next sample in:30000 mS
+11:33:49.763 -> MSM 0  Idle: Have connection to WiFi Net, going to state 1
+11:33:49.763 -> MSM 1  POST hi: POSTing 'core' JSON to drone, ccmd='hi'
+11:33:50.433 -> MSM 5  'hi' Post recived 'sval' reply: start TS=1073620780, end TS=1073620780
+11:33:50.433 -> Sending 1 Data Entries
+11:33:50.433 -> 
+11:33:50.433 -> MSM case 5: {"core":{"ccmd":"rval","fox":4,"fip":"192.168.40.34","fts":1742924028,"fbv":"F","fcnt":1,"ftso":1742924028,"ftsr":1742924028,"wrxs":-29,"lat":64.83,"lon":-147.77,"elev":137},"data":{"fox":4,"dlen":1,"ftso":1742924028,"dump":[{"rts":1742924028,"t":23.56786,"c":41.9,"h":38.52598,"l":2.97,"p":837.5891,"x":-19,"y":-4,"z":-942}]}}
+11:33:51.091 -> MSM 5  POSTing core 'rval' JSON and 'data' to drone
+11:33:51.091 -> MSM 6  Recived POST from sending data, got drone srep'='buby', procTime=666
+11:33:51.091 -> MSM 25  Recieved POST reply of 'buby', replying 'bye' to UAS Server
+11:33:51.754 -> MSM 26  Recived 'bye' reply: got drone srep 'done', procTime=665 
+11:33:51.754 -> ** Transaction compleated **
+11:33:51.754 -> 
+11:33:51.754 -> 
+11:33:51.754 -> MSM 35: Going Blind
+11:33:51.754 -> MSM 36: wifiDroneBlindTimer: 1500
+11:34:06.752 -> MSM 36: wifiDroneBlindTimer: 0
+11:34:06.752 -> MSM 36: Blind time expired, back to talking to Drone Server
+11:34:06.826 -> MSM 0  Idle: Have connection to WiFi Net, going to state 1
+11:34:06.826 -> MSM 1  POST hi: POSTing 'core' JSON to drone, ccmd='hi'
+11:34:07.458 -> MSM 5  'hi' Post recived 'sval' reply: start TS=1073620780, end TS=1073620780
+11:34:07.458 -> Sending 1 Data Entries
+.
+.
+.

@@ -1,0 +1,39 @@
+NOTE: Below shows sample output of "Fox-Node" client serial output in the case no WiFi (SSID "uas6") is found. 
+
+
+12:17:21.479 -> **FN-NTP RV-3032 Setup Initiated**
+12:17:21.479 -> Entering init
+12:17:21.479 -> Found RV3032
+12:17:21.479 -> RTC init Success
+12:17:21.479 -> RTC type = RV-3032
+12:17:21.479 -> Set ESP time to RTC mem:
+12:17:21.479 -> 2000-1-1 18:56:57
+12:17:21.479 -> Atempting NTP-WiFi Connection to SSID UAS_NTP
+12:17:21.479 -> password iswhatTime!
+12:17:22.043 -> ........................................
+12:17:41.536 -> Timeout reached, proceeding with regular code flow. NTP unable to set
+12:17:42.540 -> **Fox-Node Init**
+12:17:42.540 -> FoxNode ID: 4
+12:17:42.540 -> **I2C**
+12:17:42.586 -> Latched interrupt configured.
+12:17:42.633 -> setup_webserver_routing() done
+12:17:42.633 -> RingBuffer DataPayload Size: 106
+12:17:42.633 -> Estimated max number of entries possible in Ringbuffer: 1185
+12:17:42.633 -> Allocating 90 RingBuffer max entries.
+12:17:42.633 -> WiFiInit() Starting WiFi
+12:17:42.633 -> WiFiInit() Looking for SSID: uas6
+12:17:42.633 -> WiFiInit()    with Password: hello123
+12:17:43.616 -> WiFiStationConnected () - WiFi-STA Tx Power: 28
+12:17:43.616 -> WiFiInit(): Exiting
+12:17:43.616 -> 
+12:17:43.649 -> takeSaveSensorData() Pushed data to RingBuffer, next sample in:30000 mS
+12:17:43.694 -> MSM 0  Idle: Have connection to WiFi Net, going to state 1
+12:17:43.694 -> MSM 1  POST hi: POSTing 'core' JSON to drone, ccmd='hi'
+12:17:45.792 -> MSM 1  got unknown server reply 'null', procTime=2126 mS
+12:17:45.824 -> MSM 28: 
+12:17:45.824 -> MSM 28: 
+12:17:45.824 -> MSM 28: 
+12:17:45.858 -> MSM 28: 
+.
+.
+.
