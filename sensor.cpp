@@ -9,7 +9,7 @@
 #include "sensor.h"
 #include "serial.h"
 #include <NTPClient.h>                                          // NTP web client for FN init              
-#include "Ringbuffer.h"                                         // for httpDataPayloadDoc
+#include "RingBuffer.h"                                         // for httpDataPayloadDoc
 #include "eeprom.h"
 
 #include <Wire.h>                                               // For I2C communication
