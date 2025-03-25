@@ -1,0 +1,50 @@
+#######################################
+# Syntax Coloring Map For GuL_NovaFitness
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+HDC1010			    KEYWORD1
+HDC1080			    KEYWORD1
+GuL_TI_Humidity_HDC10XX			    KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+getSensorName   KEYWORD2
+startAcquisition    KEYWORD2
+setAcquisitionMode  KEYWORD2
+resetConfiguration  KEYWORD2
+enableHeater    KEYWORD2
+disableHeater   KEYWORD2
+heaterEnabled   KEYWORD2
+setHumidityResolution   KEYWORD2
+setTemperaturResolution     KEYWORD2
+getBatteryStatus    KEYWORD2
+getDeviceID     KEYWORD2
+getManufacturerID   KEYWORD2
+getSerialID     KEYWORD2
+getConversionTime   KEYWORD2
+getTemperature  KEYWORD2
+getHumidity     KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+CommunicatioReturnState KEYWORD2
+BatteryStatus KEYWORD2
+AcquisitionModes KEYWORD2
+HumidityMeasurementResolution KEYWORD2
+TemperatureMeasurementResolution KEYWORD2
+Channel KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+INVALID_TEMPERATURE LITERAL1
+INVALID_HUMIDITY LITERAL1

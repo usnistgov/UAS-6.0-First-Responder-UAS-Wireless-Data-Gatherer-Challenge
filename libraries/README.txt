@@ -1,0 +1,1 @@
+NOTE: GuL_TI_Humidity_HDC10XX has been modified from its original release. All other libs are stock.
