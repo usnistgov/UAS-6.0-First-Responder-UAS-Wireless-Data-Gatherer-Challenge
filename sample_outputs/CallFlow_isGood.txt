@@ -8,7 +8,7 @@ NOTE: Working call flow serial output. "Fox-Node" client is connected to UAS-Bas
 11:33:27.077 -> RTC type = RV-3032
 11:33:27.077 -> Set ESP time to RTC mem:
 11:33:27.077 -> 2025-3-25 17:33:26
-11:33:27.077 -> Atempting NTP-WiFi Connection to SSID UAS_NTP
+11:33:27.077 -> Attempting NTP-WiFi Connection to SSID UAS_NTP
 11:33:27.077 -> password iswhatTime!
 11:33:27.626 -> .........................................
 11:33:47.637 -> Timeout reached, proceeding with regular code flow. NTP unable to set
@@ -37,7 +37,7 @@ NOTE: Working call flow serial output. "Fox-Node" client is connected to UAS-Bas
 11:33:51.091 -> MSM 6  Recived POST from sending data, got drone srep'='buby', procTime=666
 11:33:51.091 -> MSM 25  Recieved POST reply of 'buby', replying 'bye' to UAS Server
 11:33:51.754 -> MSM 26  Recived 'bye' reply: got drone srep 'done', procTime=665 
-11:33:51.754 -> ** Transaction compleated **
+11:33:51.754 -> ** Transaction completed **
 11:33:51.754 -> 
 11:33:51.754 -> 
 11:33:51.754 -> MSM 35: Going Blind

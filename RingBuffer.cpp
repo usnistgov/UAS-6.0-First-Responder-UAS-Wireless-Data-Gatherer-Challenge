@@ -9,7 +9,7 @@ void ringBufferInit(){
   int maxEntries = ringbuff.estimateMaxEntries(averageStringSize);
   //putToSerialWithNewline("Allocating "+String(RING_BUFFER_SIZE)+" RingBuffer max entries.",2);   // totally number of entries Ringbuffer to be stored
   putToDebugWithNewline("Allocating 90 RingBuffer max entries.",2);   // totally number of entries Ringbuffer to be stored
-  putToDebugWithNewline("ringBufferInit() Init compleated",3);
+  putToDebugWithNewline("ringBufferInit() Init completed",3);
 }
 
 RingBuffer::RingBuffer(void) {                                  // Ringbuffer Constructor 

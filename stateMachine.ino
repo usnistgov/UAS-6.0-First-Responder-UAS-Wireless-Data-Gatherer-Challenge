@@ -1,5 +1,5 @@
 // NIST-PSCR
-// UAS 6.0 Prize Challenge "Fox-Node" client source code - nightlyBuildStage3 v2.0//
+// UAS 6.0 Prize Challenge "Fox-Node" client source code - nightlyBuildStage3 v2.1//
 // NOTE: Example code only!! subject to change without notice. 
 
 #include "state.h"

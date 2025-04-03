@@ -73,7 +73,7 @@ int initNTP(void){
 	}
 
 	// START NTP setup This gets time by connecting go a local WiFi that can get to the Internet
-	putToSerialWithNewline("Atempting NTP-WiFi Connection to SSID "+String(NTP_WIFI_SSID));
+	putToSerialWithNewline("Attempting NTP-WiFi Connection to SSID "+String(NTP_WIFI_SSID));
 	putToSerialWithNewline("password is"+String(NTP_WIFI_PASSWORD));
 	WiFi.mode(WIFI_STA);									// Otherwise opp seems to be WIFI_STA_AP mode... this makes the server connection very poor
 	startMillis = millis();     // debug timing WiFi connect

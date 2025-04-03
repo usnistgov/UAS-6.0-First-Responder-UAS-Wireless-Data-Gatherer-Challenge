@@ -91,8 +91,9 @@ unsigned int valuesShareMachine(void){        // AKA "MSM" Major State Machine
 				putToDebugWithNewline(s,2);
 			}
 		}
+    glob_connectedToDrone = 0;
 		glob_droneConnectJustDropped = 0;
-		glob_timer_droneReplyWait = POST_REPLY_WAIT + 100;		// start a 4 second timer
+		glob_timer_droneReplyWait = POST_REPLY_WAIT + 100;		      // start a 4 second timer
 		valuesShareState = 0;
 		return 5;
 	}
@@ -111,9 +112,8 @@ unsigned int valuesShareMachine(void){        // AKA "MSM" Major State Machine
 		putToDebugWithNewline("MSM Check: Attempting WiFi reconnect",2);
     putToDebugWithNewline("- glob_connectedToDrone: "+String(glob_connectedToDrone),4);
     putToDebugWithNewline("- glob_timer_droneReplyWait: "+String(glob_timer_droneReplyWait),4);
-		WiFi.disconnect(true);
-		//WiFi.reconnect();
-    // DEBUG
+		//WiFi.reconnect();// DEBUG
+    WiFi.disconnect(true);    
     WiFi.mode(WIFI_STA);	
     WiFi.config(getFoxNodeIP(thisFoxNodeId), IPAddress(UAS_Gateway), IPAddress(UAS_Subnet),IPAddress(UAS_DNS));
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -279,7 +279,7 @@ unsigned int valuesShareMachine(void){        // AKA "MSM" Major State Machine
 		case 26:		                                                // MSM 26: We have a replly back from sending the 'bye' to the drone sever
 			pdt = millis() - postStartTimeMs;
 			if(glob_stateBable){
-				sprintf(s,"MSM %d  Recived 'bye' reply: got drone srep '%s', procTime=%d \n** Transaction compleated **\n",valuesShareState,glob_droneServ_srep.c_str(),pdt);
+				sprintf(s,"MSM %d  Recived 'bye' reply: got drone srep '%s', procTime=%d \n** Transaction completed **\n",valuesShareState,glob_droneServ_srep.c_str(),pdt);
 				putToDebugWithNewline(s,2);
 			}
 			if(glob_droneServ_srep == "sval"){		// sever wants sensor values

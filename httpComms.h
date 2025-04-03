@@ -10,17 +10,16 @@
 
 // Global Variables
 //// UAS Server Target vars
-#define WIFI_SSID "uas6"					// target network for  UAS 6.0 Prize challenge
+#define WIFI_SSID     "uas6"					// target network for  UAS 6.0 Prize challenge
 #define WIFI_PASSWORD "hello123"			// target network for  UAS 6.0 Prize challenge
 #define UAS_Server "http://192.168.40.20"	// Target Drone Server UPDATE TODO
-//#define UAS_Server "http://192.168.40.20/dronePost.php" // Example Test BaseStation target (Fox-Node directly to BaseStation, no UAS in the loop)
 
-#define UAS_Gateway "192,168,1,1"			// Gateway for Sensor Client, pehaps to get time someday ?
-#define UAS_DNS		"8,8,8,8"				// DNS for Wifi, in case it needs it
+#define UAS_Gateway "192,168,40,20"			// Gateway for Sensor Client, pehaps to get time someday ?
+#define UAS_DNS		  "8,8,8,8"				    // DNS for Wifi, in case it needs it
 #define UAS_Subnet	"255,255,0,0"
 
 // for loating up the Real Time Clock  RTC  from a hotspot on the net
-#define NTP_WIFI_SSID "UAS_NTP"					// target network for  NTP (external WiFi Hotspot-system setup only)
+#define NTP_WIFI_SSID     "UAS_NTP"				// target network for  NTP (external WiFi Hotspot-system setup only)
 #define NTP_WIFI_PASSWORD "whatTime!"			// target network for  NTP
 
 //// timeout values and variables for the HTTP state machine
@@ -35,7 +34,6 @@ extern IPAddress FN_IP;
 // Function Declarations
 void initializeHttpMsmValues(void);
 IPAddress getFoxNodeIP(unsigned short thisFoxNodeId);
-void state_processSCRVReply(void);
 void setup_webserver_routing(void);
 void initializeHTTP(void);
 void httpState_WiFiConnect(void);
@@ -50,11 +48,7 @@ void http_appendCoreJson(void);				                   // MSM calls, create and p
 void http_appendDataJson(void);				                   // MSM calls, create and put the "data" data object into the HTTP POST buffer
 void state_processSCRVReply(void);			                 // MSM calls once a POST reply is recieved
 // lowest level WiFi stuff
-void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info);
 void WiFiDropConnection(void);
-void WiFiStartConnection(void);
-void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info);
 void WiFiInit(IPAddress FN_IP);
-const char* wl_status_to_string(wl_status_t status);
 
 #endif    // HTTPCOMMS_H

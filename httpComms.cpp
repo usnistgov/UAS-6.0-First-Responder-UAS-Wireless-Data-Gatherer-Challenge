@@ -4,15 +4,15 @@
 #include "serial.h"
 #include "timer.h"
 #include "display.h"
-#include "sensor.h"						// for Wire (SPI)
-#include "RingBuffer.h"					// for Ringbuffer class "ringbuff"
+#include "sensor.h"						          // for Wire (SPI)
+#include "RingBuffer.h"					        // for Ringbuffer class "ringbuff"
 #include "eeprom.h"
 
-WebServer webServer(80);				// initialize Server w/ def HTTP port assignment
-IPAddress netmask(255,255,0,0);			// Entire UAS echosystem is a 16 bit nework
+WebServer webServer(80);				        // initialize Server w/ def HTTP port assignment
+IPAddress netmask(255,255,0,0);			    // Entire UAS echosystem is a 16 bit nework
 IPAddress clientIpAddr(192,168,40,30);	// will re-define this when we have a FoxNode Sensor Client ID
 IPAddress serverIpAddr(192,168,40,20);	// the fixed IP address of the Drone Server
-IPAddress dnsServer(8,8,8,8);			// if client wants to reach out over the internet (unlikely)
+IPAddress dnsServer(8,8,8,8);			      // if client wants to reach out over the internet (unlikely)
 
 int httpResponseCode;					// things like 200 and 400. If that doen't make sense,
 										          // you should not be messing with this software.
@@ -26,50 +26,34 @@ void initializeHttpMsmValues(void) {	// Initialize the WiFi connect state monito
 }
 
 IPAddress getFoxNodeIP(unsigned short thisFoxNodeId){		// formulate IP address based on Fox-Node ID
-	if(thisFoxNodeId > 60)thisFoxNodeId = 0;				// safety
-	return IPAddress(192, 168, 40, thisFoxNodeId + 30);
+	if(thisFoxNodeId > 60)thisFoxNodeId = 0;				      // safety
+	return IPAddress(192, 168, 40, thisFoxNodeId + 80);   // UPDATE
 }
 
-////////  next 3 subroutines are tied to Wifi events
+////////  next subroutine are tied to Wifi events
 // IRQ like event where the sesnor client has connected to the Drone Server WiFi net.
 // In theory, this would be just seeing and connecting to the Wifi network, possibly before DHCP negotiation
-void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {          // so that the state machine knows if the foxnod is connected to the server drone or not.
-}
 
 void WiFiStationConnected(WiFiEvent_t event, WiFiEventInfo_t info){
   wantToPaintDisplay = 1;			// (BLUE) display connection info
   glob_connectedToDrone = 1;  // STATE MACHINE FLAG: Unlock Sensor Dump to Server given UAS connection
 }
 
-
 void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info) {
-	/*
-  putToDebugWithNewline("WiFiStationDisconnected() WiFi Network Disconnect", 2);
-		if(serialLogLevel >= 3){
-		putToDebug("WiFi Station: ", 3);
-		putToDebug(String(event), 3);
-		putToDebug(" Reason: ", 3);
-		putToDebugWithNewline(String(info.wifi_sta_disconnected.reason), 3);
-	}
-  */
-	WiFi.disconnect(true);
-	//glob_connectedToDrone = 0;                                         // STATE MACHINE FLAG: lock Sensor Dump to Server given no UAS // NOTE: that glob_connectedToDrone is an int, but used as a bool.
-	glob_droneConnectJustDropped = 1;                                  // Update Global to show SMS that we are in a WiFi dissconnection state
-	wantToPaintDisplay = 2;			// (ORANGE) display disconnection message
-}
 
+	WiFi.disconnect(true);
+	glob_connectedToDrone = 0;                                       // STATE MACHINE FLAG: lock Sensor Dump to Server given no UAS // NOTE: that glob_connectedToDrone is an int, but used as a bool.
+	glob_droneConnectJustDropped = 1;                                  // Update Global to show SMS that we are in a WiFi dissconnection state
+	wantToPaintDisplay = 2;			                                       // (ORANGE) display disconnection message
+}
 //This subroutine attaches event handlers to subroutines for key WiFi evernts.
 void WiFiInit(IPAddress foxNodeIp){
-	unsigned long timeout;
-	unsigned long startMillis;
-	char s[128];
-  
+
   putToDebugWithNewline("WiFiInit() Starting WiFi", 2);
   
 	WiFi.onEvent(WiFiStationConnected, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_CONNECTED);		      // Implement WiFi Callback functions to avoid handles in main loop
-	WiFi.onEvent(WiFiGotIP, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);					              // _guessing_ this is when client has IP from DHCP ?
 	WiFi.onEvent(WiFiStationDisconnected, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);	  // Handle WiFi reconnect //TODO check this... might be fighting with WiFi SM ...
-	
+
   // cofig arguments are: IP address, Gateway, Subnet, DNS
 	WiFi.mode(WIFI_STA);	
   WiFi.config(foxNodeIp, IPAddress(UAS_Gateway), IPAddress(UAS_Subnet),IPAddress(UAS_DNS));
@@ -86,42 +70,23 @@ void WiFiInit(IPAddress foxNodeIp){
   WiFi.setTxPower(WIFI_POWER_7dBm);                                // Set Tx power low (for Stage 2 this setting works well) NOTE: power def --> https://github.com/espressif/arduino-esp32/blob/70786dc5fa51601f525496d0f92a220c917b4ad9/libraries/WiFi/src/WiFiGeneric.h#L47
   putToDebugWithNewline("WiFiStationConnected () - WiFi-STA Tx Power: "+String(WiFi.getTxPower()), 2); // Check power setting and send to Serial
   putToDebugWithNewline("WiFiInit(): Exiting\n",2);
-	// note that our IRQ service routines will print if there was a connection here.
-	// the routines WiFiStationConnected() on WiFi net connect and WiFiGotIP() if we were expecting to get a DHCP address
-	// The glboal used in the MSM 'glob_connectedToDrone' is also set to non zero in either of these routines.
+
 }
 
 void WiFiDropConnection(void){                                       // this subroutine is called when the state machine wants to drop the connection (if it exists) for a "back off" period 
 	putToDebugWithNewline("WiFiDropConnection()", 3);
   if(httpConnectedToWiFi()){
 		WiFi.disconnect(true);			                                     // TODO do we know if we get an error if you try to disconnect
-		//glob_connectedToDrone = 0;
+		glob_connectedToDrone = 0;
+		glob_droneConnectJustDropped = 0;
 		delay(1000);
   }					
-}
-
-void WiFiReconnect(void){
-	putToDebugWithNewline("WiFiReconnect()", 4);
-	if(httpConnectedToWiFi() == 0){
-	WiFi.reconnect();
-	glob_droneConnectJustDropped = 0;                                 // Update Global to show SMS that we are in a WiFi connected state
-	}
 }
 
 void setup_webserver_routing(void){
 	webServer.onNotFound(handleNotFound);                                                     // handle 404
 	webServer.begin();
 	Serial.println("setup_webserver_routing() done");
-}
-
-unsigned int httpConnectedToWiFi(void){
-  return glob_connectedToDrone;
-
-  if (WiFi.status() != WL_CONNECTED) {
-		//glob_connectedToDrone = 0;				                             // this var will tell SM we lost connectivity.
-		return 0;
-	}
-	return 1;
 }
 
 void handleNotFound(void) {
@@ -139,8 +104,17 @@ void handleNotFound(void) {
 	webServer.send(404, "text/plain", message);
 }
 
-// this has evelved into just a logging mechanizm for the state of the wifi connection 21mar2025 PDH
+unsigned int httpConnectedToWiFi(void){                              // TODO remove ? 
+  return glob_connectedToDrone;
 
+  if (WiFi.status() != WL_CONNECTED) {
+		//glob_connectedToDrone = 0;				                             // this var will tell SM we lost connectivity.
+		return 0;
+	}
+	return 1;
+}
+
+// this has evelved into just a logging mechanizm for the state of the wifi connection 21mar2025 PDH
 void httpState_WiFiConnect(void){                                  // This is a state machine that deals with detecting/knowing if the foxnode client is connect to the drone sever.
   // This provides the functionaltiy to try to get connected, and to be able to know when an "edge event"
   // has happpend, auch as a transition from not connected to the drone WiFi to being connected.
@@ -241,19 +215,6 @@ void state_processSCRVReply(void){					                       // process the HTT
 	tft_display(4);  // (BLACK) update display to signal HTTP Rx
 }
 
-const char* wl_status_to_string(wl_status_t status) {
-
-  switch (status) {
-    case WL_NO_SHIELD: return "WL_NO_SHIELD";
-    case WL_IDLE_STATUS: return "IDLE";
-    case WL_NO_SSID_AVAIL: return "WL_NO_SSID_AVAIL";
-    case WL_SCAN_COMPLETED: return "WL_SCAN_COMPLETED";
-    case WL_CONNECTED: return "WL_CONNECTED";
-    case WL_CONNECT_FAILED: return "WL_CONNECT_FAILED";
-    case WL_CONNECTION_LOST: return "WL_CONNECTION_LOST";
-    case WL_DISCONNECTED: return "WL_DISCONNECTED";
-  }
-}
 // Mary had a an API
 // with definitions neat
 // but when the drone got sensor values
