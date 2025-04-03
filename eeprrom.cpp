@@ -23,7 +23,7 @@ unsigned short thisFoxNodeId;	// the ID number for this device
 void eepromSetVariablesToDefault(void){
 	thisFoxNodeId = 4;                  // grab the defauilt FoxNode ID, could be changed later from reading RTC EEPJROM
 	thisFoxNodeLat = 64.83;  thisFoxNodeLng = -147.77;   thisFoxNodeElev = 137;
-	rssiConnectValue = -45;		// signed, dBm. Drop threshold is 30 dB down from this.
+	rssiConnectValue = -55;		// signed, dBm. Drop threshold is 30 dB down from this.
 	blindTimeDelay = 1500;		// typically 30 seconds, can be less for testing.
 	sensorSampleRate = 3000;	// typicall 60,000 = 1 minute, can be less for testing.
 }
