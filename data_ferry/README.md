@@ -7,6 +7,7 @@ The network schema can be viewed [here]( (pics/Network_Schema_Example.png). Pre-
 - Data Ferry configuration is system dependent; however, we have provided a hardware list, configuration, and provisioning parameters in the following sections for reference if you are trying to replicate our setup.
 
 ## FoxNode Folder Structure
+```
 ├── data_ferry/            	 <-- Data Ferry (Drone Server) project
 │   ├── raspbian_files       <-- Raspbian configuration files and prebuilt ISO image
 │   ├── static               <-- Javascript app and css for web server
@@ -14,6 +15,7 @@ The network schema can be viewed [here]( (pics/Network_Schema_Example.png). Pre-
 │   ├── app.py               <-- Python Flask web app
 │   ├── README.md            <-- This page
 │   └── requirements.txt     <-- Python requirements
+```
 
 ## Data Ferry Hardware Components
 - Target PC used to "view" web pages on Data Ferry. Any OS flavor as long as it has a web browser and you are able to manually change and set network configuration settings. A laptop or portable computer is also preferred if you plan to field test the Data Ferry on a drone.

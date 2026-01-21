@@ -5,6 +5,7 @@ Note that individuals that intend to replicate the pcb companion board will need
 - PSCR posesses a limited number of "complete" FoxNode sensors. If you wish to develop on this platform or want to borrow our FoxNode sensors for your experimentation, please contact psprizes@nist.gov
 
 ## FoxNode Folder Structure
+```
 ├── foxnode/            	 <-- FoxNode project (Stage 3)
 │   ├── 3D_print_case_models <-- gcode, 3mf and dxf files for 3d printing FoxNode cases
 │   ├── libraries            <-- Arduino libraries required for Foxnode
@@ -12,6 +13,7 @@ Note that individuals that intend to replicate the pcb companion board will need
 │   ├── sample_outputs		 <-- FoxNode serial output debugs
 │   ├── stateMachine         <-- FoxNode code (bread and butter of the project)
 │   └── README.md            <-- This page
+```
 
 ## FoxNode Components
 **Hardware**: 
