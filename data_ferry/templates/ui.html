@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Drone Server UI</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>Drone Server – <span id="team">{{ team }}</span></h1>
+  <div class="sub">Server IP: <code id="sip">{{ server_ip }}</code> • <a href="/health" target="_blank">/health</a> • <a href="/dump/full" target="_blank">/dump/full</a></div>
+  <div class="actions">
+    <label class="switch"><input type="checkbox" id="themeToggle"><span>Light mode</span></label>
+    <button id="btnClear" title="Clears readings/logs; requires ADMIN_TOKEN on server">Clear data</button>
+    <a class="btnMap" href="/map" target="_blank">Map</a>
+  </div>
+</header>
+
+<section id="summary">
+  <div class="card">
+    <div class="metric"><span id="foxCount">0</span><label>FoxNodes</label></div>
+    <div class="metric"><span id="readingCount">0</span><label>Total Samples</label></div>
+    <div class="metric"><span id="lastTs">—</span><label>Last Sample (UTC)</label></div>
+  </div>
+</section>
+
+<section id="foxTable">
+  <h2>FoxNodes</h2>
+  <table>
+    <thead><tr><th>Fox</th><th>IP</th><th>Last Seen</th><th>Last Sample TS</th><th>Battery (V)</th><th>RSSI (dBm)</th><th>Actions</th></tr></thead>
+    <tbody id="foxRows"></tbody>
+  </table>
+</section>
+
+<section id="charts">
+  <h2>Recent Telemetry</h2>
+  <div class="controls">
+    <label for="winSel">Window:</label>
+    <select id="winSel">
+      <option value="0">All (last 500)</option>
+      <option value="300">Last 5 min</option>
+      <option value="1800">Last 30 min</option>
+      <option value="7200">Last 2 hr</option>
+    </select>
+  </div>
+  <div id="chartGrid"></div>
+</section>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

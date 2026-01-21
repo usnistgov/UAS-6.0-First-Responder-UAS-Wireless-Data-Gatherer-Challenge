@@ -1,0 +1,19 @@
+﻿Id,Description,Place or No Place,Designator,Package,Quantity,Designation,Manufacturer,Part Number,Mouser Part Number
+1,Coin Cell Supercapacitor,NP,BAT1,Eaton_KR-5R5H334-R,1,.33F,Eaton,KR-5R5H334-R,504-KR-5R5H334-R
+2,SMD Resistor,,"C8,C7,C4,C5,C2,C3",R_0603_1608Metric,6,.1uF,"Yageo (or similar, 10% or less)",CC0603KRX7R8BB104,603-CC603KRX7R8BB104
+3,Surface Mount Resistor Footprint,NP,R1,R_0805_2012Metric_Pad1.15x1.40mm_HandSolder,1,390,,,
+4,Pressure Sensor,,U3,LPS22DFTR,1,STmicro-LPS22DF,ST Micro,LPS22DFTR,511-LPS22DFTR
+5,Temperature/Humidity Sensor,,U2,Texas_PWSON-N6  Temp/Humidity,1,Texas-HDC1080,Texas Instraments,HDC1080DMBR,595-HDC1080DMBR
+6,Luminosity Sensor,,U4,Texas_USON-N6-DNP0006A-OPT3001   Light,1,Texas-OPT3001,Texas Instraments,OPT3001IDNPRQ1,595-OPT3001IDNPRQ1
+7,4-Pin JST SH Connector,NP,J1,JST-SH-4PIN-HORZ,1,JST SH 4-Pin,Adafruit,P4208   (10 pieces in a pack),485-4208
+8,Test Point Access Pad,NP,"J4,J3",pad50d35,2,Conn_01x01,"no part, test point access",,
+9,Diode,NP,Z1,D_SMB,1,3.3 V,Vishay,SMBJ3V3-E3/52,625-SMBJ3V3-E3
+10,Diode,,Z2,SOT-23,1,MMBZ5V6,Diodes Inc,D1213A-02SOL-7,621-D1213A-02SOL-7
+11,SMD Resistor,NP,"R3,R4",R_0603_1608Metric,2,2.74K,Any thick-film 1%,,
+12,I2C Bus Pin Socket (holes),NP,J5,PinSocket_1x04_P2.54mm_Vertical,1,Conn_01x04,"No part, just holdes",,
+13,Accelerometer,,U5,Bosch_LGA-12_2x2mm_P0.5mm Accelerometer,1,KXTJ3-1057,Rohm Semiconductor,KXTJ3-1057,912-KXTJ3-1057
+14,Ferrite Bead for EMI Suppression,,"FB1,FB2,FB3",L_0603_1608Metric,3,Ferrite_Bead_Small,Murata,BLM18HE152SN1D,81-BLM18HE152SN1D
+15,LED,NP,D1,08050603,1,LED_Small,Any green 0805 or 0603 LED,,
+16,Clock,,U1,RV-3032_RTC     Crystal Clock / Real Time Clock,1,RV-3032-C7,Micro Crystal,RV-3032-C7 32.768kHz-2.5PPM-TA-QC,428-203803-MG01
+17,Mounting Hole,NP,"H1,H2,H3,H4",MountingHole_2.7mm_M2.5,4,MountingHole,,,
+18,SMD Resistor,,C6,C_0603_1608Metric,1,1uF,"Yageo (or similar, 10% or less)",CC0603KRX7R8BB105,603-CC603KRX7R8BB105

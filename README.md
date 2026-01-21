@@ -1,140 +1,107 @@
-# [UAS 6.0 First Responder UAS Wireless Data Gatherer Challenge](https://www.nist.gov/ctl/pscr/open-innovation-prize-challenges/current-and-upcoming-prize-challenges/2024-first-responder)
-
-## Disclaimer
+# [2024 First Responder UAS Wireless Data Gatherer Challenge UAS 6.0](https://www.nist.gov/ctl/pscr/open-innovation-prize-challenges/past-prize-challenges/2024-first-responder-uas-wireless)
+**Disclaimer of Non-endorsement**:
 Any references to commercial entities, products, services, or other non-governmental
 organizations or individuals in this repository are provided solely for the information of
 individuals using this document. These references are not intended to reflect the opinion of
 NIST, the Department of Commerce or the United States, or its officers or employees. Such
 references are not an official or personal endorsement of any product, person, or service, nor
-are they intended to imply that the entities, materials, or equipment are necessarily the best
+are they intended to imply that the entities, materials, software, or equipment are necessarily the best
 available for the purpose. Such references may not be quoted or reproduced for the purpose of
 stating or implying an endorsement, recommendation, or approval of any product, person, or
-service. 
+service.
+
+See [LICENSE.md](https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data-Gatherer-Challenge/LICENSE.md) for software license information.
+
+## Repository Structure
+2024 First Responder UAS Wireless Data Gatherer Challenge UAS 6.0/
+│
+├── data_ferry/            	 <-- Drone Server/Command Server demo code
+│   ├── 3D_print_case_models
+│   ├── app.py
+│   ├── requirements.txt
+│   ├── dataferry.iso (TBD Future update)
+│   ├── static/
+│   ├── templates/
+│   └── README.md
+│
+├── docs/                    <-- Archival documentation from challenge
+│   ├── Network_Schema.drawio
+│   ├── UAS_6.0_Official_Rules
+│   ├── UAS_6.0_Stage_2_Guidance
+│   └── UAS_6.0_Stage_3_Guidance
+│
+├── foxnode/            	 <-- FoxNode project (Stage 3)
+│   ├── 3D_print_case_models
+│   ├── libraries
+│   ├── pcb_schematic
+│   ├── sample_outputs
+│   ├── stateMachine
+│   └── README.md
+│
+├── pics/            	 	 <-- Supporting pictures for repository
+│
+├── stage2_foxnode/          <-- Older FoxNode code from Stage 2
+│   ├── Foxclient_HTTP/
+│   └── README.md
+│
+├── LICENSE.md
+└── README.md                <-- Project overview (This page)
+
+## Project Components
+
+- [Data Ferry](data_ferry/README.md)
+- [FoxNode Platform (stage3)](foxnode/README.md)
+- [Stage 2 FoxNode](stage2_foxnode/README.md)
+
+## Terminology
+- The sensor device or "IoT-sensor" are interchangabally referred to as "sensor(s)" or "FoxNode(s)".
+- The drone collecting the data (from the FoxNodes) will be referred to as "data ferry" or "drone server."
+- The device receiving the data from the data ferry is referred to as the "command server".
+Note that conflicts may be present regarding terminology and alignment between the reference code and historical documentation.
 
 ## Scope
-This repository contains the IoT-Client or "Sensor Module" reference software for the NIST-PSCR UAS6.0: First Responder UAS Data Gatherer Challenge "**Fox Hunt**" Stage 2 & 3 events. These IoT nodes/Sensor Modules will be referred to herein as "Fox-Node(s)".
+This repository contains the sensor or FoxNode (Ground-based IoT-Sensor) reference software, hardware schematics, 3D-Print files, and challenge documentation for the UAS 6.0 Challenge. It also contains PSCR-developed servers (data ferry, and command server) for system testing. The intent of this repository is not only for historical preservation of software and hardware schematics used in UAS 6.0, but also as a guide for building and replicating the sensor hardware and associated software components used in the competition. Documentation includes UAS 6.0 Official Rules and Guidance documents for Stages 2 and 3. With this information one could replicate and run the entire UAS 6.0 challenge.
 
-**Stage 2**: Sensor Module addition to the [Guidance for Stage 2](https://firstresponderuas.org/wp-content/uploads/2024/08/UAS-6.0_Guidance-for-Stage-2-2024-0822.pdf) document. See document for further information.
+The "product" of this repository is a ground-based IoT-sensor, based on the Espressif ESP32 System-on-Chip platform that "senses" or generates data; including, light levels or lux, temperature, humidity, pressure, accelerometer or motion, and associated time stamps, and system-on-chip compute statuses. The system then transmits JSON formatted data in an HTTP POST message to a pre-determined IP address over Wi-Fi protocol. The associated sensor product is extensible (not currently implemented) to include global positioning system (GPS) data, among other sensors that support I2C bus. Associated data objects or "placeholders" are present for GPS extensions in the provided code.
 
-**Stage 3**: 
-UAS prize challenge competitors will participate in an in-person event to perform NIST-standardized tests and collect data from nodes scattered throughout the competition theater. 
+A secondary "product" is a Python based Flask web server for replicating the Data Ferry (Drone Server) and combo Command Server components. Both of these components were required deliverables by challenge participants, but the PSCR lab version is included here for systems based testing. 
 
-## Fox-Node Solution Components
-**Hardware**: 
-- ESP32-S2 ([Adafruit ESP32-S2 TFT Feather](https://learn.adafruit.com/adafruit-esp32-s2-tft-feather/overview))
-- [Battery pack](https://www.ravpower.com/products/ravpower-10000mah-power-bank-dual-outputs?_pos=1&_psq=prime+1000&_ss=e&_v=1.0) (USB-C out to ESP32)
-- USB to USB-C cable (Battery --> ESP32)
+## Competition Background
+The First Responder Uncrewed Aircraft Systems (UAS) Wireless Data Gatherer Challenge, otherwise known as UAS 6.0, was the sixth competition in the National Institute of Standards and Technology (NIST) Public Safety Communications Research (PSCR) Division’s UAS prize challenge series, which took place between May of 2024 and concluded April of 2025. The challenge evaluated the feasibility and operational value of using UAS as mobile data ferries to support situational awareness in public safety scenarios characterized by sparse, partitioned, or infrastructure-limited communications environments.
 
-NOTE: The ESP32 family of embedded microcontrollers has many different purchasing options that often use different/incompatible displays, bus connections, peripherals, etc. To avoid confusion, it is highly advisable to purchase the specific ESP32 "flavor" mentioned above for the best compatibility with the provided source code. 
+Unlike traditional data ferry architectures that rely on delayed, store-and-forward data delivery between disconnected network segments, UAS 6.0 demonstrated how modern commercial UAS platforms, combined with high-power radios, modular payloads, and standardized application interfaces, can enable near real-time data collection and delivery to incident command. During live field evaluations, multiple teams successfully located distributed wireless sensors, collected environmental data, and delivered actionable information to a command server within minutes, and in some cases seconds, of acquisition. These capabilities significantly reduced latency compared to legacy data ferry concepts, providing a scenario of supporting time-critical decision-making for first responders.
 
-**Software**: 
-- Host PC to program target IoT Fox-Node(s)
-    - [Arduino IDE ](https://www.arduino.cc/en/software)
+Results showed that UAS-based data ferries equipped with wide-area communications systems and operator-friendly interfaces provided measurable advantages in coverage, responsiveness, and situational awareness. At the same time, findings highlighted current limitations in autonomous flights, the importance of skilled human operators, and the need for expanded measurement science to evaluate communications performance, interference, and scalability. Collectively, the challenge outcomes will inform future public safety communications research and demonstrate a practical path toward deploying UAS-enabled data ferry systems using commercially available technologies.
 
-## Installation & Setup
-- Install the [Arduino IDE ](https://www.arduino.cc/en/software) on the target "host PC" to build project source code and program ESP32 hardware.
-    - ESP32 hardware support package dependencies listed below, install via Arduino IDE GUI "[Board Manager](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-board-manager/)" 
-        - [esp32](https://github.com/espressif/arduino-esp32) by Espressif Systems <-- main "Arduino-esp32" wrapped software stack
-    - Software dependencies libraries shown below, install via Arduino IDE GUI "[Library Manager](https://www.arduino.cc/en/Guide/Libraries/)" outside of the core Arduino-ESP32 software stack.
-        - [ArduinoJson](https://github.com/bblanchon/ArduinoJson) v7.1.0 by Benoit Blanchon
-        - [Adafruit ST7735 and ST7789 Library](https://github.com/adafruit/Adafruit-ST7735-Library) v1.10.4 by Adafruit (Select "Install All" option to bring in dependencies listed below)
-            - Adafruit BusIO v1.16.1            (dependency of Adafruit ST7735 and ST7789 installed along side by default.)
-            - Adafruit GFX Library v1.11.10     (dependency of Adafruit ST7735 and ST7789 installed along side by default.)
-            - Adafruit seesaw v1.7.8 Library    (dependency of Adafruit ST7735 and ST7789 installed along side by default.)
-            - SD v1.3.0 Library                 (dependency of Adafruit ST7735 and ST7789 installed along side by default.)
+## UAS 6.0 Competition Stages
+**Stage 1**: Stage one was a proof-of-concept phase that evaluated prototypes based on academic-style paper submissions. In this and subsequent stages, participants followed rules guided by the [UAS 6.0 Official Rules](https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data-Gatherer-Challenge/tree/main/docs/UAS_6.0_Official_Rules.pdf) document, located in the "docs" section of this repository.
 
-With the IDE setup completed, the "Fox-Node to be" (ESP32 hardware) can now be connected to the host PC via USB and programmed with the provided "Foxclient_HTTP.ino" source code file via Arduino IDE. 
+**Stage 2**: Stage two took place in participant's home locations and associated tests were ran with video asttestation methods. The sensor developed in this stage was a minimal viable verification system used for basic message exchange with built-in or "canned" data generating mechanisms. Details on how this system was implemented and associated test can be found in the [Guidance for Stage 2](https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data-Gatherer-Challenge/tree/main/docs/UAS_6.0_Stage_2_Guidance.pdf) document, located in the "docs" section of this repository.
 
-# Usage
-The "Fox Hunt" project leverages the [Arduino IDE](https://www.arduino.cc/en/software), [Arduino ESP32](https://github.com/espressif/arduino-esp32) software stack and [ESP32 hardware](https://learn.adafruit.com/adafruit-esp32-s2-tft-feather/overview) to run a simple HTTP-Client. This client (Foxclient_HTTP.ino), referred to as a "Fox-Node" will auto-connect to the predefined WiFi credentials and beacon an HTTP-POST message every 10 seconds.
+**Stage 3**: UAS prize challenge competitors competed in-person event to perform NIST-standardized tests and collect data from sensors placed throughout the competition theater. The sensor developed in in this stage generated and transmitted environmental data in JSON format from various sensing components. The sensor included a communications state machine for improved data delivery. Details on how this system was implemented and the associated tests can be found in [Guidance for Stage 3](https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data-Gatherer-Challenge/tree/main/docs/UAS_6.0_Stage_3_Guidance.pdf) document, located in the "docs" section of this repository.
 
-NOTE: Target WiFi SSID/PSWD can be easily updated in the source. **Default SSID/PSWD** are both hardcoded as **"UAS6"**.
+# UAS 6.0 Network Architecture
 
-![Fox Node State Diagram](pics/FoxNode_StateDiagram.png)
+It is important to consider how you plan to deploy the FoxNode sensors and associated servers in your network deployment. 
+The following is a (greatly) simplified architecture was used in the UAS 6.0 Stage 3 competition. All coded configurations in this repository follow this general schema if you intend to replicate this experiment.
 
-Fox-Node verification:
-The Arduino IDE provides easy access to a serial interface connection (115200 baud) that displays runtime information. This information is also pushed/displayed via an ESP TFT display (unique to the Adafruit ESP32-S2 TFT Feather). 
+![Fox Node State Diagram](pics/Network_Schema_Example.png)
 
-Upon connection to "UAS6" WiFi Network serial output... ex: 
+The diagram above shows the three primary components used in UAS 6.0.
+- The [Data Ferry](data_ferry/) is the central component configured as a Wi-Fi access point or hotspot. The IP assigned (static provisioning) to the Data Ferry is 192.168.40.20. The mask is 255.255.0.0.
+- The [FoxNodes](foxnode/) connect to the Data Ferry when it is in range. FoxNodes are assigned IP addresses 192.168.40.80 + FoxNode ID. For example, FoxNode 1 is assigned 192.168.40.81. The mask is 255.255.0.0. These values are statically set.
+- The Command Server is assigned 192.168.40.10, mask 255.255.0.0. This is statically set. For examples in this repositry, this is a simple PC client with web browsing capabilities.
+- Internet connectivity is not considered in this architecture to limit scope and to simulate "no" or "limited" connectivity often observed in first responders scenarios, such as wildfires.
 
-```
-WiFi connected
-**Fox-Node Initialized**
-WiFi Tx Power: 28
-IP address: 
-192.168.1.2
-Attempting POST.
-Server connected, Sending POST.
-POST success.
-STA PWR: 28
-HTTP Response code: 200
-POST Payload: {"Node_RSSI":-38}
-```
+# Project status
+Development status for PSCR - UAS 6.0 First Responder UAS Data Gatherer Challenge
+- The UAS 6.0 challenge and associated "works" are considered "complete and finished"
+- This repository is for historical reference, and may not receive future updates; however, other PSCR projects may utilize some or all of this project for continued development. 
+- Individuals that have questions or are interested in this project or current/future PSCR UAS projects, please contact us at the email address below.
 
-If the Fox-Node fails to find the specified WiFi Network... ex:
-
-```
-**Fox-Node Initialized**
-WiFi Station: 14 Reason: 201
-Trying to Reconnect
-WiFi Station: 14 Reason: 201
-Trying to Reconnect
-```
-
-NOTE: not all ESP32 hardware will have a display output. To make this project compatible with such hardware all references to the TFT display can be removed from the source Foxclient_HTTP.ino file to provide more "generic" ESP32 flavor compatibility.
-
-## ESP32 Display
-
-Fox-Node display states:
-
-<Disp. # >, description (background color)
-
-- 3, on sent POST,                   (GREEN)
-
-![Fox Node State Diagram](pics/FoxNode_disp3_tight.jpg)
-
-- 2, no connection to HTTP server,   (Orange)
-
-![Fox Node State Diagram](pics/FoxNode_disp2_tight.jpg)
-
-- 1, On WiFi got IP,                 (Blue)
-
-![Fox Node State Diagram](pics/FoxNode_disp1_tight.jpg)
-
-- 0, TFT init code,                  (Green)
-
-![Fox Node State Diagram](pics/FoxNode_disp0_tight.jpg)
-
-## Branch List 
-
-**main**: 
-- UAS 6.0 Stage 2 code (only dummy data + RSSI info from the Fox Node)
-
-**Live_Sensors**: 
-- Support for live data via I2C (sending real sensor data as payload via I2C --> ESP --> HTTP-POST)
-
-## 3D Printer Models
-
-- .3mf files are included if you choose to do your own slicing for your specific 3D printer or application
-- .gcodes are included for both PLA and PETG filament types, specifically for the Prusa 3D Printer
-- .dfx CAD files are included for the fabrication of the case window, so the LCD is visible
-- Any printer with a .4mm nozzle that uses 1.75mm filament shall work as long as it can accommodate .15mm tall layers
-
-## Project status
-Development targets PSCR - UAS 6.0 First Responder UAS Data Gatherer Challenge
-- Working Proof of concept w/ HTTP.POST "Fox-Nodes" w/real-time and dummy data.
-
-### Future Work  
-Implement:
-- NTP 
-- mDNS
-- LittleFS
-
-## License
-- Arduino ESP32 stack - LGPL-2.1 license
-- ArduinoJson - MIT license
-- 3D Printer Models - NIST License (See License.md)
-
-## Contact
+# Contact
 psprizes@nist.gov
+- This mailbox is part of a distrubution that is checked regularly.
+
+
 

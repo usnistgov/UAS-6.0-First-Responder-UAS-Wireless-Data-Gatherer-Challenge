@@ -1,0 +1,26 @@
+[Unit]
+Description=Drone Server Flask App
+After=network.target
+
+[Service]
+# Path to Python and your app
+ExecStart=/usr/bin/python3 /home/pscr/data_ferry/app.py
+WorkingDirectory=/home/pscr/data_ferry/
+Restart=always
+Environment=TEAM_NAME="Flying Data Miners"
+Environment=SERVER_FIXED_IP=192.168.40.20
+Environment=DB_PATH=/home/pscr/data_ferry/drone_server.db
+Environment=ADMIN_TOKEN=clearme
+Environment=PORT=80
+Environment=GOOGLE_MAPS_API_KEY="<your API key>"
+
+# Run as user, not root
+User=pscr
+Group=pscr
+
+# Allow binding to port 80 without root
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target
