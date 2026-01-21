@@ -55,70 +55,69 @@ service.
 **Adafruit Libraries**
 Adafruit_BusIO
 License: MIT
-Notes: Core I2C/SPI abstraction layer used by many Adafruit drivers.
+Note: Core I2C/SPI abstraction layer used by many Adafruit drivers.
 
 Adafruit_GFX_Library
 License: BSD 3-Clause
-Notes: One of the few Adafruit libs that is BSD rather than MIT.
 
 Adafruit_MAX1704X
 License: MIT
-Notes: Fuel gauge driver (MAX17043/44/48).
+Note: Fuel gauge driver (MAX17043/44/48).
 
 Adafruit_seesaw_Library
 License: MIT
-Notes: Used for Seesaw-based peripherals.
+Note: Used for Seesaw-based peripherals.
 
 Adafruit_ST7735_and_ST7789_Library
 License: MIT
-Notes: Display driver for ST77xx LCDs.
+Note: Display driver for ST77xx LCDs.
 
 Adafruit_Unified_Sensor
 License: MIT
-Notes: Sensor abstraction framework used across Adafruit sensor drivers.
+Note: Sensor abstraction framework used across Adafruit sensor drivers.
 
 **Arduino / Core / Networking**
 ArduinoJson
 License: MIT
-Notes: Widely used JSON serialization library.
+Note: Widely used JSON serialization library.
 
 NTPClient
 License: MIT
-Notes: Common Arduino NTP client by Fabrice Weinberg.
+Note: Common Arduino NTP client by Fabrice Weinberg.
 
 SD
 License: LGPL-2.1
-Notes: Arduino core SD library, wraps SdFat functionality.
+Note: Arduino core SD library, wraps SdFat functionality.
 Important: LGPL has redistribution implications if statically linked.
 
 **Sensor / Vendor Libraries**
 BitBang_I2C
 License: GPL-2.0 (typical)
-Notes: Often derived from early AVR bit-banged I2C implementations.
+Note: Often derived from early AVR bit-banged I2C implementations.
 Verify: License headers vary by fork.
 
 bb_rtc
 License: MIT
-Notes: Frequently used lightweight RTC helper library.
+Note: Frequently used lightweight RTC helper library.
 Verify: Some variants are public domain or BSD.
 
 GuL_T1_Humidity_HDC10XX
 License: MIT
-Notes: Community driver for TI HDC1000/1080/1010 sensors.
+Note: Community driver for TI HDC1000/1080/1010 sensors.
 
 KXTJ3-1057
 License: BSD 3-Clause or MIT
-Notes: Accelerometer driver originally from Silicon Labs or SparkFun lineage.
+Note: Accelerometer driver originally from Silicon Labs or SparkFun lineage.
 Verify: License header inside .cpp/.h.
 
 **STMicroelectronics (Cube / X-CUBE style)**
 ClosedCube_LPS25HB
 License: BSD 3-Clause
-Notes: Pressure sensor driver based on ST application code.
+Note: Pressure sensor driver based on ST application code.
 
 ClosedCube_OPT3001
 License: BSD 3-Clause
-Notes: OPT3001 light sensor driver.
+Note: OPT3001 light sensor driver.
 
 **PiSugar**
 PiSugar Power Manager (daemon)
@@ -127,4 +126,4 @@ PiSugar Python Library
 License: MIT
 
 PiSugar 2 3D Printer Case
-Licnese: GNU Version 3
+License: GNU Version 3

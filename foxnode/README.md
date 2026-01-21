@@ -108,7 +108,7 @@ Note that hardcoded passwords are not recommended for production use. The follow
 
 The FoxNode ID must be unique for each FoxNode and has to be manually configured. The FoxNode IP address is automatically formulated using this following function call in [httpComms.h](/foxnode/stateMachine/httpComms.h) file.
 ```
-IPAddress getFoxNodeIP(unsigned short thisFoxNodeId){			// formulate IP address based on Fox-Node ID
+IPAddress getFoxNodeIP(unsigned short thisFoxNodeId){			// Formulate IP address based on Fox-Node ID
 	if(thisFoxNodeId > 60)thisFoxNodeId = 5;				    // This number is the FoxNode ID and must be unique to each FoxNode
 	return IPAddress(192, 168, 40, thisFoxNodeId + 80);   		// This adds the FoxNode ID plus 80 as the IP address. For example, this will produce an IP of 192.168.40.85 for FoxNode 5.
 ```
