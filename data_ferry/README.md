@@ -192,29 +192,29 @@ Upon successful configuration of your FoxNode(s) and Data Ferry, the FoxNode sho
 Using your "Command Server" computer, set the device's Wi-Fi IP address as 192.168.50.10/16 as specified in [network architecture](/pics/Network_Schema_Example.png)
 
 Open a web browser and enter http://192.168.50.20/ui/
-From here you will see various options for settings and FoxNode collection stats:
+From here you will see various options for settings and FoxNode collection stats.
 ![Data Ferry UI Home Page](/pics/UI_Homepage.png)
 
-The Data Ferry UI includes a "Light Mode" option checkbox. "Dark Mode" is enabled by default. Check the "Light mode" box to enable Light Mode:
+The Data Ferry UI includes a "Light Mode" option checkbox. "Dark Mode" is enabled by default. Check the "Light mode" box to enable Light Mode.
 - Dark Mode
-![Data Ferry UI Dark Mode](/pics/Dark_Mode.png)
+![Data Ferry UI Dark Mode](/pics/UI_Dark_Mode.png)
 - Light Mode
-![Data Ferry UI Light Mode](/pics/Light_Mode.png)
+![Data Ferry UI Light Mode](/pics/UI_Light_Mode.png)
 
 The Data Ferry UI web page will show you data collected from connected FoxNodes and associated data values and generated graphs. Click the "View" button next to the desired FoxNode to show graph data.
 ![FoxNode Graph Data in Data Ferry UI](/pics/UI_Graphs.png)
 
 The Data Ferry does not automatically archive or rotate data logs. Data must be cleared manually otherwise the database will become quite large if left unattended.
 A "Clear Data" button is provided to purge the database. The "admin token" using the phrase "clearme" has to be entered to peform the purge.
-![Data Ferry Clear Data Button](/pics/Clearme.png)
+![Data Ferry Clear Data Button](/pics/UI_Clearme.png)
 
-A general system "health" link provides status of the Data Ferry system:
+A general system "health" link provides status of the Data Ferry system.
 ![Data Ferry Health](/pics/UI_Health.png)
 
-All gathered data can be viewed from the "/dump/full" link. This shows all of the gathered FoxNode data as JSON. A "Pretty-print" checkbox will display JSON in human readable format:
+All gathered data can be viewed from the "/dump/full" link. This shows all of the gathered FoxNode data as JSON. A "Pretty-print" checkbox will display JSON in human readable format.
 ![FoxNode JSON Data](/pics/UI_Dump.png)
 
-Scroll down the the end of the dump output to see information for "first seen" or "earliestTakeOff", "sortieCount" and others:
+Scroll down the the end of the dump output to see information for "first seen" or "earliestTakeOff", "sortieCount" and others.
 ![Data Ferry Collection Stats](/pics/UI_Dump_2.png)
 
 The "Map" button next the the "Clear data" button will open a new tab with the location of collected FoxNodes.

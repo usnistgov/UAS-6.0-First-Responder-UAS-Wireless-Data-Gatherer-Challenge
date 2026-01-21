@@ -11,7 +11,7 @@
 ## Fox-Node Solution Components (Stage 2)
 **Hardware**: 
 - ESP32-S2 ([Adafruit ESP32-S2 TFT Feather](https://learn.adafruit.com/adafruit-esp32-s2-tft-feather/overview))
-- [Battery pack](https://www.ravpower.com/products/ravpower-10000mah-power-bank-dual-outputs?_pos=1&_psq=prime+1000&_ss=e&_v=1.0) (USB-C out to ESP32)
+- Power Bank - [Anker PowerCore Slim 10000 Model A1229](https://www.anker.com/products/a1229) (USB-C out to ESP32) (USB-C out to ESP32)
 - USB to USB-C cable (Battery --> ESP32)
 
 NOTE: The ESP32 family of embedded microcontrollers has many different purchasing options that often use different/incompatible displays, bus connections, peripherals, etc. To avoid confusion, it is highly advisable to purchase the specific ESP32 "flavor" mentioned above for the best compatibility with the provided source code. 
@@ -76,21 +76,19 @@ NOTE: not all ESP32 hardware will have a display output. To make this project co
 
 Fox-Node display states:
 
-<Disp. # >, description (background color)
-
-- 3, on sent POST,                   (GREEN)
+- Exchanging HTTP messages (GREEN)
 
 ![Fox Node State Diagram](/pics/FoxNode_disp3_tight.jpg)
 
-- 2, no connection to HTTP server,   (Orange)
+- No connection to HTTP server (Orange)
 
 ![Fox Node State Diagram](/pics/FoxNode_disp2_tight.jpg)
 
-- 1, On WiFi got IP,                 (Blue)
+- On WiFi got IP (Blue)
 
 ![Fox Node State Diagram](/pics/FoxNode_disp1_tight.jpg)
 
-- 0, TFT init code,                  (Green)
+- TFT init code (Green)
 
 ![Fox Node State Diagram](/pics/FoxNode_disp0_tight.jpg)
 

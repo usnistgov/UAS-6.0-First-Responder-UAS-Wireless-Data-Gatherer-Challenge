@@ -18,7 +18,7 @@ Note that individuals that intend to replicate the pcb companion board will need
 ## FoxNode Components
 **Hardware**: 
 - ESP32-S2 ([Adafruit ESP32-S2 TFT Feather](https://learn.adafruit.com/adafruit-esp32-s2-tft-feather/overview))
-- [Battery pack](https://www.ravpower.com/products/ravpower-10000mah-power-bank-dual-outputs?_pos=1&_psq=prime+1000&_ss=e&_v=1.0) (USB-C out to ESP32)
+- Power Bank - [Anker PowerCore Slim 10000 Model A1229](https://www.anker.com/products/a1229) (USB-C out to ESP32)
 - USB to USB-C cable (Battery --> ESP32)
 - ESP32_I2C Companion Board Schematic [Schematic and Parts List](/foxnode/pcb_schematic/)
 - [100mm STEMMA QT / Qwiic JST-SH 4-pin cable](https://www.adafruit.com/product/4210)
@@ -35,7 +35,7 @@ Note that individuals that intend to replicate the pcb companion board will need
 
 **Important Notes**:
 - The ESP32 family of embedded microcontrollers has many different purchasing options that often use different/incompatible displays, bus connections, peripherals, etc. To avoid confusion, it is highly advisable to purchase the specific ESP32 "flavor" mentioned above for the best compatibility with the provided source code. 
--The I2C Companion Board schematics and [parts list](foxnode/pcb_schematic/esp32_I2C_Parts_List.csv) are provided in the [pcb_schematic](foxnode/pcb_schematic/) directory. 
+-The I2C Companion Board schematics and [parts list](/foxnode/pcb_schematic/esp32_I2C_Parts_List.csv) are provided in the [pcb_schematic](/foxnode/pcb_schematic/) directory. 
 
 **Software**: 
 - Host PC or target to program FoxNode(s)
@@ -54,10 +54,11 @@ git clone https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data
 - Install the [Arduino IDE ](https://www.arduino.cc/en/software) on the target to build project source code and program ESP32 hardware.
 - ESP32 hardware support package dependencies listed below, install via Arduino IDE GUI "[Board Manager](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-board-manager/)" 
     - [esp32](https://github.com/espressif/arduino-esp32) by Espressif Systems <-- main "Arduino-esp32" wrapped software stack, search Espressif Systems in the "Boards Manager", select and install.
-	- Open [stateMachine.ino](foxnode/stateMachine/stateMachine.ino) file, confirm/acknowlege the creation of "stateMachine" directory.
+	- Open [stateMachine.ino](/foxnode/stateMachine/stateMachine.ino) file, confirm/acknowlege the creation of "stateMachine" directory.
 	- Move/Copy [libraries](/foxnode/libraries) directory and contents from the cloned repository to the "Arduino" directory in your home directory.
 
 Please note that the specific path for your cloned GitHub repository and Arduino libraries may differ.
+
 Windows: 
 ```
 robocopy "C:\Users\%USERNAME%\Documents\GitHub\UAS-6.0-First-Responder-UAS-Wireless-Data-Gatherer-Challenge\Stage3\libraries" ^
@@ -104,11 +105,11 @@ Note that hardcoded passwords are not recommended for production use. The follow
 - Provision at runtime and store in non-volatile memory. Requires manual setup on each boot.
 - Move secrets out of code using build-time secrets (for repository and dev environments)
 
-The FoxNode ID must be set and unique for each FoxNode. The FoxNode IP address is automatically formulated using this following function call in httpComms.cpp.
+The FoxNode ID must be unique for each FoxNode and has to be manually configured. The FoxNode IP address is automatically formulated using this following function call in [httpComms.h](/foxnode/stateMachine/httpComms.h) file.
 ```
 IPAddress getFoxNodeIP(unsigned short thisFoxNodeId){		// formulate IP address based on Fox-Node ID
 	if(thisFoxNodeId > 60)thisFoxNodeId = 5;				      // This number is the FoxNode ID and must be unique to each FoxNode
-	return IPAddress(192, 168, 40, thisFoxNodeId + 80);   // This adds the FoxNode ID is to 80 as the IP address. For example, this will produce an IP of 192.168.40.85 for FoxNode 5.
+	return IPAddress(192, 168, 40, thisFoxNodeId + 80);   // This adds the FoxNode ID plus 80 as the IP address. For example, this will produce an IP of 192.168.40.85 for FoxNode 5.
 ```
 
 With the IDE setup completed and variables configured, the "FoxNode to be" (ESP32 hardware) can now be connected to the host PC via USB and programmed with the provided source code file via Arduino IDE. 
@@ -157,20 +158,18 @@ NOTE: not all ESP32 hardware will have a display output. To make this project co
 
 FoxNode display states:
 
-<Disp. # >, description (background color)
-
-- 3, NTP Connection at powerup/boot,                   (Yellow)
+- NTP Connection at powerup/boot (Yellow)
 
 ![FoxNode NTP Connection](/pics/FoxNode_NTP_Connect.jpg)
 
-- 2, Not connected to Data Ferry or searching,   (Orange)
+- Not connected to Data Ferry or searching for network (Orange)
 
 ![FoxNode Searching for Data Ferry Network](/pics/FoxNode_Searching.jpg)
 
-- 1, On WiFi got IP handshaking for data exchange,                 (Blue)
+- Connected to Wi-Fi, set IP, handshaking for data exchange (Blue)
 
 ![FoxNode Connected to Data Ferry, no Data Transfer](/pics/FoxNode_WiFi_Connect.jpg)
 
-- 0, Fully connected to Data Ferry and exchaning data,                  (Black)
+- Fully connected to Data Ferry and exchaning data (Black)
 
 ![FoxNode Fully Connected, Data Exchange](/pics/FoxNode_Fully_Connected.jpg) 
