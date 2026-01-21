@@ -13,6 +13,7 @@ service.
 See [LICENSE.md](https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data-Gatherer-Challenge/LICENSE.md) for software license information.
 
 ## Repository Structure
+```
 Responder UAS Wireless Data Gatherer Challenge UAS 6.0/
 ├── data_ferry/                         # Drone Server / Command Server demo code
 │   ├── 3D_print_case_models/
@@ -45,7 +46,7 @@ Responder UAS Wireless Data Gatherer Challenge UAS 6.0/
 │
 ├── LICENSE.md
 └── README.md                           # Project overview (this page)
-
+```
 ## Project Components
 
 - [Data Ferry](data_ferry/README.md)
