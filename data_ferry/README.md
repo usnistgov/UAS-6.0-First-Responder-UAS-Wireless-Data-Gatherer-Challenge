@@ -1,7 +1,7 @@
 # Data Ferry (Drone Server) and Command Server
 The Data Ferry presented in this section was used for proof-of-concept (lab) testing. The Data Ferry has a functional web server so that a PC client can view data collected and processed by the Data Ferry. The Data Ferry is a Python Flask server with a Javascript front end and uses sqlite3 for data storage and retrieval. For the purposes of testing the "command server," data post-processing functionality is performed on the Data Ferry. The PC client is only used to view the data.
 
-The network schema can be viewed [here](pics/Network_Schema_Example.png). Pre-populated values in this repository are not secure, are considered compromised, and should not be used.
+The network schema can be viewed [here](/pics/Network_Schema_Example.png). Pre-populated values in this repository are not secure, are considered compromised, and should not be used.
 
 - Where cited portions of the Data Ferry code was generated with assistance from ChatGPT (OpenAI) and Gemini (Google). The code has been reviewed and integrated by the project authors.
 - Data Ferry configuration is system-dependent; however, we have provided a hardware list, configuration, and provisioning parameters in the following sections for reference if you are trying to replicate our setup.
@@ -35,7 +35,7 @@ The network schema can be viewed [here](pics/Network_Schema_Example.png). Pre-po
 Note that when using a USB hub, the Pi assigns an "ID" to the USB peripheral, so moving a device between different hub ports or to a port directly to the Pi will assign it a different ID, so any provisioning for an external Wi-Fi adaptor will have to be updated to reflect its new port assignment.
 
 Prototype Example of Data Ferry:
-![Prototype Data Ferry](pics/Data_Ferry_Prototype.png)
+![Prototype Data Ferry](/pics/Data_Ferry_Prototype.png)
 
 ## Data Ferry Configuration (Raspberry Pi Zero 2 W)
 - In our setup, we disabled NetworkManager in favor of systemd-networkd and netplan.
@@ -103,7 +103,7 @@ sudo iwconfig
 sudo systemctl stop NetworkManager
 sudo systemctl disable NetworkManager
 ```
-**Step 8**: Create new network configuration .yaml file or copy [dataferry.yaml](data_ferry/raspbian_files/dataferry.yaml) from respository to /etc/netplan/
+**Step 8**: Create new network configuration .yaml file or copy [dataferry.yaml](/data_ferry/raspbian_files/dataferry.yaml) from respository to /etc/netplan/
 ```
 sudo cp ~/data_ferry/dataferry.yaml /etc/netplan/dataferry.yaml
 ```
@@ -118,13 +118,13 @@ sudo netplan apply
 ```
 sudo /usr/sbin/rfkill unblock wifi
 ```
-- Create or copy [hostapd.conf](data_ferry/raspbian_files/hostapd.conf) to /etc/hostapd/hostapd.conf
+- Create or copy [hostapd.conf](/data_ferry/raspbian_files/hostapd.conf) to /etc/hostapd/hostapd.conf
 ```
 sudo cp ~/data_ferry/hostapd.conf /etc/hostapd.conf
 ```
 - Note change SSIDs and wpa_password to match your architecture.
 
-**Step 11**: Create/copy [rfkill startup service](data_ferry/raspbian_files/rfkill-unblock-wifi.service) that automatically disables RFKill on startup
+**Step 11**: Create/copy [rfkill startup service](/data_ferry/raspbian_files/rfkill-unblock-wifi.service) that automatically disables RFKill on startup
 Copy the file to the /etc/systemd/system directory
 ```
 sudo cp ~/data_ferry/rfkill-unblock-wifi.service /etc/systemd/system/rfkill-unblock-wifi.service
@@ -136,7 +136,7 @@ sudo systemctl enable rfkill-unblock-wifi.service
 sudo systemctl start rfkill-unblock-wifi.service
 ```
 
-**Step 12**: Optionally configure/copy [/etc/dnsmasq.conf](data_ferry/raspbian_files/dnsmasq.conf)
+**Step 12**: Optionally configure/copy [/etc/dnsmasq.conf](/data_ferry/raspbian_files/dnsmasq.conf)
 - Change parameters to match your network schema or copy file from repositiory
 ```
 sudo cp ~/data_ferry/rfkill-unblock-wifi.service /etc/dnsmasq.conf
@@ -189,34 +189,34 @@ sudo systemctl start ssh
 ## Data Ferry Usage
 Upon successful configuration of your FoxNode(s) and Data Ferry, the FoxNode should automatically connect to the Data Ferry Wi-Fi network and the Data Ferry will collect and store data to the sqlite3 database. sqlite3 will automatically create the associated database files in the /home/pscr/data_ferry/ working directory.
 
-Using your "Command Server" computer, set the device's Wi-Fi IP address as 192.168.50.10/16 as specified in [network architecture](pics/Network_Schema_Example.png)
+Using your "Command Server" computer, set the device's Wi-Fi IP address as 192.168.50.10/16 as specified in [network architecture](/pics/Network_Schema_Example.png)
 
 Open a web browser and enter http://192.168.50.20/ui/
 From here you will see various options for settings and FoxNode collection stats:
-![Data Ferry UI Home Page](pics/UI_Homepage.png)
+![Data Ferry UI Home Page](/pics/UI_Homepage.png)
 
 The Data Ferry UI includes a "Light Mode" option checkbox. "Dark Mode" is enabled by default. Check the "Light mode" box to enable Light Mode:
 - Dark Mode
-![Data Ferry UI Dark Mode](pics/Dark_Mode.png)
+![Data Ferry UI Dark Mode](/pics/Dark_Mode.png)
 - Light Mode
-![Data Ferry UI Light Mode](pics/Light_Mode.png)
+![Data Ferry UI Light Mode](/pics/Light_Mode.png)
 
 The Data Ferry UI web page will show you data collected from connected FoxNodes and associated data values and generated graphs. Click the "View" button next to the desired FoxNode to show graph data.
-![FoxNode Graph Data in Data Ferry UI](pics/UI_Graphs.png)
+![FoxNode Graph Data in Data Ferry UI](/pics/UI_Graphs.png)
 
 The Data Ferry does not automatically archive or rotate data logs. Data must be cleared manually otherwise the database will become quite large if left unattended.
 A "Clear Data" button is provided to purge the database. The "admin token" using the phrase "clearme" has to be entered to peform the purge.
-![Data Ferry Clear Data Button](pics/Clearme.png)
+![Data Ferry Clear Data Button](/pics/Clearme.png)
 
 A general system "health" link provides status of the Data Ferry system:
-![Data Ferry Health](pics/UI_Health.png)
+![Data Ferry Health](/pics/UI_Health.png)
 
 All gathered data can be viewed from the "/dump/full" link. This shows all of the gathered FoxNode data as JSON. A "Pretty-print" checkbox will display JSON in human readable format:
-![FoxNode JSON Data](pics/UI_Dump.png)
+![FoxNode JSON Data](/pics/UI_Dump.png)
 
 Scroll down the the end of the dump output to see information for "first seen" or "earliestTakeOff", "sortieCount" and others:
-![Data Ferry Collection Stats](pics/UI_Dump_2.png)
+![Data Ferry Collection Stats](/pics/UI_Dump_2.png)
 
 The "Map" button next the the "Clear data" button will open a new tab with the location of collected FoxNodes.
 Note that the use of Google Maps requires a Google account and Google Maps API key. Setup and configuration of the API key and maps funtionalty is not covered in this instruction, but placeholders are present for integration.
-![Data Ferry Maps](pics/UI_Map.png)
+![Data Ferry Maps](/pics/UI_Map.png)
