@@ -1,5 +1,6 @@
 # [2024 First Responder UAS Wireless Data Gatherer Challenge UAS 6.0](https://www.nist.gov/ctl/pscr/open-innovation-prize-challenges/past-prize-challenges/2024-first-responder-uas-wireless)
 **Disclaimer of Non-endorsement**:
+
 Any references to commercial entities, products, services, or other non-governmental
 organizations or individuals in this repository are provided solely for the information of
 individuals using this document. These references are not intended to reflect the opinion of
@@ -10,7 +11,7 @@ available for the purpose. Such references may not be quoted or reproduced for t
 stating or implying an endorsement, recommendation, or approval of any product, person, or
 service.
 
-See [LICENSE.md](https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data-Gatherer-Challenge/LICENSE.md) for software license information.
+See License tab for licensing information.
 
 ## Repository Structure
 ```
@@ -57,6 +58,7 @@ Responder UAS Wireless Data Gatherer Challenge UAS 6.0/
 - The sensor device or "IoT-sensor" is interchangeably referred to as "sensor(s)" or "FoxNode(s)".
 - The drone collecting the data (from the FoxNodes) will be referred to as "data ferry" or "drone server."
 - The device receiving the data from the data ferry is referred to as the "command server".
+
 Note that conflicts may be present regarding terminology and alignment between the reference code and historical documentation.
 
 ## Scope
@@ -78,7 +80,7 @@ Results showed that UAS-based data ferries equipped with wide-area communication
 
 **Stage 2**: Stage two took place at participants' home locations, and associated tests were conducted using video assessment methods. The sensor developed in this stage was a minimal viable verification system used for basic message exchange with built-in or "canned" data-generating mechanisms. Details on how this system was implemented and associated tests can be found in the [Guidance for Stage 2](docs/UAS_6.0_Stage_2_Guidance.pdf) document, located in the "docs" section of this repository. This section is included for historical reference. Anyone looking to replicate or build on elements from UAS 6.0 should start in the FoxNode section for Stage 3.
 
-**Stage 3**: UAS prize challenge competitors competed in-person event to perform NIST-standardized tests and collect data from sensors placed throughout the competition theater. The sensor developed in this stage generated and transmitted environmental data in JSON format from various sensing components. The sensor included a communications state machine to improve data delivery. Details on how this system was implemented and the associated tests can be found in  [Guidance for Stage 3](docs/UAS_6.0_Stage_3_Guidance.pdf) document, located in the "docs" section of this repository.
+**Stage 3**: UAS prize challenge participants competed in-person event to perform NIST-standardized tests and collect data from sensors placed throughout the competition theater. The sensor developed in this stage generated and transmitted environmental data in JSON format from various sensing components. The sensor included a communications state machine to improve data delivery. Details on how this system was implemented and the associated tests can be found in  [Guidance for Stage 3](docs/UAS_6.0_Stage_3_Guidance.pdf) document, located in the [docs](/docs) section of this repository.
 
 # UAS 6.0 Network Architecture
 
@@ -91,7 +93,7 @@ The diagram above shows the three primary components used in UAS 6.0.
 - The [Data Ferry](data_ferry/) is the central component configured as a Wi-Fi access point or hotspot. The IP assigned (static provisioning) to the Data Ferry is 192.168.40.20. The mask is 255.255.0.0.
 - The [FoxNodes](foxnode/) connect to the Data Ferry when it is in range. FoxNodes are assigned IP addresses 192.168.40.80 + FoxNode ID. For example, FoxNode 1 is assigned 192.168.40.81. The mask is 255.255.0.0. These values are statically set.
 - The Command Server is assigned 192.168.40.10, mask 255.255.0.0. This is statically set. For examples in this repository, this is a simple PC client with web browsing capabilities.
-- Internet connectivity is not considered in this architecture to limit scope and to simulate "no" or "limited" connectivity often observed in first responder scenarios, such as wildfires.
+- Internet connectivity is not considered in this architecture to limit scope and to simulate "no" or "limited" connectivity often observed in first responder scenarios, such as wildfires. However, a mobile hotspot or alternative Wi-Fi connection is recommended for provisioning purposes.
 
 # Project status
 Development status for PSCR - UAS 6.0 First Responder UAS Data Gatherer Challenge

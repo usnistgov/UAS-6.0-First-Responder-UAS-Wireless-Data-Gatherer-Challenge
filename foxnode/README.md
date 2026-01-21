@@ -1,6 +1,7 @@
 # UAS 6.0 Stage 3 FoxNode Sensor
 The following provides component list and instuction for building and programming the FoxNode sensor.
 Note that individuals that intend to replicate the pcb companion board will need to source a pcb fabrication facility and associated board components.
+Instruction is not provided on pcb fabrication, but details can be found in [parts list](/foxnode/pcb_schematic/esp32_I2C_Parts_List.csv) and [pcb_schematic](/foxnode/pcb_schematic/)
 
 - PSCR posesses a limited number of "complete" FoxNode sensors. If you wish to develop on this platform or want to borrow our FoxNode sensors for your experimentation, please contact psprizes@nist.gov
 
@@ -35,7 +36,7 @@ Note that individuals that intend to replicate the pcb companion board will need
 
 **Important Notes**:
 - The ESP32 family of embedded microcontrollers has many different purchasing options that often use different/incompatible displays, bus connections, peripherals, etc. To avoid confusion, it is highly advisable to purchase the specific ESP32 "flavor" mentioned above for the best compatibility with the provided source code. 
--The I2C Companion Board schematics and [parts list](/foxnode/pcb_schematic/esp32_I2C_Parts_List.csv) are provided in the [pcb_schematic](/foxnode/pcb_schematic/) directory. 
+- The I2C Companion Board schematics and [parts list](/foxnode/pcb_schematic/esp32_I2C_Parts_List.csv) are provided in the [pcb_schematic](/foxnode/pcb_schematic/) directory. 
 
 **Software**: 
 - Host PC or target to program FoxNode(s)
@@ -79,7 +80,7 @@ rsync -av \
 ```
 
 ## FoxNode Configuration Variables
-The FoxNode must be configured for your specific network architecture and it is recommended to change Wi-Fi SSID passwords before proceeding. The network schema can be viewed [here]( (/pics/Network_Schema_Example.png). Pre-populated values in this repository are not not secure, are considered compromised, and should not be used.
+The FoxNode must be configured for your specific network architecture and it is recommended to change Wi-Fi SSID passwords before proceeding. The network schema can be viewed [here] (/pics/Network_Schema_Example.png). Pre-populated values in this repository are not not secure, are considered compromised, and should not be used.
 
 - FoxNode network configuration is found in the [httpComms.h](/foxnode/stateMachine/httpComms.h) file. Edit the file cloned in your local copy of the repository.
 
@@ -87,8 +88,8 @@ Open the httpComms.h file in your favorite text editor or Arduino IDE and modify
 ```
 // Global Variables
 //// UAS Server Target vars
-#define WIFI_SSID     "uas6"			    // target network for  UAS 6.0 Prize challenge
-#define WIFI_PASSWORD "hello123"			// target network for  UAS 6.0 Prize challenge
+#define WIFI_SSID     "uas6"			    // target network for UAS 6.0 Prize challenge
+#define WIFI_PASSWORD "hello123"			// target network for UAS 6.0 Prize challenge
 #define UAS_Server "http://192.168.40.20"	// Target Data Ferry or Drone
 
 #define UAS_Gateway "192,168,40,20"			// Gateway for Sensor Client
@@ -96,8 +97,8 @@ Open the httpComms.h file in your favorite text editor or Arduino IDE and modify
 #define UAS_Subnet	"255,255,0,0"
 
 // for loating up the Real Time Clock RTC from a hotspot on the net
-#define NTP_WIFI_SSID     "UAS_NTP"				// target network for  NTP (external WiFi Hotspot-system setup only)
-#define NTP_WIFI_PASSWORD "whatTime!"			// target network for  NTP
+#define NTP_WIFI_SSID     "UAS_NTP"				// target network for NTP (external WiFi Hotspot-system setup only)
+#define NTP_WIFI_PASSWORD "whatTime!"			// target network for NTP
 ```
 Note that hardcoded passwords are not recommended for production use. The following methods are recommended for further development and device hardening:
 - Use ESP32 NVS encryption / secure boot / flash encryption (Recommended)
@@ -107,9 +108,9 @@ Note that hardcoded passwords are not recommended for production use. The follow
 
 The FoxNode ID must be unique for each FoxNode and has to be manually configured. The FoxNode IP address is automatically formulated using this following function call in [httpComms.h](/foxnode/stateMachine/httpComms.h) file.
 ```
-IPAddress getFoxNodeIP(unsigned short thisFoxNodeId){		// formulate IP address based on Fox-Node ID
-	if(thisFoxNodeId > 60)thisFoxNodeId = 5;				      // This number is the FoxNode ID and must be unique to each FoxNode
-	return IPAddress(192, 168, 40, thisFoxNodeId + 80);   // This adds the FoxNode ID plus 80 as the IP address. For example, this will produce an IP of 192.168.40.85 for FoxNode 5.
+IPAddress getFoxNodeIP(unsigned short thisFoxNodeId){			// formulate IP address based on Fox-Node ID
+	if(thisFoxNodeId > 60)thisFoxNodeId = 5;				    // This number is the FoxNode ID and must be unique to each FoxNode
+	return IPAddress(192, 168, 40, thisFoxNodeId + 80);   		// This adds the FoxNode ID plus 80 as the IP address. For example, this will produce an IP of 192.168.40.85 for FoxNode 5.
 ```
 
 With the IDE setup completed and variables configured, the "FoxNode to be" (ESP32 hardware) can now be connected to the host PC via USB and programmed with the provided source code file via Arduino IDE. 

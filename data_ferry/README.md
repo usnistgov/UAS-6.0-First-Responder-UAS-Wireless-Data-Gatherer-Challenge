@@ -1,15 +1,16 @@
 # Data Ferry (Drone Server) and Command Server
-The Data Ferry presented in this section was used for proof-of-concept (lab) testing. The Data Ferry has a functional web server so that a PC client can view data collected and processed by the Data Ferry. The Data Ferry is a Python Flask server with a Javascript front end and uses sqlite3 for data storage and retrieval. For the purposes of testing the "command server," data post-processing functionality is performed on the Data Ferry. The PC client is only used to view the data.
+The Data Ferry presented in this section is used for proof-of-concept (lab) testing. The Data Ferry has a functional web server so that a PC client can view collected data that is processed by the Data Ferry. The Data Ferry is a Python Flask server with a Javascript front end and uses sqlite3 for data storage and retrieval. For the purposes of testing the "command server," data post-processing functionality is performed on the Data Ferry instead of a dedicated command server. The PC that would normally be used for the command server is only used to view the data though a web browser.
 
-The network schema can be viewed [here](/pics/Network_Schema_Example.png). Pre-populated values in this repository are not secure, are considered compromised, and should not be used.
+The network schema can be viewed [here](/pics/Network_Schema_Example.png).
+Note that pre-populated values such as SSIDs, pre-shared keys, and passwords presented in this repository are not secure, are considered compromised, and should not be used and are shown as examples or placeholders.
 
 - Where cited portions of the Data Ferry code was generated with assistance from ChatGPT (OpenAI) and Gemini (Google). The code has been reviewed and integrated by the project authors.
 - Data Ferry configuration is system-dependent; however, we have provided a hardware list, configuration, and provisioning parameters in the following sections for reference if you are trying to replicate our setup.
 
-## FoxNode Folder Structure
+## FoxNode Repository Structure
 ```
 ├── data_ferry/            	 <-- Data Ferry (Drone Server) project
-│   ├── raspbian_files       <-- Raspbian configuration files and prebuilt ISO image
+│   ├── raspbian_files       <-- Raspbian configuration files and prebuilt ISO image - ISO is TBD
 │   ├── static               <-- Javascript app and css for web server
 │   ├── templates		     <-- HTML templates for web server
 │   ├── app.py               <-- Python Flask web app
@@ -83,6 +84,7 @@ or
 Adjust paths according to your deployment.
 
 **Step 5**: Install Python Flask
+
 Note: For this project we are using a dedicated device and install for a single Python app. If you plan to run other Python projects on your device it is recommended to use Python virtual environments (venv). For this project we are choosing to "break system packages." Acknowlege/confirm any warnings against doing so.
 ```
 sudo /bin/python pip install flask --break-system-packages
@@ -96,7 +98,7 @@ and/or
 ```
 sudo iwconfig
 ```
-- Typically the new interface shows up as wlan1, but you may have to run the command(s) before and after you plug it in.
+- Typically the new interface shows up as wlan1, but you may have to run the command(s) before and after you plug it in to determine the interface name designation.
 
 **Step 7**: Stop and disable NetworkManager
 ```
@@ -152,7 +154,7 @@ sudo systemctl start hostapd
 sudo systemctl restart systemd-networkd
 ```
 
-**Step 14**: Configure the Pi to start the Data Ferry automatically on startup by creating a startup service
+**Step 14**: Configure the Pi to start the Data Ferry automatically on startup by creating a startup service. For this step you will be modifying the [droneserver.service](/data_ferry/raspbian_files/droneserver.service) file.
 
 - Optional - Add your Google Maps API key in the placeholder value <your API key> using the command below. Replace "AIzaSyBwV_B_B_B_B_B_B_B_B_B_B_B_B" in the command below with your actual key. It will still work without it or if left unchanged.
 ```
