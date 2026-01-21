@@ -2,11 +2,11 @@
 
 ## Scope
 - This section contains the IoT-Client or "Sensor Module" reference software for the NIST-PSCR UAS6.0: First Responder UAS Data Gatherer Challenge "**Fox Hunt**" Stage 2.
-- This section has been provided for archival reference and we recommend instead building the [Stage 3 FoxNode](foxnode) as it contains a more functional prototype.
+- This section has been provided for archival reference and we recommend instead building the [Stage 3 FoxNode](/foxnode) as it contains a more functional prototype.
 - The Stage 2 FoxNode was a minimal viable prototype that used "canned" data. The Stage 3 FoxNode uses actual environmental data output and contains superior network handling functions.
 - Stage 2 instructions and repository files have not been updated or modified and may contain errors or limited function. In other words, if you are new here, this is not where you should be.
 
-**Stage 2**: Sensor Module addition to the [Guidance for Stage 2](docs/UAS_6.0_Stage_2_Guidance.pdf) document. See document for further information.
+**Stage 2**: Sensor Module addition to the [Guidance for Stage 2](/docs/UAS_6.0_Stage_2_Guidance.pdf) document. See document for further information.
 
 ## Fox-Node Solution Components (Stage 2)
 **Hardware**: 
@@ -39,7 +39,7 @@ The "Fox Hunt" project leverages the [Arduino IDE](https://www.arduino.cc/en/sof
 
 NOTE: Target WiFi SSID/PSWD can be easily updated in the source. **Default SSID/PSWD** are both hardcoded as **"UAS6"**.
 
-![Fox Node State Diagram](pics/FoxNode_StateDiagram.png)
+![Fox Node State Diagram](/pics/FoxNode_StateDiagram.png)
 
 Fox-Node verification:
 The Arduino IDE provides easy access to a serial interface connection (115200 baud) that displays runtime information. This information is also pushed/displayed via an ESP TFT display (unique to the Adafruit ESP32-S2 TFT Feather). 
@@ -80,17 +80,17 @@ Fox-Node display states:
 
 - 3, on sent POST,                   (GREEN)
 
-![Fox Node State Diagram](pics/FoxNode_disp3_tight.jpg)
+![Fox Node State Diagram](/pics/FoxNode_disp3_tight.jpg)
 
 - 2, no connection to HTTP server,   (Orange)
 
-![Fox Node State Diagram](pics/FoxNode_disp2_tight.jpg)
+![Fox Node State Diagram](/pics/FoxNode_disp2_tight.jpg)
 
 - 1, On WiFi got IP,                 (Blue)
 
-![Fox Node State Diagram](pics/FoxNode_disp1_tight.jpg)
+![Fox Node State Diagram](/pics/FoxNode_disp1_tight.jpg)
 
 - 0, TFT init code,                  (Green)
 
-![Fox Node State Diagram](pics/FoxNode_disp0_tight.jpg)
+![Fox Node State Diagram](/pics/FoxNode_disp0_tight.jpg)
 

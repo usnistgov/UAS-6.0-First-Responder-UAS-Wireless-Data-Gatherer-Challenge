@@ -20,11 +20,11 @@ Note that individuals that intend to replicate the pcb companion board will need
 - ESP32-S2 ([Adafruit ESP32-S2 TFT Feather](https://learn.adafruit.com/adafruit-esp32-s2-tft-feather/overview))
 - [Battery pack](https://www.ravpower.com/products/ravpower-10000mah-power-bank-dual-outputs?_pos=1&_psq=prime+1000&_ss=e&_v=1.0) (USB-C out to ESP32)
 - USB to USB-C cable (Battery --> ESP32)
-- ESP32_I2C Companion Board Schematic [Schematic and Parts List](foxnode/pcb_schematic/)
+- ESP32_I2C Companion Board Schematic [Schematic and Parts List](/foxnode/pcb_schematic/)
 - [100mm STEMMA QT / Qwiic JST-SH 4-pin cable](https://www.adafruit.com/product/4210)
 
 **3D-Printed Cases**:
-- [3D-Print Case Models](foxnode/3D_print_case_models/)
+- [3D-Print Case Models](/foxnode/3D_print_case_models/)
 - All of the Gcode are sliced for a Prusa MK3s+ printer with a .4mm nozzle and stacked layers at .15 mm
 - .3mf files are included if you choose to do your own slicing for your specific 3D printer or application
 - .gcodes are included for both PLA and PETG filament types, specifically for the Prusa 3D Printer
@@ -55,7 +55,7 @@ git clone https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data
 - ESP32 hardware support package dependencies listed below, install via Arduino IDE GUI "[Board Manager](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-board-manager/)" 
     - [esp32](https://github.com/espressif/arduino-esp32) by Espressif Systems <-- main "Arduino-esp32" wrapped software stack, search Espressif Systems in the "Boards Manager", select and install.
 	- Open [stateMachine.ino](foxnode/stateMachine/stateMachine.ino) file, confirm/acknowlege the creation of "stateMachine" directory.
-	- Move/Copy [libraries](foxnode/libraries) directory and contents from the cloned repository to the "Arduino" directory in your home directory.
+	- Move/Copy [libraries](/foxnode/libraries) directory and contents from the cloned repository to the "Arduino" directory in your home directory.
 
 Please note that the specific path for your cloned GitHub repository and Arduino libraries may differ.
 Windows: 
@@ -78,9 +78,9 @@ rsync -av \
 ```
 
 ## FoxNode Configuration Variables
-The FoxNode must be configured for your specific network architecture and it is recommended to change Wi-Fi SSID passwords before proceeding. The network schema can be viewed [here]( (pics/Network_Schema_Example.png). Pre-populated values in this repository are not not secure, are considered compromised, and should not be used.
+The FoxNode must be configured for your specific network architecture and it is recommended to change Wi-Fi SSID passwords before proceeding. The network schema can be viewed [here]( (/pics/Network_Schema_Example.png). Pre-populated values in this repository are not not secure, are considered compromised, and should not be used.
 
-- FoxNode network configuration is found in the [httpComms.h](foxnode/stateMachine/httpComms.h) file. Edit the file cloned in your local copy of the repository.
+- FoxNode network configuration is found in the [httpComms.h](/foxnode/stateMachine/httpComms.h) file. Edit the file cloned in your local copy of the repository.
 
 Open the httpComms.h file in your favorite text editor or Arduino IDE and modify the following values to match your environment. The following values are prepopulated:
 ```
@@ -120,7 +120,7 @@ With the IDE setup completed and variables configured, the "FoxNode to be" (ESP3
 4. Once connected the FoxNode will send HTTP-POST requests to the URI defined in UAS_Server
 5. FoxNode will continue to send HTTP-POST updates every 10 seconds
 
-- See Appendix B and C of the [UAS_6.0_Stage_3_Guidance](https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data-Gatherer-Challenge/tree/main/docs/UAS_6.0_Stage_3_Guidance.pdf) for full FoxNode state machine operation.
+- See Appendix B and C of the [UAS_6.0_Stage_3_Guidance](/docs/UAS_6.0_Stage_3_Guidance.pdf) for full FoxNode state machine operation.
 
 FoxNode verification:
 The Arduino IDE provides easy access to a serial interface connection (115200 baud) that displays runtime information. This information is also pushed/displayed via an ESP TFT display (unique to the Adafruit ESP32-S2 TFT Feather). 
@@ -161,16 +161,16 @@ FoxNode display states:
 
 - 3, NTP Connection at powerup/boot,                   (Yellow)
 
-![FoxNode NTP Connection](pics/FoxNode_NTP_Connect.jpg)
+![FoxNode NTP Connection](/pics/FoxNode_NTP_Connect.jpg)
 
 - 2, Not connected to Data Ferry or searching,   (Orange)
 
-![FoxNode Searching for Data Ferry Network](pics/FoxNode_Searching.jpg)
+![FoxNode Searching for Data Ferry Network](/pics/FoxNode_Searching.jpg)
 
 - 1, On WiFi got IP handshaking for data exchange,                 (Blue)
 
-![FoxNode Connected to Data Ferry, no Data Transfer](pics/FoxNode_WiFi_Connect.jpg)
+![FoxNode Connected to Data Ferry, no Data Transfer](/pics/FoxNode_WiFi_Connect.jpg)
 
 - 0, Fully connected to Data Ferry and exchaning data,                  (Black)
 
-![FoxNode Fully Connected, Data Exchange](pics/FoxNode_Fully_Connected.jpg) 
+![FoxNode Fully Connected, Data Exchange](/pics/FoxNode_Fully_Connected.jpg) 

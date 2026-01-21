@@ -154,7 +154,7 @@ sudo systemctl restart systemd-networkd
 
 **Step 14**: Configure the Pi to start the Data Ferry automatically on startup by creating a startup service
 
-- Optional - Add you Google Maps API key in the placeholder value <your API key> using the command below. Replace "AIzaSyBwV_B_B_B_B_B_B_B_B_B_B_B_B" in the command below with your actual key. It will still work without it or if left unchanged.
+- Optional - Add your Google Maps API key in the placeholder value <your API key> using the command below. Replace "AIzaSyBwV_B_B_B_B_B_B_B_B_B_B_B_B" in the command below with your actual key. It will still work without it or if left unchanged.
 ```
 sed -i "s/<your API key>/AIzaSyBwV_B_B_B_B_B_B_B_B_B_B_B_B/g" ~/data_ferry/raspbian_files/droneserver.service
 ```
