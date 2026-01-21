@@ -13,39 +13,38 @@ service.
 See [LICENSE.md](https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data-Gatherer-Challenge/LICENSE.md) for software license information.
 
 ## Repository Structure
-2024 First Responder UAS Wireless Data Gatherer Challenge UAS 6.0/
-│
-├── data_ferry/            	 <-- Drone Server/Command Server demo code
-│   ├── 3D_print_case_models
+Responder UAS Wireless Data Gatherer Challenge UAS 6.0/
+├── data_ferry/                         # Drone Server / Command Server demo code
+│   ├── 3D_print_case_models/
 │   ├── app.py
 │   ├── requirements.txt
-│   ├── dataferry.iso (TBD Future update)
+│   ├── dataferry.iso                  # TBD future update
 │   ├── static/
 │   ├── templates/
 │   └── README.md
 │
-├── docs/                    <-- Archival documentation from challenge
+├── docs/                               # Archival documentation from challenge
 │   ├── Network_Schema.drawio
-│   ├── UAS_6.0_Official_Rules
-│   ├── UAS_6.0_Stage_2_Guidance
-│   └── UAS_6.0_Stage_3_Guidance
+│   ├── UAS_6.0_Official_Rules/
+│   ├── UAS_6.0_Stage_2_Guidance/
+│   └── UAS_6.0_Stage_3_Guidance/
 │
-├── foxnode/            	 <-- FoxNode project (Stage 3)
-│   ├── 3D_print_case_models
-│   ├── libraries
-│   ├── pcb_schematic
-│   ├── sample_outputs
-│   ├── stateMachine
+├── foxnode/                            # FoxNode project (Stage 3)
+│   ├── 3D_print_case_models/
+│   ├── libraries/
+│   ├── pcb_schematic/
+│   ├── sample_outputs/
+│   ├── stateMachine/
 │   └── README.md
 │
-├── pics/            	 	 <-- Supporting pictures for repository
+├── pics/                               # Supporting pictures for repository
 │
-├── stage2_foxnode/          <-- Older FoxNode code from Stage 2
+├── stage2_foxnode/                     # Older FoxNode code from Stage 2
 │   ├── Foxclient_HTTP/
 │   └── README.md
 │
 ├── LICENSE.md
-└── README.md                <-- Project overview (This page)
+└── README.md                           # Project overview (this page)
 
 ## Project Components
 
