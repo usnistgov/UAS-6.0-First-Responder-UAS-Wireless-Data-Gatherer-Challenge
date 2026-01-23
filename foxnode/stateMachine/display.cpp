@@ -41,32 +41,33 @@ void tft_display(int disp_update) {
     tft.setTextSize(2);tft.setTextColor(ST77XX_RED);
     tft.print("RSSI: ");tft.println(String(data_doc["rssi"]));			// Build our data display.... This is what has been pushed to the Ringbuffer and will be POSTED if UAS ask's
     tft.print("STA_TX_PWR: ");tft.println(String(data_doc["tpwr"]));
-    tft.print("L: ");tft.println(String(data_doc["l"]));
-    tft.print("H: ");tft.println(String(data_doc["h"]));
-    tft.print("T: ");tft.println(String(data_doc["t"]));
-    tft.print("P: ");tft.println(String(data_doc["p"]));
-    tft.print("lat: ");tft.println(String(data_doc["lat"]));  
-    tft.print("lon: ");tft.println(String(data_doc["lon"]));
-    tft.print("elev: ");tft.println(String(data_doc["elev"]));
-    tft.print("HTTP Response code: ");
-    tft.println(httpResponseCode);
+    tft.print("S: ");tft.println(UAS_Server_IP);
+    tft.print("HTTP Resp: ");tft.println(httpResponseCode);
+    tft.print("F: ");tft.println(WiFi.localIP());
+    //tft.print("L: ");tft.println(String(data_doc["l"]));
+    //tft.print("H: ");tft.println(String(data_doc["h"]));
+    //tft.print("T: ");tft.println(String(data_doc["t"]));
+    //tft.print("P: ");tft.println(String(data_doc["p"]));
+    //tft.print("lat: ");tft.println(String(data_doc["lat"]));  
+    //tft.print("lon: ");tft.println(String(data_doc["lon"]));
+    //tft.print("elev: ");tft.println(String(data_doc["elev"]));
     tft.setTextColor(ST77XX_WHITE);										// Set back to white for later calls
   } else if (disp_update == 2) {      // (ORANGE) no WiFi/HTTP Server connection available 
     tft.setRotation(disp_rotation);tft.fillScreen(ST77XX_ORANGE);tft.setCursor(0, 0);tft.setTextSize(3);tft.setTextColor(ST77XX_WHITE);
     tft.println(("FOX > UAS 6.0"));tft.setTextSize(2);
+    RTC_tftPrint();
     tft.println("Looking for Network");
     tft.print("SSID: ");tft.println(WIFI_SSID);							// Display NTP HotSpot connection cred to disp.
     tft.print("PASS: ");tft.println(WIFI_PASSWORD);						// Display NTP HotSpot connection cred to disp.
-    RTC_tftPrint();
-    tft.println("Reconnteting URI:  ");
+    tft.println("URI:  ");
     tft.println(UAS_Server);
   } else if (disp_update == 1) {     // (BLUE) disp IP connected
     tft.setRotation(disp_rotation);tft.fillScreen(ST77XX_BLUE);tft.setCursor(0, 0);tft.setTextSize(3);tft.setTextColor(ST77XX_WHITE);
     tft.println("FOX > UAS 6.0");tft.setTextSize(2);
+    RTC_tftPrint();  // Display formatted RTC time info
     tft.println("WiFi Connected.");
     tft.print("IP: ");tft.println(WiFi.localIP());
     tft.print("RSSI: ");tft.println(String(WiFi.RSSI()));
-    RTC_tftPrint();														// Display formatted RTC time info
   } else if (disp_update == 0) {    // (GREEN) disp initial setup  screen
     tft.init(135, 240);pinMode(TFT_BACKLITE, OUTPUT);digitalWrite(TFT_BACKLITE, HIGH);    // Start TFT &turn on backlite
     tft.setRotation(disp_rotation);tft.setCursor(0, 0);tft.fillScreen(ST77XX_GREEN);tft.setTextSize(3);

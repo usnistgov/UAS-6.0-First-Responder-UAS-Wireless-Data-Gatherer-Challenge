@@ -4,30 +4,29 @@
 #include "serial.h"
 #include "timer.h"
 #include "display.h"
-#include "sensor.h"						          // for Wire (SPI)
-#include "RingBuffer.h"					        // for Ringbuffer class "ringbuff"
+#include "sensor.h"						          // For Wire (SPI)
+#include "RingBuffer.h"					        // For Ringbuffer class "ringbuff"
 #include "eeprom.h"
 
-WebServer webServer(80);				        // initialize Server w/ def HTTP port assignment
-IPAddress netmask(255,255,0,0);			    // Entire UAS echosystem is a 16 bit nework
-IPAddress clientIpAddr(192,168,40,30);	// will re-define this when we have a FoxNode Sensor Client ID
-IPAddress serverIpAddr(192,168,40,20);	// the fixed IP address of the Drone Server
-IPAddress dnsServer(8,8,8,8);			      // if client wants to reach out over the internet (unlikely)
+WebServer webServer(80);				        // Initialize Server w/ def HTTP port assignment
+IPAddress netmask(255,255,0,0);			    // Entire UAS echosystem is a 16 bit classless nework
+IPAddress clientIpAddr(192,168,40,30);	// Base IP for FoxNode IP range, IPs actually start at 80, as defined below (Don't change this)
+IPAddress serverIpAddr(192,168,40,20);	// The fixed IP address of the Drone Server
+IPAddress dnsServer(8,8,8,8);			      // If client wants to reach out over the internet
 
-int httpResponseCode;					// things like 200 and 400. If that doen't make sense,
-										          // you should not be messing with this software.
+int httpResponseCode;					// Standard HTTP responses like 200 and 400.
 unsigned int httpWiFiState;
-unsigned int wifiDropDeadTimer;			// loss of signal to try to connect again dead time
-unsigned int WiFiHaveDhcpReply;			// true if have had a good DNS reply so the client has an IP address
+unsigned int wifiDropDeadTimer;			// Loss of signal to try to connect again or "dead time"
+unsigned int WiFiHaveDhcpReply;			// True if have had a good DNS reply so the client has an IP address
 
 void initializeHttpMsmValues(void) {	// Initialize the WiFi connect state monitor, used to create clean logging for WiFi conectivilty events
 	httpWiFiState = 0;
-	WiFiHaveDhcpReply = 0;				// only called once on boot
+	WiFiHaveDhcpReply = 0;				// Only called once on boot
 }
 
-IPAddress getFoxNodeIP(unsigned short thisFoxNodeId){		// formulate IP address based on Fox-Node ID
-	if(thisFoxNodeId > 60)thisFoxNodeId = 0;				      // safety
-	return IPAddress(192, 168, 40, thisFoxNodeId + 80);   // UPDATE
+IPAddress getFoxNodeIP(unsigned short thisFoxNodeId){		// Formulate IP address based on Fox-Node ID
+	if(thisFoxNodeId > 60)thisFoxNodeId = 0;				      // Logic for checking FoxNode ID, Don't assign over 175.
+	return IPAddress(192, 168, 40, thisFoxNodeId + 80);   // Add 80 to FoxNode ID to keep it out of lower ranges for static devices
 }
 
 ////////  next subroutine are tied to Wifi events
@@ -212,7 +211,7 @@ void state_processSCRVReply(void){					                       // process the HTT
 	else {
 		putToDebugWithNewline("state_processSCRVReply() Unknown SREP cmd '"+glob_droneServ_srep+"'", 4);
 	}
-	tft_display(4);  // (BLACK) update display to signal HTTP Rx
+	tft_display(3);  // (BLACK) update display to signal HTTP Rx
 }
 
 // Mary had a an API

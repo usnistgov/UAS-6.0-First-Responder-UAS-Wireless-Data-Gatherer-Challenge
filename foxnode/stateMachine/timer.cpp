@@ -77,7 +77,7 @@ int initNTP(void){
 	putToSerialWithNewline("password is"+String(NTP_WIFI_PASSWORD));
 	WiFi.mode(WIFI_STA);									// Otherwise opp seems to be WIFI_STA_AP mode... this makes the server connection very poor
 	startMillis = millis();     // debug timing WiFi connect
-  WiFi.begin(NTP_WIFI_SSID, NTP_WIFI_PASSWORD);			// Connect to UAS_NTP WiFi-hotspot, Defaults to DHCP address
+  WiFi.begin(NTP_WIFI_SSID, NTP_WIFI_PASSWORD);			// Connect to UAS_NTP WiFi-hotspot, Defualts to DHCP address
 	startMillis = millis();
 	timeout = 20000;										// 20 seconds to get connected to net for NTP
 	while( WiFi.status() != WL_CONNECTED ){

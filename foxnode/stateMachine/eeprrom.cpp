@@ -21,7 +21,7 @@ unsigned short thisFoxNodeId;	// the ID number for this device
 // Set up the eeprom variabels to their default values if there is a probelm with the RTC
 // this replaced a number of #defines in various .h files
 void eepromSetVariablesToDefault(void){
-	thisFoxNodeId = 4;                  // grab the defauilt FoxNode ID, could be changed later from reading RTC EEPJROM
+	thisFoxNodeId = 10;                  // This is where you manually set the FoxNode ID, Do not assign values greater than 175.
 	thisFoxNodeLat = 64.83;  thisFoxNodeLng = -147.77;   thisFoxNodeElev = 137;
 	rssiConnectValue = -55;		// signed, dBm. Drop threshold is 30 dB down from this.
 	blindTimeDelay = 1500;		// typically 30 seconds, can be less for testing.
@@ -33,7 +33,7 @@ void eepromXferRtcToVariables(void){
 	//
 	// exctract EEPROM and set variables here...
 	//
-	if(thisFoxNodeId > 60)thisFoxNodeId = 0;		// saefty
+	if(thisFoxNodeId > 175)thisFoxNodeId = 0;		// We add 80 in httpComms.cpp, this safegaurds to make sure it's not over 175
 }
 
 void eepromXferVariablesToRtc(void){

@@ -106,16 +106,25 @@ Note that hardcoded passwords are not recommended for production use. The follow
 - Provision at runtime and store in non-volatile memory. Requires manual setup on each boot.
 - Move secrets out of code using build-time secrets (for repository and dev environments)
 
-The FoxNode ID must be unique for each FoxNode and has to be manually configured. The FoxNode IP address is automatically formulated using this following function call in [httpComms.h](/foxnode/stateMachine/httpComms.h) file.
+The FoxNode ID must be unique for each FoxNode and has to be manually configured. The FoxNode IP address is automatically formulated using this following function call in [httpComms.h](/foxnode/stateMachine/httpComms.h).
+
 ```
 IPAddress getFoxNodeIP(unsigned short thisFoxNodeId){			// Formulate IP address based on Fox-Node ID
-	if(thisFoxNodeId > 60)thisFoxNodeId = 5;				    // This number is the FoxNode ID and must be unique to each FoxNode
-	return IPAddress(192, 168, 40, thisFoxNodeId + 80);   		// This adds the FoxNode ID plus 80 as the IP address. For example, this will produce an IP of 192.168.40.85 for FoxNode 5.
+	if(thisFoxNodeId >= 175)thisFoxNodeId = 0;				    // This is a safety check to make sure we're not going over 255 when asigning FoxNodes
+	return IPAddress(192, 168, 40, thisFoxNodeId + 80);   		// This adds the FoxNode ID plus 80 as the IP address.
 ```
+The FoxNode ID is manually configured in the [eeprrom.cpp](/foxnode/stateMachine/eeprrom.cpp) file.
+```
+void eepromSetVariablesToDefault(void){
+	thisFoxNodeId = 10;                  // This is where you manually set the FoxNode ID, Do not assign values greater than 175.
+...
+}
+```
+- In the previous example, the FoxNode will be assigned a IP of 192.168.40.90.
 
 With the IDE setup completed and variables configured, the "FoxNode to be" (ESP32 hardware) can now be connected to the host PC via USB and programmed with the provided source code file via Arduino IDE. 
 
-# FoxNode Operation
+# FoxNode Operation and Debugging
 1. The FoxNode sensor will first attempt to auto-connect to the predefined WiFi credentials to obtain NTP clock. In testing a phone with LTE/5G internet access running a Wi-Fi hotspot was used for this purpose, using the "UAS_NTP" credentials outlined in the previous section. 
 2. NTP is optional and the sensor will automatically proceed to the next connection phase if it is unable to connect to an NTP server, but will "freewheel" with incorrect timestamps.
 3. Next the FoxNode will attempt to connect to the Wi-Fi network defined in WIFI_SSID
@@ -124,38 +133,122 @@ With the IDE setup completed and variables configured, the "FoxNode to be" (ESP3
 
 - See Appendix B and C of the [UAS_6.0_Stage_3_Guidance](/docs/UAS_6.0_Stage_3_Guidance.pdf) for full FoxNode state machine operation.
 
-FoxNode verification:
-The Arduino IDE provides easy access to a serial interface connection (115200 baud) that displays runtime information. This information is also pushed/displayed via an ESP TFT display (unique to the Adafruit ESP32-S2 TFT Feather). 
+**FoxNode verification**:
+The Arduino IDE provides easy access to a serial interface connection (115200 baud) that displays runtime information. This information is also pushed/displayed via an ESP TFT display (unique to the Adafruit ESP32-S2 TFT Feather).  
 
-Upon connection to "UAS6" WiFi Network serial output... ex: 
+With the FoxNode connected to your target PC, from the Arduino IDE make sure your ESP's COM port is selected in the top dropdown box, then select Tools > Serial Monitor
+![Arduino Serial Monitor](/pics/ARD_Serial_Monitor.png)
+
+A successful FoxNode bootup will go throught the following processes:  
+
+- FoxNode NTP Connect  
+```
+**FN-NTP RV-3032 Setup Initiated**
+Entering init
+Found RV3032
+RTC init Success
+RTC type = RV-3032
+Set ESP time to RTC mem:
+2026-1-22 17:52:28
+Attempting NTP-WiFi Connection to SSID UAS_NTP
+password iswhatTime!
+....NTP Setup procTime=3765
+
+NTP WiFi Connected
+FN-NTP Time Set:175231
+```
+- FoxNode INIT, assigns ID set in httpComms.cpp in thisFoxNodeId  
 
 ```
-WiFi connected
-**FoxNode Initialized**
-WiFi Tx Power: 28
-IP address: 
-192.168.1.2
-Attempting POST.
-Server connected, Sending POST.
-POST success.
-STA PWR: 28
-HTTP Response code: 200
-POST Payload: {"Node_RSSI":-38}
+**Fox-Node Init**
+FoxNode ID: 4
+**I2C**
+Latched interrupt configured.
+setup_webserver_routing() done
+RingBuffer DataPayload Size: 106
+Estimated max number of entries possible in Ringbuffer: 1093
+Allocating 90 RingBuffer max entries.
 ```
-
-If the FoxNode fails to find the specified WiFi Network... ex:
+- FoxNode Connecting to Drone Server  
 
 ```
-**FoxNode Initialized**
-WiFi Station: 14 Reason: 201
-Trying to Reconnect
-WiFi Station: 14 Reason: 201
-Trying to Reconnect
+WiFiInit() Starting WiFi
+WiFiInit() Looking for SSID: uas6
+WiFiInit()    with Password: hello123
+WiFiStationConnected () - WiFi-STA Tx Power: 28
+WiFiInit(): Exiting
+```
+- FoxNode POST "hi" and receive 'sval'  
+```
+takeSaveSensorData() Pushed data to RingBuffer, next sample in:30000 mS
+MSM 0  Idle: Have connection to WiFi Net, going to state 1
+MSM 1  POST hi: POSTing 'core' JSON to drone, ccmd='hi'
+MSM 5  'hi' Post recived 'sval' reply: start TS=1073645108, end TS=1073645108
+```
+- FoxNode sending data entries  
+```
+Sending 1 Data Entries
+
+MSM case 5: {"core":{"ccmd":"rval","fox":4,"fip":"192.168.40.84","fts":1769104354,"fbv":"F","fcnt":1,"ftso":1769104353,"ftsr":1769104353,"wrxs":-36,"lat":64.83,"lon":-147.77,"elev":137},"data":{"fox":4,"dlen":1,"ftso":1769104353,"dump":[{"rts":1769104353,"t":28.81483,"c":62.8,"h":41.70596,"l":423.68,"p":832.9751,"x":36,"y":-119,"z":928}]}}
+MSM 5  POSTing core 'rval' JSON and 'data' to drone
+```
+- FoxNode recieve acknowlegement from Drone Server "buby" and send "bye" to close connection  
+```
+MSM 5  POSTing core 'rval' JSON and 'data' to drone
+MSM 6  Recived POST from sending data, got drone srep'='buby', procTime=104
+MSM 25  Recieved POST reply of 'buby', replying 'bye' to UAS Server
+MSM 26  Recived 'bye' reply: got drone srep 'done', procTime=95 
+** Transaction completed **
+```
+- FoxNode initiates wait timer till next transaction  
+```
+MSM 35: Going Blind
+MSM 36: wifiDroneBlindTimer: 1500
+MSM 36: wifiDroneBlindTimer: 0
+MSM 36: Blind time expired, back to talking to Drone Server
 ```
 
-NOTE: not all ESP32 hardware will have a display output. To make this project compatible with such hardware all references to the TFT display can be removed from the source Foxclient_HTTP.ino file to provide more "generic" ESP32 flavor compatibility.
+Unsucessful FoxNode Attempts:  
 
-## ESP32 Display and Operational States
+-Failed to connect to NTP  
+```
+**FN-NTP RV-3032 Setup Initiated**
+Entering init
+Found RV3032
+RTC init Success
+RTC type = RV-3032
+Set ESP time to RTC mem:
+2026-1-22 20:58:28
+Attempting NTP-WiFi Connection to SSID UAS_NTP
+password iswhatTime!
+........................................
+Timeout reached, proceeding with regular code flow. NTP unable to set
+```
+- Failed to connect to Drone Server  
+```
+**Fox-Node Init**
+FoxNode ID: 4
+**I2C**
+Latched interrupt configured.
+setup_webserver_routing() done
+RingBuffer DataPayload Size: 106
+Estimated max number of entries possible in Ringbuffer: 1095
+Allocating 90 RingBuffer max entries.
+WiFiInit() Starting WiFi
+WiFiInit() Looking for SSID: uas6
+WiFiInit()    with Password: hello123
+WiFiStationConnected () - WiFi-STA Tx Power: 28
+WiFiInit(): Exiting
+
+takeSaveSensorData() Pushed data to RingBuffer, next sample in:30000 mS
+MSM Check: Attempting WiFi reconnect
+MSM Check: Attempting WiFi reconnect
+MSM Check: Attempting WiFi reconnect
+MSM Check: Attempting WiFi reconnect
+takeSaveSensorData() Pushed data to RingBuffer, next sample in:30000 mS
+```
+
+## FoxNode Display and Operational States
 
 FoxNode display states:
 
@@ -164,13 +257,28 @@ FoxNode display states:
 ![FoxNode NTP Connection](/pics/FoxNode_NTP_Connect.jpg)
 
 - Not connected to Data Ferry or searching for network (Orange)
+Display shows connection status  
+Drone Server SSID  
+Drone Server PSK  
+Timestamp  
+Drone Server URI  
 
 ![FoxNode Searching for Data Ferry Network](/pics/FoxNode_Searching.jpg)
 
 - Connected to Wi-Fi, set IP, handshaking for data exchange (Blue)
+Wi-Fi Conection state  
+Display shows Drone Server IP
+RSSI reading  
+Timestamp
 
 ![FoxNode Connected to Data Ferry, no Data Transfer](/pics/FoxNode_WiFi_Connect.jpg)
 
-- Fully connected to Data Ferry and exchaning data (Black)
+- Fully connected to Data Ferry and receiving data (Green)
+Display show Timestamp  
+RSSI reading    
+Foxnode Transmit power (STA_TX_PWR)  
+Drone Server IP (S)  
+Drone Server HTTP Response Code (HTTP Resp)  
+FoxNode IP (F)  
 
-![FoxNode Fully Connected, Data Exchange](/pics/FoxNode_Fully_Connected.jpg) 
+![FoxNode Fully Connected, Data Exchange](/pics/FoxNode_Fully_Connected_ALT.jpg) 

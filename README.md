@@ -101,6 +101,12 @@ Development status for PSCR - UAS 6.0 First Responder UAS Data Gatherer Challeng
 - This repository is for historical reference, and may not receive future updates; however, other PSCR projects may utilize some or all of this project for continued development. 
 - Individuals who have questions or are interested in this project or current/future PSCR UAS projects, please contact us at the email address below.
 
+# Recommended To-dos and Implementations
+- Security, implement secure stoarge and handling of SSIDs, PSKs, phrases, and passwords
+- Security, secure comms, https and certificate based device authentication
+- DHCP assignment based on FoxNode ID
+- Deployment package or iso of Data Ferry
+
 # Contact
 psprizes@nist.gov
 - This mailbox is part of a distrubution that is checked regularly.

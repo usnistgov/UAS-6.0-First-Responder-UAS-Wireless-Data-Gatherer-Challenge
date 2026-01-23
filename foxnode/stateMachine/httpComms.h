@@ -12,9 +12,10 @@
 //// UAS Server Target vars
 #define WIFI_SSID     "uas6"					// target network for  UAS 6.0 Prize challenge
 #define WIFI_PASSWORD "hello123"			// target network for  UAS 6.0 Prize challenge
-#define UAS_Server "http://192.168.40.20"	// Target Data Ferry
+#define UAS_Server_IP "192.168.40.20" // target Drone Server IP address
+#define UAS_Server "http://" UAS_Server_IP	// target Drone Server URI
 
-#define UAS_Gateway "192,168,40,20"			// Gateway for Sensor Client, pehaps to get time someday ?
+#define UAS_Gateway "192,168,40,20"			// Gateway for Sensor Client
 #define UAS_DNS		  "8,8,8,8"				    // DNS for Wifi, in case it needs it
 #define UAS_Subnet	"255,255,0,0"
 
