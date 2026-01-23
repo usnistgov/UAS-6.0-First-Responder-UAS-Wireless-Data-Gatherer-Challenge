@@ -7,6 +7,27 @@
 #include "sensor.h"						          // For Wire (SPI)
 #include "RingBuffer.h"					        // For Ringbuffer class "ringbuff"
 #include "eeprom.h"
+#include "WiFi.h"
+
+//The following block sets the FoxNode for DHCP instead of Static IP
+//To set back to Static IP, comment this section and edit commented sections below
+bool connectWiFi_DHCP(const char* ssid, const char* pass, uint32_t timeoutMs = 15000) {
+  WiFi.persistent(false);     // avoid flash wear from saving creds repeatedly
+  WiFi.mode(WIFI_STA);
+  WiFi.setAutoReconnect(true);
+
+  // Ensure we are not carrying an old static config
+  WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE); // clears static config on ESP32
+
+  WiFi.begin(ssid, pass);
+
+  uint32_t start = millis();
+  while (WiFi.status() != WL_CONNECTED && (millis() - start) < timeoutMs) {
+    delay(250);
+  }
+
+  return (WiFi.status() == WL_CONNECTED);
+}
 
 WebServer webServer(80);				        // Initialize Server w/ def HTTP port assignment
 IPAddress netmask(255,255,0,0);			    // Entire UAS echosystem is a 16 bit classless nework
@@ -54,22 +75,25 @@ void WiFiInit(IPAddress foxNodeIp){
 	WiFi.onEvent(WiFiStationDisconnected, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);	  // Handle WiFi reconnect //TODO check this... might be fighting with WiFi SM ...
 
   // cofig arguments are: IP address, Gateway, Subnet, DNS
+	// For static IP uncomment WiFi.config below
 	WiFi.mode(WIFI_STA);	
-  WiFi.config(foxNodeIp, IPAddress(UAS_Gateway), IPAddress(UAS_Subnet),IPAddress(UAS_DNS));
+  //WiFi.config(foxNodeIp, IPAddress(UAS_Gateway), IPAddress(UAS_Subnet),IPAddress(UAS_DNS));
 
   putToDebugWithNewline("WiFiInit() Looking for SSID: "+String(WIFI_SSID),2);
   putToDebugWithNewline("WiFiInit()    with Password: "+String(WIFI_PASSWORD),2);
   putToDebugWithNewline("WiFiInit(): calling WiFi.begin", 3);
   
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  delay(1000);
+	//For Static IP uncomment WiFi.begin, comment if statement and edit whitespacing
+  //WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+	if (!connectWiFi_DHCP(WIFI_SSID, WIFI_PASSWORD)){
+		delay(1000);
 
-  putToDebugWithNewline("- glob_connectedToDrone: "+String(glob_connectedToDrone),4);
-  putToDebugWithNewline("- wantToPaintDisplay: "+String(wantToPaintDisplay),4);
-  WiFi.setTxPower(WIFI_POWER_7dBm);                                // Set Tx power low (for Stage 2 this setting works well) NOTE: power def --> https://github.com/espressif/arduino-esp32/blob/70786dc5fa51601f525496d0f92a220c917b4ad9/libraries/WiFi/src/WiFiGeneric.h#L47
-  putToDebugWithNewline("WiFiStationConnected () - WiFi-STA Tx Power: "+String(WiFi.getTxPower()), 2); // Check power setting and send to Serial
-  putToDebugWithNewline("WiFiInit(): Exiting\n",2);
-
+  	putToDebugWithNewline("- glob_connectedToDrone: "+String(glob_connectedToDrone),4);
+  	putToDebugWithNewline("- wantToPaintDisplay: "+String(wantToPaintDisplay),4);
+  	WiFi.setTxPower(WIFI_POWER_7dBm);                                // Set Tx power low (for Stage 2 this setting works well) NOTE: power def --> https://github.com/espressif/arduino-esp32/blob/70786dc5fa51601f525496d0f92a220c917b4ad9/libraries/WiFi/src/WiFiGeneric.h#L47
+  	putToDebugWithNewline("WiFiStationConnected () - WiFi-STA Tx Power: "+String(WiFi.getTxPower()), 2); // Check power setting and send to Serial
+  	putToDebugWithNewline("WiFiInit(): Exiting\n",2);
+	}
 }
 
 void WiFiDropConnection(void){                                       // this subroutine is called when the state machine wants to drop the connection (if it exists) for a "back off" period 

@@ -39,11 +39,12 @@ void tft_display(int disp_update) {
     tft.setCursor(0, 0);tft.setTextSize(3);tft.setTextColor(ST77XX_WHITE);tft.println("FOX > UAS 6.0");
     RTC_tftPrint();  // Display formatted RTC time info
     tft.setTextSize(2);tft.setTextColor(ST77XX_RED);
+    tft.print("FoxID: ");tft.println(thisFoxNodeId);
+    tft.print("IP: ");tft.println(WiFi.localIP());
     tft.print("RSSI: ");tft.println(String(data_doc["rssi"]));			// Build our data display.... This is what has been pushed to the Ringbuffer and will be POSTED if UAS ask's
     tft.print("STA_TX_PWR: ");tft.println(String(data_doc["tpwr"]));
     tft.print("S: ");tft.println(UAS_Server_IP);
     tft.print("HTTP Resp: ");tft.println(httpResponseCode);
-    tft.print("F: ");tft.println(WiFi.localIP());
     //tft.print("L: ");tft.println(String(data_doc["l"]));
     //tft.print("H: ");tft.println(String(data_doc["h"]));
     //tft.print("T: ");tft.println(String(data_doc["t"]));

@@ -77,9 +77,10 @@ int initNTP(void){
 	putToSerialWithNewline("password is"+String(NTP_WIFI_PASSWORD));
 	WiFi.mode(WIFI_STA);									// Otherwise opp seems to be WIFI_STA_AP mode... this makes the server connection very poor
 	startMillis = millis();     // debug timing WiFi connect
+	WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE); // clears static config on ESP32 Remove this line if using static IP
   WiFi.begin(NTP_WIFI_SSID, NTP_WIFI_PASSWORD);			// Connect to UAS_NTP WiFi-hotspot, Defualts to DHCP address
 	startMillis = millis();
-	timeout = 20000;										// 20 seconds to get connected to net for NTP
+	timeout = 30000;										// 30 seconds to get connected to net for NTP
 	while( WiFi.status() != WL_CONNECTED ){
 		if(millis() - startMillis >= timeout){
 			putToSerialWithNewline("\nTimeout reached, proceeding with regular code flow. NTP unable to set");
