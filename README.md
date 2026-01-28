@@ -91,7 +91,7 @@ The following is a greatly simplified architecture that was used in the UAS 6.0 
 
 The diagram above shows the three primary components used in UAS 6.0.
 - The [Data Ferry](data_ferry/) is the central component configured as a Wi-Fi access point or hotspot. The IP assigned (static provisioning) to the Data Ferry is 192.168.40.20. The mask is 255.255.0.0.
-- The [FoxNodes](foxnode/) connect to the Data Ferry when it is in range. FoxNodes are assigned IP addresses 192.168.40.80 + FoxNode ID. For example, FoxNode 1 is assigned 192.168.40.81. The mask is 255.255.0.0. These values are statically set.
+- The [FoxNodes](foxnode/) connect to the Data Ferry when it is in range. FoxNodes are assigned DHCP address (first choice), and failover to "static" IP addresses 192.168.40.80 + FoxNode ID. For example, FoxNode 1 is assigned 192.168.40.81. The mask is 255.255.0.0. These values are statically set.
 - The Command Server is assigned 192.168.40.10, mask 255.255.0.0. This is statically set. For examples in this repository, this is a simple PC client with web browsing capabilities.
 - Internet connectivity is not considered in this architecture to limit scope and to simulate "no" or "limited" connectivity often observed in first responder scenarios, such as wildfires. However, a mobile hotspot or alternative Wi-Fi connection is recommended for provisioning purposes.
 
@@ -104,7 +104,6 @@ Development status for PSCR - UAS 6.0 First Responder UAS Data Gatherer Challeng
 # Recommended To-dos and Implementations
 - Security, implement secure stoarge and handling of SSIDs, PSKs, phrases, and passwords
 - Security, secure comms, https and certificate based device authentication
-- DHCP assignment based on FoxNode ID
 - Deployment package or iso of Data Ferry
 
 # Contact

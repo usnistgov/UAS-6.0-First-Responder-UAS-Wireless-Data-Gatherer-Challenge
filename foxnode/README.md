@@ -26,7 +26,7 @@ Instruction is not provided on pcb fabrication, but details can be found in [par
 
 **3D-Printed Cases**:
 - [3D-Print Case Models](/foxnode/3D_print_case_models/)
-- All of the Gcode are sliced for a Prusa MK3s+ printer with a .4mm nozzle and stacked layers at .15 mm
+- All of the Gcode are sliced for a Prusa MK3s+ printer with a .4mm nozzle and stacked layers at .15 mm (common for most late model 3D printers as of 2026)
 - .3mf files are included if you choose to do your own slicing for your specific 3D printer or application
 - .gcodes are included for both PLA and PETG filament types, specifically for the Prusa 3D Printer
 - Any printer with a .4mm nozzle that uses 1.75mm filament shall work as long as it can accommodate .15mm tall layers
@@ -80,40 +80,25 @@ rsync -av \
 ```
 
 ## FoxNode Configuration Variables
-The FoxNode must be configured for your specific network architecture and it is recommended to change Wi-Fi SSID passwords before proceeding. The network schema can be viewed [here] (/pics/Network_Schema_Example.png). Pre-populated values in this repository are not not secure, are considered compromised, and should not be used.
+The FoxNode must be configured for your specific network architecture and it is recommended to change Wi-Fi SSID passwords before proceeding. The network schema can be viewed [here] (/pics/Network_Schema_Example.png). Pre-populated values in this repository are not not secure, are considered compromised, and should not be used.  
 
-- FoxNode network configuration is found in the [httpComms.h](/foxnode/stateMachine/httpComms.h) file. Edit the file cloned in your local copy of the repository.
+IP configuration of the FoxNode follows the following process:
+![FoxNode IP Config](/pics/FN_Connection_Process.drawio.png)
 
-Open the httpComms.h file in your favorite text editor or Arduino IDE and modify the following values to match your environment. The following values are prepopulated:
-```
-// Global Variables
-//// UAS Server Target vars
-#define WIFI_SSID     "uas6"			    // target network for UAS 6.0 Prize challenge
-#define WIFI_PASSWORD "hello123"			// target network for UAS 6.0 Prize challenge
-#define UAS_Server "http://192.168.40.20"	// Target Data Ferry or Drone
+- FoxNode network configuration is found in the [httpComms.cpp](/foxnode/stateMachine/httpComms.cpp) file and [httpComms.h](/foxnode/stateMachine/httpComms.h) files.
 
-#define UAS_Gateway "192,168,40,20"			// Gateway for Sensor Client
-#define UAS_DNS		  "8,8,8,8"				// DNS for Wifi
-#define UAS_Subnet	"255,255,0,0"
+If you are replicating the uas6 FoxNode architecture, than you do not have to modify these files; however you will have to update the FoxNode ID for each of your FoxNodes.
 
-// for loating up the Real Time Clock RTC from a hotspot on the net
-#define NTP_WIFI_SSID     "UAS_NTP"				// target network for NTP (external WiFi Hotspot-system setup only)
-#define NTP_WIFI_PASSWORD "whatTime!"			// target network for NTP
-```
-Note that hardcoded passwords are not recommended for production use. The following methods are recommended for further development and device hardening:
-- Use ESP32 NVS encryption / secure boot / flash encryption (Recommended)
-- Enterprise Wi-Fi (WPA2-Enterprise / WPA3-Enterprise) certificate/device based authentication (Recommended)
-- Provision at runtime and store in non-volatile memory. Requires manual setup on each boot.
-- Move secrets out of code using build-time secrets (for repository and dev environments)
-
-The FoxNode ID must be unique for each FoxNode and has to be manually configured. The FoxNode IP address is automatically formulated using this following function call in [httpComms.h](/foxnode/stateMachine/httpComms.h).
+The FoxNode ID must be unique for each FoxNode and has to be manually configured. The Static FoxNode IP address is formulated using this following function call in [httpComms.h](/foxnode/stateMachine/httpComms.h).
 
 ```
 IPAddress getFoxNodeIP(unsigned short thisFoxNodeId){			// Formulate IP address based on Fox-Node ID
 	if(thisFoxNodeId >= 175)thisFoxNodeId = 0;				    // This is a safety check to make sure we're not going over 255 when asigning FoxNodes
 	return IPAddress(192, 168, 40, thisFoxNodeId + 80);   		// This adds the FoxNode ID plus 80 as the IP address.
 ```
-The FoxNode ID is manually configured in the [eeprrom.cpp](/foxnode/stateMachine/eeprrom.cpp) file.
+The FoxNode ID is manually configured in the [eeprrom.cpp](/foxnode/stateMachine/eeprrom.cpp) file.  
+
+**THIS VALUE MUST BE CHANGED FOR EACH FOXNODE**
 ```
 void eepromSetVariablesToDefault(void){
 	thisFoxNodeId = 10;                  // This is where you manually set the FoxNode ID, Do not assign values greater than 175.
@@ -122,19 +107,23 @@ void eepromSetVariablesToDefault(void){
 ```
 - In the previous example, the FoxNode will be assigned a IP of 192.168.40.90.
 
-With the IDE setup completed and variables configured, the "FoxNode to be" (ESP32 hardware) can now be connected to the host PC via USB and programmed with the provided source code file via Arduino IDE. 
+With the IDE setup completed and variables configured, the "FoxNode to be" (ESP32 hardware) can now be connected to the host PC via USB and programmed with the provided source code file via Arduino IDE.
+Please consult Arduino documentation on how to program the ESP.
 
 # FoxNode Operation and Debugging
 1. The FoxNode sensor will first attempt to auto-connect to the predefined WiFi credentials to obtain NTP clock. In testing a phone with LTE/5G internet access running a Wi-Fi hotspot was used for this purpose, using the "UAS_NTP" credentials outlined in the previous section. 
 2. NTP is optional and the sensor will automatically proceed to the next connection phase if it is unable to connect to an NTP server, but will "freewheel" with incorrect timestamps.
-3. Next the FoxNode will attempt to connect to the Wi-Fi network defined in WIFI_SSID
-4. Once connected the FoxNode will send HTTP-POST requests to the URI defined in UAS_Server
-5. FoxNode will continue to send HTTP-POST updates every 10 seconds
+3. Next the FoxNode will attempt to connect to the Wi-Fi network defined in WIFI_SSID or "uas6"
+4. The FoxNode will first request DHCP network configuration from the Drone Server.
+5. If the Drone Server does not have a DHCP server configured, the FoxNode will fallback to the hard coded static IP, based on it's FoxNode ID.
+6. Once connected the FoxNode will send HTTP-POST requests to the URI defined in UAS_Server
+7. FoxNode will continue to send HTTP-POST updates every 10 seconds
 
-- See Appendix B and C of the [UAS_6.0_Stage_3_Guidance](/docs/UAS_6.0_Stage_3_Guidance.pdf) for full FoxNode state machine operation.
+- See Appendix B and C of the [UAS_6.0_Stage_3_Guidance](/docs/UAS_6.0_Stage_3_Guidance.pdf) for full FoxNode state machine operation.  
+Note: Stage 3 Guidance does not support DHCP configuration, only static addressing.
 
 **FoxNode verification**:
-The Arduino IDE provides easy access to a serial interface connection (115200 baud) that displays runtime information. This information is also pushed/displayed via an ESP TFT display (unique to the Adafruit ESP32-S2 TFT Feather).  
+The Arduino IDE provides easy access to a serial interface connection (9600 baud) that displays runtime information. This information is also pushed/displayed via an ESP TFT display (unique to the Adafruit ESP32-S2 TFT Feather).  
 
 With the FoxNode connected to your target PC, from the Arduino IDE make sure your ESP's COM port is selected in the top dropdown box, then select Tools > Serial Monitor
 ![Arduino Serial Monitor](/pics/ARD_Serial_Monitor.png)
@@ -282,3 +271,10 @@ Drone Server HTTP Response Code (HTTP Resp)
 FoxNode IP (F)  
 
 ![FoxNode Fully Connected, Data Exchange](/pics/FoxNode_Fully_Connected_ALT.jpg) 
+
+## Note on Cybersecurity implementations
+Note that hardcoded passwords are not recommended for production use. The following methods are recommended for further development and device hardening:
+- Use ESP32 NVS encryption / secure boot / flash encryption (Recommended)
+- Enterprise Wi-Fi (WPA2-Enterprise / WPA3-Enterprise) certificate/device based authentication (Recommended)
+- Provision at runtime and store in non-volatile memory. Requires manual setup on each boot.
+- Move secrets out of code using build-time secrets (for repository and dev environments)

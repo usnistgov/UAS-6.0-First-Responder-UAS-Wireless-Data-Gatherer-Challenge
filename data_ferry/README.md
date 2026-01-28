@@ -47,7 +47,7 @@ Prototype Example of Data Ferry:
 
 - For the AP software, we used hostapd
 
-- dnsmask is installed for FoxNodes or devices that use DHCP
+- isc-dhcp-server is installed for FoxNodes or devices that use DHCP
 
 - Optional - install iptables for device network security (configuration for iptables is not provided in this repository)
 
@@ -61,7 +61,7 @@ Prototype Example of Data Ferry:
 **Step 2**: Update Raspberry Pi and install software dependencies
 ```
 sudo apt-get update && sudo apt-get upgrade -y
-sudo apt-get install netplan.io systemd systemd-resolved hostapd dnsmasq iptables iptables-persistent python3-full git
+sudo apt-get install netplan.io systemd systemd-resolved hostapd dnsmasq iptables iptables-persistent python3-full git isc-dhcp-server
 ```
 
 **Step 3**: Change to your user's home directory and download/clone GitHub repository to the Pi
@@ -138,16 +138,16 @@ sudo systemctl enable rfkill-unblock-wifi.service
 sudo systemctl start rfkill-unblock-wifi.service
 ```
 
-**Step 12**: Optionally configure/copy [/etc/dnsmasq.conf](/data_ferry/raspbian_files/dnsmasq.conf)
+**Step 12**: Configure/copy DHCP Server [dhcpd.conf](/data_ferry/raspbian_files/dhcpd.conf)
 - Change parameters to match your network schema or copy file from repositiory
 ```
-sudo cp ~/data_ferry/rfkill-unblock-wifi.service /etc/dnsmasq.conf
+sudo cp ~/data_ferry/raspbian_files/dhcpd.conf /etc/dhcp/dhcpd.conf
 ```
 
 **Step 13**: Enable, start/restart services
 ```
-sudo systemctl enable dnsmasq
-sudo systemctl start dnsmasq
+sudo systemctl enable isc-dhcp-server.service
+sudo systemctl start isc-dhcp-server.service
 sudo systemctl unmask hostapd
 sudo systemctl enable hostapd
 sudo systemctl start hostapd

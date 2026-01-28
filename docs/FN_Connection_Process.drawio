@@ -1,0 +1,108 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36" version="29.3.4">
+  <diagram name="Page-1" id="W2-LZ1Spj59YKc8FSVxh">
+    <mxGraphModel dx="1158" dy="1134" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-1" parent="1" style="sketch=0;verticalLabelPosition=bottom;sketch=0;aspect=fixed;html=1;verticalAlign=top;strokeColor=none;fillColor=#000000;align=center;outlineConnect=0;pointerEvents=1;shape=mxgraph.citrix2.wifi_router;" value="Drone Server&lt;div&gt;Wi-Fi Access Point&lt;/div&gt;&lt;div&gt;SSID: uas6&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="49.9" x="230" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="DHCP Success" vertex="1">
+          <mxGeometry height="30" width="120" x="90" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-13" edge="1" parent="1" source="YngxKgZ9SRMUdGp1cUMN-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YngxKgZ9SRMUdGp1cUMN-4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=14;" value="WiFi.begin()" vertex="1">
+          <mxGeometry height="30" width="60" x="230" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-4" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Attempt DHCP" vertex="1">
+          <mxGeometry height="30" width="60" x="230" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="DHCP Timeout" vertex="1">
+          <mxGeometry height="30" width="120" x="320" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Static Fallback IP" vertex="1">
+          <mxGeometry height="30" width="120" x="320" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="DHCP IP" vertex="1">
+          <mxGeometry height="30" width="120" x="90" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Configured IP" vertex="1">
+          <mxGeometry height="30" width="120" x="205" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="HTTP State Machine" vertex="1">
+          <mxGeometry height="30" width="120" x="205" y="681" as="geometry" />
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-11" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;" target="YngxKgZ9SRMUdGp1cUMN-3" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="260" y="200" as="sourcePoint" />
+            <mxPoint x="580" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-12" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="260" y="270" as="sourcePoint" />
+            <mxPoint x="259.5" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-15" edge="1" parent="1" source="YngxKgZ9SRMUdGp1cUMN-4" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="YngxKgZ9SRMUdGp1cUMN-6" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="380" y="315" />
+            </Array>
+            <mxPoint x="530" y="600" as="sourcePoint" />
+            <mxPoint x="580" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-16" edge="1" parent="1" source="YngxKgZ9SRMUdGp1cUMN-4" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="150" y="315" />
+            </Array>
+            <mxPoint x="149.5" y="290" as="sourcePoint" />
+            <mxPoint x="149.5" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-17" edge="1" parent="1" source="YngxKgZ9SRMUdGp1cUMN-6" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="YngxKgZ9SRMUdGp1cUMN-7" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="600" as="sourcePoint" />
+            <mxPoint x="580" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-18" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="149.5" y="390" as="sourcePoint" />
+            <mxPoint x="149.5" y="460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-20" edge="1" parent="1" source="YngxKgZ9SRMUdGp1cUMN-8" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.45;entryY=0.033;entryDx=0;entryDy=0;entryPerimeter=0;" target="YngxKgZ9SRMUdGp1cUMN-9" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="150" y="530" />
+              <mxPoint x="259" y="530" />
+            </Array>
+            <mxPoint x="530" y="600" as="sourcePoint" />
+            <mxPoint x="580" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-21" edge="1" parent="1" source="YngxKgZ9SRMUdGp1cUMN-7" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="380" y="530" />
+              <mxPoint x="260" y="530" />
+            </Array>
+            <mxPoint x="530" y="600" as="sourcePoint" />
+            <mxPoint x="260" y="570" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YngxKgZ9SRMUdGp1cUMN-22" edge="1" parent="1" source="YngxKgZ9SRMUdGp1cUMN-9" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="YngxKgZ9SRMUdGp1cUMN-10" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="600" as="sourcePoint" />
+            <mxPoint x="580" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
