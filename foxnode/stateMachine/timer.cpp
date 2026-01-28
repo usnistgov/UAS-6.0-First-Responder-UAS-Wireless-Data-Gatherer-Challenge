@@ -7,7 +7,6 @@
 // measurements.
 
 #include <Arduino.h>						                                                            // Print functions 
-
 #include "timer.h"
 #include "sensor.h"							// for sensorSampleRate
 #include "state.h"
@@ -77,8 +76,12 @@ int initNTP(void){
 	putToSerialWithNewline("password is"+String(NTP_WIFI_PASSWORD));
 	WiFi.mode(WIFI_STA);									// Otherwise opp seems to be WIFI_STA_AP mode... this makes the server connection very poor
 	startMillis = millis();     // debug timing WiFi connect
-	WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE); // clears static config on ESP32 Remove this line if using static IP
-  WiFi.begin(NTP_WIFI_SSID, NTP_WIFI_PASSWORD);			// Connect to UAS_NTP WiFi-hotspot, Defualts to DHCP address
+	WiFi.disconnect(true);
+	delay(100);
+	WiFi.mode(WIFI_STA);
+	WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE);  // force DHCP, clear static
+	WiFi.begin(NTP_WIFI_SSID, NTP_WIFI_PASSWORD);
+
 	startMillis = millis();
 	timeout = 30000;										// 30 seconds to get connected to net for NTP
 	while( WiFi.status() != WL_CONNECTED ){
@@ -96,18 +99,19 @@ int initNTP(void){
   putToDebugWithNewline(s,2);
 	if(WiFi.status() == WL_CONNECTED){				// If we found NTP_WiFi read NTP and save to RTC
 		putToSerialWithNewline("\nNTP WiFi Connected");
-		tft.println("NTP Setup WiFi Connected");
+		tft.println("NTP WiFi Connected");
 		timeClient.setTimeOffset(0);						// GMT - 7 = -25200    (MST selection) TODO: UPDATE for day of timezone??
 		timeClient.begin();
 		timeClient.update();
 		time_t rawTime = timeClient.getEpochTime();			// get NTP time in epoch format (number of seconds from 1900)
 		localtime_r(&rawTime, &myTime);						// convert local time and store in myTime struct
 		rtc.setTime(&myTime);								      // set RCT time
+    RTC_tftPrint();  // Display formatted RTC time info
 		putToSerial("FN-NTP Time Set:"+String(myTime.tm_hour)+String(myTime.tm_min)+String(myTime.tm_sec));
 		timeClient.end();									      // clean up NTP
 		WiFi.disconnect(true);							  	// clean up WiFi STA
 		delay(1000);										        // Short 1000 ms (1 second) delay to ensure disconnect is complete
-		tft.println("NTP Setup WiFi Disconnected");
+		tft.println("NTP WiFi Disconnect");
 		return 0;											          // sucsses RTC initalized
   }
   else{

@@ -1,7 +1,8 @@
 // NIST-PSCR
 // UAS 6.0 Prize Challenge "Fox-Node" client source code
-// NOTE: Example code only!! subject to change without notice. 
-
+// =============================================================
+// stateMachine.ino
+// =============================================================
 #include "state.h"
 #include "sensor.h"
 #include "httpComms.h"
@@ -18,7 +19,7 @@ void setup() {
   WiFi.disconnect(true);                  // init setp, this clears the WiFi object
   eepromSetVariablesToDefault();          // set this foxnod specifc defaults, will be changed when values read in from EEPROM
   
-  tft_display(0);                         // (GREEN) onboard TFT display for ESP32 display, also inits wantToPaintDisplay variable
+  tft_display(0);                         // Onboard TFT display for ESP32 display, also inits wantToPaintDisplay variable
   initTimers();                           // Timer ISR that run statemachine's 
   if(1){                                  // used to skip getting NPT from internet for debugging
     if(initNTP() != 0){ 

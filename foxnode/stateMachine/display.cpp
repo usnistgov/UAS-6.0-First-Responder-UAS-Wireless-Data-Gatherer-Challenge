@@ -27,7 +27,8 @@ void tft_display(int disp_update) {
   if (disp_update == 5) {           // (YELLOW) disp FN NTP time setting 
     tft.setRotation(disp_rotation);tft.fillScreen(ST77XX_YELLOW);tft.setCursor(0, 0);
     tft.setTextSize(3);tft.setTextColor(ST77XX_WHITE);tft.println("FOX > UAS 6.0");
-    tft.setTextSize(2);tft.println("NTP looking 4");
+    tft.setTextSize(2);tft.print("FoxID: ");tft.println(thisFoxNodeId);
+    tft.setTextSize(2);tft.println("NTP connect...");
     tft.print("SSID: ");tft.println(NTP_WIFI_SSID);						// Display NTP Hotspot connection cred to disp.
     tft.print("PASS: ");tft.println(NTP_WIFI_PASSWORD);					// Display NTP Hotspot connection cred to disp.
   } else if (disp_update == 4) {    // (BLACK) display is built in, ST7789 (TFT display) 240x135
@@ -57,15 +58,16 @@ void tft_display(int disp_update) {
     tft.setRotation(disp_rotation);tft.fillScreen(ST77XX_ORANGE);tft.setCursor(0, 0);tft.setTextSize(3);tft.setTextColor(ST77XX_WHITE);
     tft.println(("FOX > UAS 6.0"));tft.setTextSize(2);
     RTC_tftPrint();
+    tft.print("FoxID: ");tft.println(thisFoxNodeId);
     tft.println("Looking for Network");
     tft.print("SSID: ");tft.println(WIFI_SSID);							// Display NTP HotSpot connection cred to disp.
     tft.print("PASS: ");tft.println(WIFI_PASSWORD);						// Display NTP HotSpot connection cred to disp.
-    tft.println("URI:  ");
     tft.println(UAS_Server);
   } else if (disp_update == 1) {     // (BLUE) disp IP connected
     tft.setRotation(disp_rotation);tft.fillScreen(ST77XX_BLUE);tft.setCursor(0, 0);tft.setTextSize(3);tft.setTextColor(ST77XX_WHITE);
     tft.println("FOX > UAS 6.0");tft.setTextSize(2);
     RTC_tftPrint();  // Display formatted RTC time info
+    tft.print("FoxID: ");tft.println(thisFoxNodeId);
     tft.println("WiFi Connected.");
     tft.print("IP: ");tft.println(WiFi.localIP());
     tft.print("RSSI: ");tft.println(String(WiFi.RSSI()));

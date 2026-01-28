@@ -1,3 +1,6 @@
+// =============================================================
+// state.h
+// =============================================================
 #ifndef STATE_H
 #define STATE_H
 
@@ -12,7 +15,7 @@
 #define DRONE_SERVER_IP_ADDRESS_STRING IPAddress(192,168,40,20)
 
 #define CLOCK_MS_TICK_RATE 1							// number of milliseconds per timer tick
-#define TIMER1_MSP1 10									// number of milliseconds per timer IRQ in "bigloop", typically 1 mS  // TODO remove this
+#define TIMER1_MSP1 10									// number of milliseconds per timer IRQ in "bigloop", typically 1 mS
 
 //// Key time delays. Assuming a 10 mS big loop time.
 #define SENSOR_SAMPLE_RATE 30000/TIMER1_MSP1              // 1 minute per sensor set sample

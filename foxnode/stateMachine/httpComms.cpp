@@ -1,4 +1,9 @@
 // HTTP ESP32 specific interface routines
+// =============================================================
+// httpComms.cpp
+// This file determines connection actions regarding http state and interacton
+// with Wi-Fi connection status
+// =============================================================
 #include "httpComms.h"
 #include "state.h"
 #include "serial.h"
@@ -9,24 +14,47 @@
 #include "eeprom.h"
 #include "WiFi.h"
 
-//The following block sets the FoxNode for DHCP instead of Static IP
-//To set back to Static IP, comment this section and edit commented sections below
-bool connectWiFi_DHCP(const char* ssid, const char* pass, uint32_t timeoutMs = 15000) {
-  WiFi.persistent(false);     // avoid flash wear from saving creds repeatedly
+//The following block fist tries DHCP, than falls back to static IP if Drone server
+// has AP, but no DHCP configured.
+// Static fallback settings (edit to match your network)
+static bool waitForIP(uint32_t timeoutMs) {
+  uint32_t start = millis();
+  while ((millis() - start) < timeoutMs) {
+    if (WiFi.status() == WL_CONNECTED) {
+      IPAddress ip = WiFi.localIP();
+      if (ip[0] != 0) return true;  // not 0.0.0.0
+    }
+    delay(250);
+  }
+  return false;
+}
+
+bool connectWiFi_DHCP_thenStaticEveryAttempt(IPAddress fallbackIp,
+                                             uint32_t dhcpTimeoutMs,
+                                             uint32_t staticTimeoutMs) {
+  WiFi.persistent(false);
   WiFi.mode(WIFI_STA);
   WiFi.setAutoReconnect(true);
 
-  // Ensure we are not carrying an old static config
-  WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE); // clears static config on ESP32
+  // Always start clean so DHCP gets first shot every time
+  WiFi.disconnect(true);
+  delay(100);
 
-  WiFi.begin(ssid, pass);
+  // Force DHCP (clears any prior static config)
+  WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE);
 
-  uint32_t start = millis();
-  while (WiFi.status() != WL_CONNECTED && (millis() - start) < timeoutMs) {
-    delay(250);
-  }
+  // --- DHCP attempt ---
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  if (waitForIP(dhcpTimeoutMs)) return true;
 
-  return (WiFi.status() == WL_CONNECTED);
+  // --- Static fallback ---
+  WiFi.disconnect(true);
+  delay(200);
+
+  WiFi.config(fallbackIp, UAS_Gateway, UAS_Subnet, UAS_DNS);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+  return waitForIP(staticTimeoutMs);
 }
 
 WebServer webServer(80);				        // Initialize Server w/ def HTTP port assignment
@@ -45,6 +73,7 @@ void initializeHttpMsmValues(void) {	// Initialize the WiFi connect state monito
 	WiFiHaveDhcpReply = 0;				// Only called once on boot
 }
 
+// This routine is used to determine static IP settings
 IPAddress getFoxNodeIP(unsigned short thisFoxNodeId){		// Formulate IP address based on Fox-Node ID
 	if(thisFoxNodeId > 60)thisFoxNodeId = 0;				      // Logic for checking FoxNode ID, Don't assign over 175.
 	return IPAddress(192, 168, 40, thisFoxNodeId + 80);   // Add 80 to FoxNode ID to keep it out of lower ranges for static devices
@@ -52,54 +81,81 @@ IPAddress getFoxNodeIP(unsigned short thisFoxNodeId){		// Formulate IP address b
 
 ////////  next subroutine are tied to Wifi events
 // IRQ like event where the sesnor client has connected to the Drone Server WiFi net.
-// In theory, this would be just seeing and connecting to the Wifi network, possibly before DHCP negotiation
+// This would be just seeing and connecting to the Wifi network, possibly before DHCP negotiation
 
 void WiFiStationConnected(WiFiEvent_t event, WiFiEventInfo_t info){
   wantToPaintDisplay = 1;			// (BLUE) display connection info
-  glob_connectedToDrone = 1;  // STATE MACHINE FLAG: Unlock Sensor Dump to Server given UAS connection
+}
+
+// Only mark connected once we actually have a non-zero IP address
+void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info){
+  IPAddress ip = WiFi.localIP();
+  if (WiFi.status() == WL_CONNECTED && ip[0] != 0) {
+    glob_connectedToDrone = 1;
+  }
 }
 
 void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info) {
-
-	WiFi.disconnect(true);
 	glob_connectedToDrone = 0;                                       // STATE MACHINE FLAG: lock Sensor Dump to Server given no UAS // NOTE: that glob_connectedToDrone is an int, but used as a bool.
 	glob_droneConnectJustDropped = 1;                                  // Update Global to show SMS that we are in a WiFi dissconnection state
 	wantToPaintDisplay = 2;			                                       // (ORANGE) display disconnection message
+  // print the reason so we know if it’s AUTH_FAIL, NO_AP_FOUND, etc.
+  Serial.print("WiFi disconnected, reason=");
+  Serial.println(info.wifi_sta_disconnected.reason);
 }
 //This subroutine attaches event handlers to subroutines for key WiFi evernts.
-void WiFiInit(IPAddress foxNodeIp){
 
-  putToDebugWithNewline("WiFiInit() Starting WiFi", 2);
-  
-	WiFi.onEvent(WiFiStationConnected, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_CONNECTED);		      // Implement WiFi Callback functions to avoid handles in main loop
-	WiFi.onEvent(WiFiStationDisconnected, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);	  // Handle WiFi reconnect //TODO check this... might be fighting with WiFi SM ...
+static uint32_t lastWifiAttemptMs = 0;
+bool ensureWifiConnected(IPAddress fallbackIp) {
+  // If already connected with a real IP, nothing to do
+  if (WiFi.status() == WL_CONNECTED && WiFi.localIP()[0] != 0) {
+    return true;
+  }
 
-  // cofig arguments are: IP address, Gateway, Subnet, DNS
-	// For static IP uncomment WiFi.config below
-	WiFi.mode(WIFI_STA);	
-  //WiFi.config(foxNodeIp, IPAddress(UAS_Gateway), IPAddress(UAS_Subnet),IPAddress(UAS_DNS));
+  // Backoff so we don't thrash WiFi.begin() repeatedly
+  static uint32_t lastAttemptMs = 0;
+  if (millis() - lastAttemptMs < 5000) {
+    return false;
+  }
+  lastAttemptMs = millis();
 
-  putToDebugWithNewline("WiFiInit() Looking for SSID: "+String(WIFI_SSID),2);
-  putToDebugWithNewline("WiFiInit()    with Password: "+String(WIFI_PASSWORD),2);
-  putToDebugWithNewline("WiFiInit(): calling WiFi.begin", 3);
-  
-	//For Static IP uncomment WiFi.begin, comment if statement and edit whitespacing
-  //WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-	if (!connectWiFi_DHCP(WIFI_SSID, WIFI_PASSWORD)){
-		delay(1000);
-
-  	putToDebugWithNewline("- glob_connectedToDrone: "+String(glob_connectedToDrone),4);
-  	putToDebugWithNewline("- wantToPaintDisplay: "+String(wantToPaintDisplay),4);
-  	WiFi.setTxPower(WIFI_POWER_7dBm);                                // Set Tx power low (for Stage 2 this setting works well) NOTE: power def --> https://github.com/espressif/arduino-esp32/blob/70786dc5fa51601f525496d0f92a220c917b4ad9/libraries/WiFi/src/WiFiGeneric.h#L47
-  	putToDebugWithNewline("WiFiStationConnected () - WiFi-STA Tx Power: "+String(WiFi.getTxPower()), 2); // Check power setting and send to Serial
-  	putToDebugWithNewline("WiFiInit(): Exiting\n",2);
-	}
+  // Try DHCP first, then static fallback
+  return connectWiFi_DHCP_thenStaticEveryAttempt(fallbackIp);
 }
+
+
+void WiFiInit(IPAddress foxNodeIp){
+	WiFi.setSleep(false);
+  putToDebugWithNewline("WiFiInit() Starting WiFi", 2);
+  // Attach handlers FIRST so we don't miss the initial connect event
+	WiFi.onEvent(WiFiStationConnected,    WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_CONNECTED);
+	WiFi.onEvent(WiFiStationGotIP,        WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
+	WiFi.onEvent(WiFiStationDisconnected, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
+
+
+  WiFi.mode(WIFI_STA);
+
+  // Now connect (DHCP first, then static fallback)
+ bool ok = ensureWifiConnected(foxNodeIp);
+
+  // If we connected before the event handler fires (or event doesn't fire),
+  // explicitly set the same flags your event handler would set.
+  if (ok && WiFi.status() == WL_CONNECTED && WiFi.localIP()[0] != 0) {
+    glob_connectedToDrone = 1;
+    wantToPaintDisplay = 1;
+  } else {
+    glob_connectedToDrone = 0;
+  }
+
+  WiFi.setTxPower(WIFI_POWER_19_5dBm);
+  putToDebugWithNewline("WiFiInit(): Exiting\n", 2);
+}
+
 
 void WiFiDropConnection(void){                                       // this subroutine is called when the state machine wants to drop the connection (if it exists) for a "back off" period 
 	putToDebugWithNewline("WiFiDropConnection()", 3);
   if(httpConnectedToWiFi()){
-		WiFi.disconnect(true);			                                     // TODO do we know if we get an error if you try to disconnect
+		WiFi.disconnect(true);			                                 
 		glob_connectedToDrone = 0;
 		glob_droneConnectJustDropped = 0;
 		delay(1000);
@@ -127,14 +183,11 @@ void handleNotFound(void) {
 	webServer.send(404, "text/plain", message);
 }
 
-unsigned int httpConnectedToWiFi(void){                              // TODO remove ? 
-  return glob_connectedToDrone;
-
-  if (WiFi.status() != WL_CONNECTED) {
-		//glob_connectedToDrone = 0;				                             // this var will tell SM we lost connectivity.
-		return 0;
-	}
-	return 1;
+unsigned int httpConnectedToWiFi(void){
+  if (WiFi.status() != WL_CONNECTED) return 0;
+  IPAddress ip = WiFi.localIP();
+  if (ip[0] == 0) return 0;  // still 0.0.0.0 means no usable IP
+  return 1;
 }
 
 // this has evelved into just a logging mechanizm for the state of the wifi connection 21mar2025 PDH
@@ -154,7 +207,7 @@ void httpState_WiFiConnect(void){                                  // This is a 
           if(glob_connectedToDrone == 0){                           // Either the WiFi droped (from IRQ handler WiFiStationDisconnected() )
               putToDebugWithNewline("HTTP SM 1: Connection to Drone dropped",3);
               httpWiFiState = 3;
-              wifiDropDeadTimer = WIFI_DROP_DEAD_WAIT;                             // set in httpComms.h, typicall 3 seconds
+              wifiDropDeadTimer = WIFI_DROP_DEAD_WAIT;                             // set in httpComms.h, typically 3 seconds
               return;
           }
           return;
@@ -235,11 +288,5 @@ void state_processSCRVReply(void){					                       // process the HTT
 	else {
 		putToDebugWithNewline("state_processSCRVReply() Unknown SREP cmd '"+glob_droneServ_srep+"'", 4);
 	}
-	tft_display(3);  // (BLACK) update display to signal HTTP Rx
+	tft_display(3);  // (Green) update display to signal HTTP Rx
 }
-
-// Mary had a an API
-// with definitions neat
-// but when the drone got sensor values
-// it really was quite sweet
-

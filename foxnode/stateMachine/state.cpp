@@ -1,11 +1,11 @@
+// =============================================================
+// state.cpp
+// =============================================================
 /*
  * State machine to handle sharing of sensor values
  * from the sensor client to the drone server
  * for the "Sensor Dump to Server" state machine.
- * 17 Jan 2025 PDH
  */
- 
-//#include <ctime>          // conversion of long --> tm struct
 
 #include "state.h"
 #include "httpComms.h"
@@ -70,7 +70,6 @@ void initializeSensorDump2Server(void){
 void initialize_WiConnectMachine(void){       // reset the wifi connect state machine.
 	putToDebugWithNewline("initialize_WiConnectMachine()...",2);
 	wifiConnectState = 0;
-	//glob_connectedToDrone = 0;		              // we are not connected to the drone
 	glob_requestDropWifi = 0;		                  // we have no request to drop the WiFi connection
 	glob_requestConnctWiFi = 1;		                // if we have good signal strength, we want to connect
 }
@@ -82,7 +81,14 @@ unsigned int valuesShareMachine(void){        // AKA "MSM" Major State Machine
 	unsigned long pdt;						// how long it took to do the entire POST process 'p'ost 'd'elta 't'ime
 	unsigned int bar;
 
-	if(wifiDroneBlindTimer != 0)return 1;					// we are locked out from communicaitons becuase we had a good sesnor report.
+	Serial.print("HTTP gate glob_connectedToDrone=");
+	Serial.print(glob_connectedToDrone);
+	Serial.print(" WiFi.status=");
+	Serial.print(WiFi.status());
+	Serial.print(" IP=");
+	Serial.println(WiFi.localIP());
+
+	if(wifiDroneBlindTimer != 0)return 1;					// we are locked out from communicatoins because we had a good sensor report.
 	glob_stateBable = 1;                        // Verbosity of Statemachine logging serial output
 	if(!wifiDroneBlindTimer && glob_droneConnectJustDropped){	          // If the connection to the drone is lost, the state machine is reset.
 		if(valuesShareState){				// this is a one-shot message when the connection drops
@@ -113,18 +119,20 @@ unsigned int valuesShareMachine(void){        // AKA "MSM" Major State Machine
     putToDebugWithNewline("- glob_connectedToDrone: "+String(glob_connectedToDrone),4);
     putToDebugWithNewline("- glob_timer_droneReplyWait: "+String(glob_timer_droneReplyWait),4);
 		//WiFi.reconnect();// DEBUG
-    WiFi.disconnect(true);    
-    WiFi.mode(WIFI_STA);	
-    WiFi.config(getFoxNodeIP(thisFoxNodeId), IPAddress(UAS_Gateway), IPAddress(UAS_Subnet),IPAddress(UAS_DNS));
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+		bool ok = ensureWifiConnected(getFoxNodeIP(thisFoxNodeId));
 
-    if(WiFi.status() == WL_CONNECTED){
-      glob_connectedToDrone = 1;
-    }
+
+		if (ok && WiFi.status() == WL_CONNECTED && WiFi.localIP()[0] != 0) {
+  		glob_connectedToDrone = 1;
+  		wantToPaintDisplay = 1;
+		} else {
+  		glob_connectedToDrone = 0;
+		}
+
 
 		return 5;
 	}
-	// so in theory, if we are here we are connected to the WiFi new, not in blind time, and have good signal strength
+	// If we are here we are connected to the WiFi new, not in blind time, and have good signal strength
 	postStartTimeMs = millis();
   switch(valuesShareState){
     case 0:		                                 // MSM 0: If not connected to WiFi try and connect

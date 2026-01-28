@@ -1,7 +1,17 @@
+// =============================================================
+// httpComms.h
+// =============================================================
+#include <Arduino.h>   // brings in uint32_t (and a lot of Arduino core types)
+#include <WiFi.h>      // brings in IPAddress and WiFi (ESP32/ESP8266 core)
+
 #ifndef HTTPCOMMS_H
 #define HTTPCOMMS_H
+bool ensureWifiConnected(IPAddress fallbackIp);
 
-// SCOPE: Support system Network communications, WiFi/HTTP
+// SCOPE: Support system Network communications, WiFi/HTTP, adjust dhcp/static timeout here
+bool connectWiFi_DHCP_thenStaticEveryAttempt(IPAddress fallbackIp,
+                                             uint32_t dhcpTimeoutMs = 3000,
+                                             uint32_t staticTimeoutMs = 5000);
 
 // Includes
 #include "serial.h"
@@ -12,12 +22,12 @@
 //// UAS Server Target vars
 #define WIFI_SSID     "uas6"					// target network for  UAS 6.0 Prize challenge
 #define WIFI_PASSWORD "hello123"			// target network for  UAS 6.0 Prize challenge
-#define UAS_Server_IP "192.168.40.20" // target Drone Server IP address
+#define UAS_Server_IP "192.168.40.20" // target Drone Server/Data Ferry IP address
 #define UAS_Server "http://" UAS_Server_IP	// target Drone Server URI
 
-#define UAS_Gateway "192,168,40,20"			// Gateway for Sensor Client
-#define UAS_DNS		  "8,8,8,8"				    // DNS for Wifi, in case it needs it
-#define UAS_Subnet	"255,255,0,0"
+#define UAS_Gateway "192.168.40.20"			// Gateway for Sensor Client
+#define UAS_DNS		  "8.8.8.8"				    // DNS for Wifi, in case it needs it
+#define UAS_Subnet	"255.255.0.0"
 
 // for loating up the Real Time Clock  RTC  from a hotspot on the net
 #define NTP_WIFI_SSID     "UAS_NTP"				// target network for  NTP (external WiFi Hotspot-system setup only)
