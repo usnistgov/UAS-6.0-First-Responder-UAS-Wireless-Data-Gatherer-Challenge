@@ -1,4 +1,30 @@
-#import "display.h"
+#include "display.h"
+#include "httpComms.h"
+
+
+// Compile-time guard: PSKs must never be displayed.
+// If any PSK macros are present and you try to compile display.cpp, fail the build.
+#if (FOXNODE_ALLOW_DISPLAY_PSK == 0)
+  #if defined(WIFI_PASSWORD) || defined(NTP_WIFI_PASSWORD)
+    #error "display.cpp must not reference WIFI_PASSWORD or NTP_WIFI_PASSWORD. Remove PSK display and use secrets/NVS."
+  #endif
+#endif
+
+// Helper: print SSID and provisioning indicator without ever displaying PSK.
+static void tftPrintSSIDLine(const char *label, WifiProfile profile) {
+  String ssid;
+  String throwawayPsk;  // required by secretsGetWiFi signature; do NOT display it
+
+  bool ok = secretsGetWiFi(profile, ssid, throwawayPsk);
+  tft.print(label);
+  if (ok) {
+    tft.print(ssid);
+    tft.print("  PROV: YES");
+  } else {
+    tft.print("<not provisioned>  PROV: NO");
+  }
+  tft.println();
+}
 
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);                          // Use dedicated hardware SPI pins for TFT disp
 
@@ -29,30 +55,40 @@ void tft_display(int disp_update) {
     tft.setTextSize(3);tft.setTextColor(ST77XX_WHITE);tft.println("FOX > UAS 6.0");
     tft.setTextSize(2);tft.print("FoxID: ");tft.println(thisFoxNodeId);
     tft.setTextSize(2);tft.println("NTP connect...");
-    tft.print("SSID: ");tft.println(NTP_WIFI_SSID);						// Display NTP Hotspot connection cred to disp.
-    tft.print("PASS: ");tft.println(NTP_WIFI_PASSWORD);					// Display NTP Hotspot connection cred to disp.
+    // Display SSID only (never PSK). Pulled from NVS.
+    tftPrintSSIDLine("SSID: ", WifiProfile::NTP);
   } else if (disp_update == 4) {    // (BLACK) display is built in, ST7789 (TFT display) 240x135
     tft.setRotation(disp_rotation);pinMode(TFT_BACKLITE, OUTPUT);digitalWrite(TFT_BACKLITE, HIGH);tft.init(135, 240);
     tft.setCursor(0, 0);tft.fillScreen(ST77XX_BLACK);tft.setTextSize(3);tft.setTextColor(ST77XX_WHITE); // End TFT init
     tft.println("FOX > UAS 6.0");tft.println("FN-API Rx");tft.setTextSize(2);                      
   }else if (disp_update == 3) {     // (GREEN)
     tft.setRotation(disp_rotation);tft.fillScreen(ST77XX_GREEN);
-    tft.setCursor(0, 0);tft.setTextSize(3);tft.setTextColor(ST77XX_WHITE);tft.println("FOX > UAS 6.0");
-    RTC_tftPrint();  // Display formatted RTC time info
+    //tft.setCursor(0, 0);tft.setTextSize(2);tft.setTextColor(ST77XX_WHITE);tft.println("FOX > UAS 6.0");
+    tft.setCursor(0, 0);RTC_tftPrint();  // Display formatted RTC time info
     tft.setTextSize(2);tft.setTextColor(ST77XX_RED);
     tft.print("FoxID: ");tft.println(thisFoxNodeId);
     tft.print("IP: ");tft.println(WiFi.localIP());
-    tft.print("RSSI: ");tft.println(String(data_doc["rssi"]));			// Build our data display.... This is what has been pushed to the Ringbuffer and will be POSTED if UAS ask's
+    tft.print("RSSI: ");tft.println(String(data_doc["rssi"]));			// This is what has been pushed to the Ringbuffer and will be POSTED when UAS connects
     tft.print("STA_TX_PWR: ");tft.println(String(data_doc["tpwr"]));
-    tft.print("S: ");tft.println(UAS_Server_IP);
-    tft.print("HTTP Resp: ");tft.println(httpResponseCode);
-    //tft.print("L: ");tft.println(String(data_doc["l"]));
-    //tft.print("H: ");tft.println(String(data_doc["h"]));
-    //tft.print("T: ");tft.println(String(data_doc["t"]));
-    //tft.print("P: ");tft.println(String(data_doc["p"]));
-    //tft.print("lat: ");tft.println(String(data_doc["lat"]));  
-    //tft.print("lon: ");tft.println(String(data_doc["lon"]));
-    //tft.print("elev: ");tft.println(String(data_doc["elev"]));
+    tft.print("S:");tft.println(UAS_Server_IP);
+    tft.print("HTTP Resp: ");
+    if (httpResponseCode == -999) {tft.println("N/A");}
+    else {tft.println(httpResponseCode);}
+    tft.print("TLS: ");
+    if (tlsState == TLS_STATE_OK) {
+      tft.println("OK");
+    } else if (tlsState == TLS_STATE_FAIL) {
+      tft.println("FAIL");
+      if (tlsLastError[0]) {
+        // Keep it readable on the TFT by shrinking the font for the error snippet.
+        tft.setTextSize(1);
+        tft.println(tlsLastError);
+        tft.setTextSize(2);
+      }
+    } else {
+      tft.println("N/A");
+    }
+
     tft.setTextColor(ST77XX_WHITE);										// Set back to white for later calls
   } else if (disp_update == 2) {      // (ORANGE) no WiFi/HTTP Server connection available 
     tft.setRotation(disp_rotation);tft.fillScreen(ST77XX_ORANGE);tft.setCursor(0, 0);tft.setTextSize(3);tft.setTextColor(ST77XX_WHITE);
@@ -60,9 +96,9 @@ void tft_display(int disp_update) {
     RTC_tftPrint();
     tft.print("FoxID: ");tft.println(thisFoxNodeId);
     tft.println("Looking for Network");
-    tft.print("SSID: ");tft.println(WIFI_SSID);							// Display NTP HotSpot connection cred to disp.
-    tft.print("PASS: ");tft.println(WIFI_PASSWORD);						// Display NTP HotSpot connection cred to disp.
-    tft.println(UAS_Server);
+    // Display SSID only (never PSK). Pulled from NVS.
+    tftPrintSSIDLine("SSID: ", WifiProfile::UAS6);
+    tft.println(UAS_Server_IP);
   } else if (disp_update == 1) {     // (BLUE) disp IP connected
     tft.setRotation(disp_rotation);tft.fillScreen(ST77XX_BLUE);tft.setCursor(0, 0);tft.setTextSize(3);tft.setTextColor(ST77XX_WHITE);
     tft.println("FOX > UAS 6.0");tft.setTextSize(2);

@@ -8,11 +8,11 @@
 //  0 - none      1 - errors   2 - general/high level info   3 - medium info   4 - 4 Very Verbos
 
 // Includes 
-#include <Arduino.h>
 #include <WiFi.h>                                               // For ESP32 or other Arduino-compatible Wi-Fi libraries
 #include <WebServer.h>
 #include <HTTPClient.h>
-#include "httpComms.h"                                          // for httpDataPayload buffer
+#include "httpComms.h" 
+#include <Arduino.h>
 
 // Global Variables
 extern unsigned int serialLogLevel;		                          // what log level are we at
@@ -25,5 +25,9 @@ void putToDebug(String s, unsigned int logLevel);
 void putToDebugWithNewline(String s, unsigned int logPriority);
 void putToSerial(String s);
 void putToSerialWithNewline(String s);
+
+// Safe debug print: truncates and prints in small chunks with yield() to avoid WiFi starvation.
+// Use this for large JSON strings.
+void putToDebugWithNewlineTrunc(const String &s, unsigned int logPriority, size_t maxChars = 240);
 
 #endif	//	SERIAL_H

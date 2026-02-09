@@ -11,6 +11,7 @@
 #include "httpComms.h"
 #include "sensor.h"
 #include "eeprom.h"
+#include "RingBuffer.h"
 
 // core communications variables to work with lower WiFi (things in httpComms.c)
 unsigned int glob_requestConnctWiFi;
@@ -81,12 +82,35 @@ unsigned int valuesShareMachine(void){        // AKA "MSM" Major State Machine
 	unsigned long pdt;						// how long it took to do the entire POST process 'p'ost 'd'elta 't'ime
 	unsigned int bar;
 
-	Serial.print("HTTP gate glob_connectedToDrone=");
-	Serial.print(glob_connectedToDrone);
-	Serial.print(" WiFi.status=");
-	Serial.print(WiFi.status());
-	Serial.print(" IP=");
-	Serial.println(WiFi.localIP());
+  // Track the last time window we attempted to send so we can ACK/clear it after server response.
+  static time_t lastSent_stsb = 0;
+  static time_t lastSent_stse = 0;
+
+// Sets serial monitoring events and only prints when there is a change and rate limits prints
+
+static int lastGlob = -1;
+static int lastWiFi = -1;
+static uint32_t lastIp = 0;
+static uint32_t lastGatePrintMs = 0;
+
+int curGlob = glob_connectedToDrone;
+int curWiFi = WiFi.status();
+uint32_t curIp = (uint32_t)WiFi.localIP();
+
+if (millis() - lastGatePrintMs >= 5000) {
+	if (curGlob != lastGlob || curWiFi != lastWiFi || curIp != lastIp) {
+  	lastGlob = curGlob;
+  	lastWiFi = curWiFi;
+  	lastIp = curIp;
+
+  	Serial.print("HTTP gate glob_connectedToDrone=");
+  	Serial.print(curGlob);
+  	Serial.print(" WiFi.status=");
+  	Serial.print(curWiFi);
+  	Serial.print(" IP=");
+  	Serial.println(WiFi.localIP());
+	}
+}
 
 	if(wifiDroneBlindTimer != 0)return 1;					// we are locked out from communicatoins because we had a good sensor report.
 	glob_stateBable = 1;                        // Verbosity of Statemachine logging serial output
@@ -182,8 +206,18 @@ unsigned int valuesShareMachine(void){        // AKA "MSM" Major State Machine
 				sprintf(s,"MSM %d  'hi' Post recived 'sval' reply: start TS=%d, end TS=%d", valuesShareState, gmtime(&glob_droneServer_stsb), gmtime(&glob_droneServer_stse));
 				putToDebugWithNewline(s,2);
 			}
+
+      lastSent_stsb = glob_droneServer_stsb;
+      lastSent_stse = glob_droneServer_stse;
+
 			foo = CoreDataAndMerge("rval",glob_droneServer_stsb,glob_droneServer_stse);
-			putToDebugWithNewline("MSM case 5: "+foo,1);
+			// IMPORTANT: Do NOT dump full JSON at low log levels (can stall Serial and starve WiFi).
+      // Level 1: print size only
+      putToDebugWithNewline("MSM case 5 payload bytes=" + String(foo.length()), 1);
+      // Level 4: print a truncated preview
+      if (serialLogLevel >= 4) {
+        putToDebugWithNewlineTrunc("MSM case 5: " + foo, 4, 300);
+      }
 			wifi_sendPost(foo);
 			
 			if(glob_stateBable && 2 <= serialLogLevel){
@@ -299,10 +333,26 @@ unsigned int valuesShareMachine(void){        // AKA "MSM" Major State Machine
 				return 0;					// we want to process this request ASAP
 			}
 			if(glob_droneServ_srep =="buby"){		// sever is ready to disconnect
+			// Server ACKed receipt of the rval window. Drop those samples so we do not resend them.
+        if (lastSent_stse != 0) {
+          int dropped = ringbuff.dropEntriesUpTo(lastSent_stse);
+          if (2 <= serialLogLevel) {
+            putToDebugWithNewline("ACK: dropped ringbuffer entries <= stse (" + String((unsigned long)lastSent_stse) + "), dropped=" + String(dropped), 2);
+            putToDebugWithNewline("Ringbuffer now has entries=" + String(ringbuff.getCount()), 2);
+          }
+        }
 				valuesShareState = 25;
 				return 0;					// we want to process this request ASAP
 			}
 			if(glob_droneServ_srep == "done"){		// sever is disconnecting now.
+			// Treat DONE as an ACK as well.
+        if (lastSent_stse != 0) {
+          int dropped = ringbuff.dropEntriesUpTo(lastSent_stse);
+          if (2 <= serialLogLevel) {
+            putToDebugWithNewline("ACK(done): dropped ringbuffer entries <= stse (" + String((unsigned long)lastSent_stse) + "), dropped=" + String(dropped), 2);
+            putToDebugWithNewline("Ringbuffer now has entries=" + String(ringbuff.getCount()), 2);
+          }
+        }
 				valuesShareState = 35;
 				return 0;					// we want to process this request ASAP
 			}

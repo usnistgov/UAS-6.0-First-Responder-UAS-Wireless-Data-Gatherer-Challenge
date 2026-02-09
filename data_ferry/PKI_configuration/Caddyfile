@@ -1,0 +1,27 @@
+{
+  # optional while debugging
+  # debug
+}
+
+# Redirect HTTP to HTTPS for browser traffic
+http://192.168.40.20 {
+  redir https://192.168.40.20{uri} permanent
+}
+
+# Browser HTTPS (no client cert)
+https://192.168.40.20 {
+  tls /etc/caddy/mtls/server.crt /etc/caddy/mtls/server.key
+  reverse_proxy 127.0.0.1:5000
+}
+
+# FoxNode ingest over mTLS (client cert required)
+:8443 {
+  tls /etc/caddy/mtls/server.crt /etc/caddy/mtls/server.key {
+    client_auth {
+      mode require_and_verify
+      trust_pool file /etc/caddy/mtls/ca.crt
+    }
+  }
+
+  reverse_proxy 127.0.0.1:5000
+}

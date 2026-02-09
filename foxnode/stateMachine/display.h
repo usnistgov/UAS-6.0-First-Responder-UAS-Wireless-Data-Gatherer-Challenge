@@ -10,6 +10,17 @@
 #include "serial.h"
 #include "sensor.h"                                              // JSON lib
 #include "state.h"                                               // for UAS_Server var
+#include "secrets.h"                                             // NVS secrets
+
+// ===========================
+// Display Security Guardrails
+// ===========================
+// Never display PSKs on the TFT. If you *intentionally* want to override this for lab bring-up,
+// you must set FOXNODE_ALLOW_DISPLAY_PSK to 1 *in your build flags* (not in source).
+#ifndef FOXNODE_ALLOW_DISPLAY_PSK
+#define FOXNODE_ALLOW_DISPLAY_PSK 0
+#endif
+
 
 // Global Variables
 extern Adafruit_ST7789 tft;

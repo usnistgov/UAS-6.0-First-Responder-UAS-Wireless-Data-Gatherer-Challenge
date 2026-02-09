@@ -13,60 +13,71 @@ service.
 
 See License tab for licensing information.
 
+**NOTE:** As defined in the software license, this sofware is provided "as-is," meaning that it may not receive future updates and may contain bugs/issues. This repository is provided for reference and archival purposes. Software included in this project may or may not implement "secure" mechanisms, code, configuration, and routines, in partial or whole. Those that do, may be out of date, contain bugs, compromised, not support "best secure practices," and/or contain legacy protocols that contain vulnurabalities.
+
 ## Repository Structure
 ```
 Responder UAS Wireless Data Gatherer Challenge UAS 6.0/
-├── data_ferry/                         # Drone Server / Command Server demo code
-│   ├── 3D_print_case_models/
-│   ├── app.py
-│   ├── requirements.txt
-│   ├── dataferry.iso                  # TBD future update
-│   ├── static/
-│   ├── templates/
+├── data_ferry/                        # Drone Server / Command Server demo code
+│   ├── 3D_print_case_models/		   # 3D Printer case files for Drone Server (To-Do)
+│   ├── network_configuration/         # Configuration and apps to support network functions
+│   ├── PKI_configuration/			   # Apps and support for mTLS and HTTPS
+│   ├── server_app/					   # Drone server Python/Java application
+│   ├── server_management/			   # GUI management and how-to
+│   ├── software_installation/		   # Guide on what software to install on the Raspberry Pi
+│   ├── system_install/			       # Guide on Raspberry Pi OS installation (To-Do)
 │   └── README.md
 │
-├── docs/                               # Archival documentation from challenge
+├── docs/                               # Archival documentation from the challenge
 │   ├── Network_Schema.drawio
 │   ├── UAS_6.0_Official_Rules/
 │   ├── UAS_6.0_Stage_2_Guidance/
 │   └── UAS_6.0_Stage_3_Guidance/
 │
-├── foxnode/                            # FoxNode project (Stage 3)
-│   ├── 3D_print_case_models/
-│   ├── libraries/
-│   ├── pcb_schematic/
-│   ├── sample_outputs/
-│   ├── stateMachine/
+├── foxnode/                            # FoxNode project (Post Competition)
+│   ├── 3D_print_case_models/		    # 3D Printer case files for FoxNode
+│   ├── libraries/						# Arduino libraries used in the project
+│   ├── pcb_schematic/					# PCB Schematics and parts list for FoxNode companion board
+│   ├── provision_secrets/				# Supporting PKI Arduino soure code and configuration for FoxNode HTTPS capabilities
+│   ├── sample_outputs/					# JSON outputs from FoxNodes
+│   ├── stateMachine/					# FoxNode project Arduino source code
 │   └── README.md
 │
 ├── pics/                               # Supporting pictures for repository
 │
 ├── stage2_foxnode/                     # Older FoxNode code from Stage 2
-│   ├── Foxclient_HTTP/
+│   ├── Foxclient_HTTP/					# Stage 2 FoxNode Arduino source code
 │   └── README.md
 │
-├── LICENSE.md
+├── stage3_foxnode/                     # Older FoxNode code from Stage 3
+│   ├── libraries/						# Arduino libraries to support Stage 3 FoxNode
+│   ├── stateMachine/					# Stage 3 FoxNode project Arduino source code
+│   └── README.md
+│
+├── LICENSE.md							# NIST license and supporting libraries licenses
 └── README.md                           # Project overview (this page)
 ```
 ## Project Components
 
-- [Data Ferry](data_ferry/README.md)
-- [FoxNode Platform (stage3)](foxnode/README.md)
-- [Stage 2 FoxNode](stage2_foxnode/README.md)
+- [Data Ferry](/data_ferry/README.md)
+- [FoxNode Platform - Post Competition](/foxnode/README.md)
+- [Stage 2 FoxNode](/stage2_foxnode/README.md)
+- [Stage 3 FoxNode](/stage3_foxnode/README.md)
+
 
 ## Terminology
-- The sensor device or "IoT-sensor" is interchangeably referred to as "sensor(s)" or "FoxNode(s)".
-- The drone collecting the data (from the FoxNodes) will be referred to as "data ferry" or "drone server."
+- The sensor device or "IoT-sensor" is referred to as "sensor(s)" or "FoxNode(s)".
+- The drone collecting the data (from the FoxNodes) is referred to as "data ferry", "drone server", or simply "server."
 - The device receiving the data from the data ferry is referred to as the "command server".
 
-Note that conflicts may be present regarding terminology and alignment between the reference code and historical documentation.
+Note that conflicts may be present regarding terminology and alignment between the reference code and historical documentation. Above terms will be used interchangeably throughout.
 
 ## Scope
-This repository contains the reference software for the FoxNode (Ground-based IoT-Sensor), hardware schematics, 3D-print files, and challenge documentation for the UAS 6.0 Challenge. It also includes PSCR-developed servers (data ferry and command server) for system testing. The intent of this repository is not only to preserve the software and hardware schematics used in UAS 6.0, but also to serve as a guide for building and replicating the sensor hardware and associated software components used in the competition. Documentation includes UAS 6.0 Official Rules and Guidance documents for Stages 2 and 3. With this information, one could replicate and run the entire UAS 6.0 challenge.
+This repository contains the reference software for the FoxNode (Ground-based IoT-Sensor), hardware schematics, 3D-print files, and challenge documentation for the UAS 6.0 Challenge. It also includes PSCR-developed servers (data ferry and command server) for system testing. The intent of this repository is not only to preserve the software and hardware schematics used in UAS 6.0, but also to serve as a guide for building and replicating the sensor hardware and associated software components used in the competition. Documentation includes UAS 6.0 Official Rules and Guidance documents for Stages 2 and 3. With this information, one could replicate and run the entire UAS 6.0 challenge. Stage 2 and 3 FoxNode code is provided for historical reference and "Post Competition" code is provided that contains additional added enhancements since the compeition conculded.
 
-The "product" of this repository is a ground-based IoT-sensor, based on the Espressif ESP32 System-on-Chip platform that "senses" or generates data, including light levels or lux, temperature, humidity, pressure, accelerometer or motion, associated time stamps, and system-on-chip compute statuses. The system then transmits JSON-formatted data in an HTTP POST message to a predetermined IP address over Wi-Fi. The associated sensor product is extensible (not currently implemented) to include global positioning system (GPS) data, among other sensors that support the I2C bus. Associated data objects or "placeholders" are present for GPS extensions in the provided code.
+The "product" of this repository is a ground-based IoT-sensor, based on the Espressif ESP32 System-on-Chip platform that "senses" or generates data, including light levels or lux, temperature, humidity, pressure, accelerometer or motion, associated time stamps, and system-on-chip compute statuses. The system then transmits JSON-formatted data in an HTTP POST message to a predetermined IP address over Wi-Fi. The associated sensor product is extensible to include global positioning system (GPS) data, among other sensors that support the I2C bus. Associated data objects or "placeholders" are present for GPS extensions in the provided code.
 
-A secondary "product" is a Python-based Flask web server for replicating the Data Ferry (Drone Server) and combo Command Server components. Both of these components were required deliverables by challenge participants, but the PSCR lab version is included here for systems-based testing. 
+A secondary "product" is a Python-based Flask web server for replicating the Data Ferry (Drone Server) and combo Command Server components. Both of these components were required deliverables by challenge participants in Stage 3, but the PSCR lab version is included here for systems-based testing and ongoing development.
 
 ## Competition Background
 The First Responder Uncrewed Aircraft Systems (UAS) Wireless Data Gatherer Challenge, otherwise known as UAS 6.0, was the sixth competition in the National Institute of Standards and Technology (NIST) Public Safety Communications Research (PSCR) Division’s UAS prize challenge series, which took place between May 2024 and concluded in April of 2025. The challenge evaluated the feasibility and operational value of using UAS as mobile data ferries to support situational awareness in public safety scenarios characterized by sparse, partitioned, or infrastructure-limited communications environments.
@@ -84,15 +95,21 @@ Results showed that UAS-based data ferries equipped with wide-area communication
 
 # UAS 6.0 Network Architecture
 
-It is important to consider how you plan to deploy the FoxNode sensors and associated servers in your network deployment. 
+It is important to consider how you plan to deploy the FoxNode sensors and associated servers in your network deployment if you choose to develop on this project.
 The following is a greatly simplified architecture that was used in the UAS 6.0 Stage 3 competition. All coded configurations in this repository follow this general schema if you intend to replicate this experiment.
 
 ![Fox Node State Diagram](pics/Network_Schema_Example.png)
 
 The diagram above shows the three primary components used in UAS 6.0.
+
 - The [Data Ferry](data_ferry/) is the central component configured as a Wi-Fi access point or hotspot. The IP assigned (static provisioning) to the Data Ferry is 192.168.40.20. The mask is 255.255.0.0.
+
 - The [FoxNodes](foxnode/) connect to the Data Ferry when it is in range. FoxNodes are assigned DHCP address (first choice), and failover to "static" IP addresses 192.168.40.80 + FoxNode ID. For example, FoxNode 1 is assigned 192.168.40.81. The mask is 255.255.0.0. These values are statically set.
-- The Command Server is assigned 192.168.40.10, mask 255.255.0.0. This is statically set. For examples in this repository, this is a simple PC client with web browsing capabilities.
+
+**NOTE:** A 255.255.0.0 or /16 "classless" 192.168.0.0 network was chosen for extensiblity in the final stage 3 competition; however, this is not typical, nor scalabale in most designs. It is recommended to use a network design that fits your application and architecture.
+
+- The Command Server is assigned 192.168.40.10, mask 255.255.0.0. This is statically set. For examples in this repository, this is a simple PC client with web browsing capabilities and can be any non-conflicting address in the /16 space.
+
 - Internet connectivity is not considered in this architecture to limit scope and to simulate "no" or "limited" connectivity often observed in first responder scenarios, such as wildfires. However, a mobile hotspot or alternative Wi-Fi connection is recommended for provisioning purposes.
 
 # Project status
@@ -102,8 +119,6 @@ Development status for PSCR - UAS 6.0 First Responder UAS Data Gatherer Challeng
 - Individuals who have questions or are interested in this project or current/future PSCR UAS projects, please contact us at the email address below.
 
 # Recommended To-dos and Implementations
-- Security, implement secure stoarge and handling of SSIDs, PSKs, phrases, and passwords
-- Security, secure comms, https and certificate based device authentication
 - Deployment package or iso of Data Ferry
 
 # Contact

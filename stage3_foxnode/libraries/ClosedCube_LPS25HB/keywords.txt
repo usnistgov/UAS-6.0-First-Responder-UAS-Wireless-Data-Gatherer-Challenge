@@ -1,0 +1,22 @@
+##################################################################
+# Syntax Coloring Map For  ClosedCube LPS25HB MEMS Absolute Barometer / Pressure Sensor breakout board
+##################################################################
+
+##################################################################
+# Datatypes (KEYWORD1)
+##################################################################
+
+ClosedCube_LPS25HB	KEYWORD1
+
+##################################################################
+# Methods and Functions (KEYWORD2)
+##################################################################
+
+begin KEYWORD2
+whoAmI KEYWORD2
+
+readTemperature KEYWORD2
+readPressure KEYWORD2
+
+readT KEYWORD2
+readP KEYWORD2

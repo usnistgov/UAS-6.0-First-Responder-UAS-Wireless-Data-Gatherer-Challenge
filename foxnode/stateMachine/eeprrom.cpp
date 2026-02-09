@@ -21,8 +21,8 @@ unsigned short thisFoxNodeId;	// the ID number for this device
 // Set up the eeprom variabels to their default values if there is a probelm with the RTC
 // this replaced a number of #defines in various .h files
 void eepromSetVariablesToDefault(void){
-	thisFoxNodeId = 6;                  // This is where you manually set the FoxNode ID, Do not assign values greater than 175.
-	thisFoxNodeLat = 64.83;  thisFoxNodeLng = -147.77;   thisFoxNodeElev = 137;
+	thisFoxNodeId = 14;                  // This is where you manually set the FoxNode ID, Do not assign values greater than 175.
+	thisFoxNodeLat = 64.83;  thisFoxNodeLng = -147.77;   thisFoxNodeElev = 137; //Hardset value for GPS till real GPS is integrated
 	rssiConnectValue = -55;		// signed, dBm. Drop threshold is 30 dB down from this.
 	blindTimeDelay = 1500;		// typically 30 seconds, can be less for testing.
 	sensorSampleRate = 3000;	// typicall 60,000 = 1 minute, can be less for testing.

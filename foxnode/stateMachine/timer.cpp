@@ -6,10 +6,16 @@
 // no IRQs. Software can grab the 32-bit timer in order to make time
 // measurements.
 
-#include <Arduino.h>						                                                            // Print functions 
+#include <Arduino.h>		
+#include <time.h>				                                                            // Print functions 
 #include "timer.h"
 #include "sensor.h"							// for sensorSampleRate
 #include "state.h"
+#include "secrets.h"
+#include <WiFi.h>
+#include <sys/time.h>
+#include "secrets.h"
+#include "httpComms.h" 
 
 unsigned int sensorSampleRateTimer;			// timer that decremants to zero to control when to take a sample from the sensors
 
@@ -49,78 +55,138 @@ void initTimers(void){										// setup ESP32 timers ISR (these drive StateMach
   timerAlarm(timer2, 10, false, 0);							// Timer IRQ (which is not used) is every 1 mS
 } 
 
-// Initialize the RTC (Real Time Clock) chip. We connect to a hotspot with
-//  Internet connectivity so that we can get the time via HTP protocol.
 int initNTP(void){
-	char s[128];
-  unsigned long timeout;
-	unsigned long startMillis;
-  unsigned long postStartTimeMs;
-  unsigned long pdt;						// how long it took to do the entire POST process 'p'ost 'd'elta 't'ime
-	tft_display(5);											// (YELLOW) tftDisp NTP time setup
-	putToSerialWithNewline("**FN-NTP RV-3032 Setup Initiated**");
-	int RTC_err = rtc.init();								// init Real Time Clock (RV-3032 on SNS-PCB via I2C)
-	if(RTC_err == RTC_SUCCESS){
-		putToSerialWithNewline("RTC init Success");
-		putToSerialWithNewline("RTC type = " + String(szRTCType[rtc.getType()]));
-		rtc.getTime(&myTime);                                                                   // Set ESP Time from RTC
-		putToSerialWithNewline("Set ESP time to RTC mem:");
-		putToSerial(String(myTime.tm_year + 1900) + "-" + String(myTime.tm_mon + 1) + "-" + String(myTime.tm_mday) + " " + String(myTime.tm_hour) + ":" + String(myTime.tm_min) + ":" + String(myTime.tm_sec) + "\n");
-	} else {
-		putToSerialWithNewline("{ERROR} RTC Failure, stopping... does this FN have a SEN's PCB board connected (I2C)?");
-		return -1;											// no clock found /  RTC error !
-	}
+  unsigned long startMs;
+  unsigned long timeoutMs;
 
-	// START NTP setup This gets time by connecting go a local WiFi that can get to the Internet
-	putToSerialWithNewline("Attempting NTP-WiFi Connection to SSID "+String(NTP_WIFI_SSID));
-	putToSerialWithNewline("password is"+String(NTP_WIFI_PASSWORD));
-	WiFi.mode(WIFI_STA);									// Otherwise opp seems to be WIFI_STA_AP mode... this makes the server connection very poor
-	startMillis = millis();     // debug timing WiFi connect
-	WiFi.disconnect(true);
-	delay(100);
-	WiFi.mode(WIFI_STA);
-	WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE);  // force DHCP, clear static
-	WiFi.begin(NTP_WIFI_SSID, NTP_WIFI_PASSWORD);
+  // Screen 5 = primary NTP setup (UAS_NTP)
+  tft_display(5);
+  putToSerialWithNewline("**FN-NTP RV-3032 Setup Initiated**");
 
-	startMillis = millis();
-	timeout = 30000;										// 30 seconds to get connected to net for NTP
-	while( WiFi.status() != WL_CONNECTED ){
-		if(millis() - startMillis >= timeout){
-			putToSerialWithNewline("\nTimeout reached, proceeding with regular code flow. NTP unable to set");
-			WiFi.disconnect(true);							// clean up WiFi STA from NTP attempt
-			delay(1000);									// Short 1 second delay to ensure disconnect is complete. delay function units are mS
-			return 0;										// sucsses RTC initalized
-		}
-		delay(500);
-		putToSerial( "." );
-	}
-  pdt = millis() - postStartTimeMs;
-  sprintf(s,"NTP Setup procTime=%d", pdt);
-  putToDebugWithNewline(s,2);
-	if(WiFi.status() == WL_CONNECTED){				// If we found NTP_WiFi read NTP and save to RTC
-		putToSerialWithNewline("\nNTP WiFi Connected");
-		tft.println("NTP WiFi Connected");
-		timeClient.setTimeOffset(0);						// GMT - 7 = -25200    (MST selection) TODO: UPDATE for day of timezone??
-		timeClient.begin();
-		timeClient.update();
-		time_t rawTime = timeClient.getEpochTime();			// get NTP time in epoch format (number of seconds from 1900)
-		localtime_r(&rawTime, &myTime);						// convert local time and store in myTime struct
-		rtc.setTime(&myTime);								      // set RCT time
-    RTC_tftPrint();  // Display formatted RTC time info
-		putToSerial("FN-NTP Time Set:"+String(myTime.tm_hour)+String(myTime.tm_min)+String(myTime.tm_sec));
-		timeClient.end();									      // clean up NTP
-		WiFi.disconnect(true);							  	// clean up WiFi STA
-		delay(1000);										        // Short 1000 ms (1 second) delay to ensure disconnect is complete
-		tft.println("NTP WiFi Disconnect");
-		return 0;											          // sucsses RTC initalized
+  // Init RTC (RV-3032)
+  secretsInit();
+  int RTC_err = rtc.init();
+  if (RTC_err != RTC_SUCCESS) {
+    putToSerialWithNewline("{ERROR} RTC Failure, stopping... does this FN have a SEN's PCB board connected (I2C)?");
+    return -1;
   }
-  else{
+
+  // Seed from RTC first
+  rtc.getTime(&myTime);
+
+  // Helper: commit current myTime to RTC + TFT
+  auto commitTimeToRtc = [&](){
+    rtc.setTime(&myTime);
+    RTC_tftPrint();
+    putToSerial("FN-NTP Time Set:" + String(myTime.tm_hour) + String(myTime.tm_min) + String(myTime.tm_sec));
+  };
+
+  // Helper: SNTP sync from a server (hostname or IP). Accept whatever time it provides.
+  auto sntpSync = [&](const char *server, uint32_t waitMs) -> bool {
+    configTime(0, 0, server);
+    struct tm timeinfo;
+    if (!getLocalTime(&timeinfo, waitMs)) {
+      return false;
+    }
+    myTime = timeinfo;
+    commitTimeToRtc();
+    return true;
+  };
+
+  // ----------------------------
+  // Primary: connect to UAS_NTP and sync via Internet NTP
+  // ----------------------------
+  String ntpSsid, ntpPsk;
+  bool haveNtpWiFi = secretsGetWiFi(WifiProfile::NTP, ntpSsid, ntpPsk);
+
+  if (haveNtpWiFi && ntpSsid.length() > 0) {
+    putToSerialWithNewline("Attempting NTP WiFi Connection to SSID " + ntpSsid);
+
+    WiFi.mode(WIFI_STA);
     WiFi.disconnect(true);
-    pdt = millis() - postStartTimeMs;
-    sprintf(s,"NTP Setup failed, procTime=%d",pdt);
-    putToDebugWithNewline(s,2);
-    delay(1000);
+    delay(100);
+    WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE); // DHCP
+
+    startMs = millis();
+    timeoutMs = 30000;
+    WiFi.begin(ntpSsid.c_str(), ntpPsk.c_str());
+
+    while (WiFi.status() != WL_CONNECTED) {
+      if (millis() - startMs >= timeoutMs) {
+        putToSerialWithNewline("UAS_NTP timeout, switching to Drone Server NTP fallback");
+        WiFi.disconnect(true);
+        delay(200);
+        break;
+      }
+      delay(500);
+      putToSerial(".");
+    }
+
+    if (WiFi.status() == WL_CONNECTED) {
+      putToSerialWithNewline("NTP WiFi Connected");
+      tft.println("NTP WiFi Connected");
+
+      if (sntpSync("pool.ntp.org", 8000)) {
+        putToSerialWithNewline("Internet NTP sync OK");
+        WiFi.disconnect(true);
+        delay(500);
+        tft.println("NTP WiFi Disconnect");
+        return 0;
+      }
+
+      putToSerialWithNewline("Internet NTP sync failed, switching to Drone Server NTP fallback");
+      WiFi.disconnect(true);
+      delay(200);
+    }
+  } else {
+    putToSerialWithNewline("NTP WiFi secrets missing in NVS, switching to Drone Server NTP fallback");
   }
+
+  // ----------------------------
+  // Fallback: connect to uas6 and query Drone Server as NTP server
+  // ----------------------------
+  tft_display(6);
+  putToSerialWithNewline("Attempting Drone Server NTP fallback (uas6)...");
+
+  String uasSsid, uasPsk;
+  if (!secretsGetWiFi(WifiProfile::UAS6, uasSsid, uasPsk) || uasSsid.length() == 0) {
+    putToSerialWithNewline("UAS6 WiFi secrets missing in NVS, cannot do Drone Server NTP fallback");
+    return 0;
+  }
+
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect(true);
+  delay(100);
+  WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE); // DHCP
+
+  startMs = millis();
+  timeoutMs = 20000;
+  WiFi.begin(uasSsid.c_str(), uasPsk.c_str());
+
+  while (WiFi.status() != WL_CONNECTED) {
+    if (millis() - startMs >= timeoutMs) {
+      putToSerialWithNewline("Drone Server NTP fallback: WiFi connect timeout");
+      WiFi.disconnect(true);
+      delay(200);
+      return 0;
+    }
+    delay(500);
+    putToSerial(".");
+  }
+
+  putToSerialWithNewline("uas6 WiFi Connected (fallback)");
+  tft.println("uas6 WiFi Connected");
+  tft.println("Querying Drone NTP");
+
+  if (sntpSync("192.168.40.20", 8000)) {
+    putToSerialWithNewline("Drone Server NTP fallback OK");
+  } else {
+    putToSerialWithNewline("Drone Server NTP fallback failed, proceeding with RTC time");
+  }
+
+  WiFi.disconnect(true);
+  delay(500);
+  return 0;
 }
 
 time_t rtcToUnixTimeStamp(struct tm rawTime){			// Convert RTC time (dat and HH:MM:SS into Unix time (seconds from epoch)

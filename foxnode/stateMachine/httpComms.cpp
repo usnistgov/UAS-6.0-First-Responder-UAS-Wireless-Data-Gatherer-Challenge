@@ -13,6 +13,127 @@
 #include "RingBuffer.h"					        // For Ringbuffer class "ringbuff"
 #include "eeprom.h"
 #include "WiFi.h"
+#include <WiFiClientSecure.h>
+#include <HTTPClient.h>
+#include "secrets.h"
+#include <cstring>
+
+// Forward declarations (configureMtlsClient uses these).
+static void printTlsLastError(WiFiClientSecure &client);
+static void dumpFirstBadBase64Char(const char *label, const String &s);
+
+// Keep PEM buffers alive for the lifetime of the program.
+// WiFiClientSecure commonly stores pointers to PEM buffers (does not always deep-copy),
+// so local Strings can lead to dangling pointers after a helper returns.
+static bool g_mtlsCacheLoaded = false;
+static bool g_mtlsCacheOk = false;
+static String g_caPem;
+static String g_certPem;
+static String g_keyPem;
+
+static void configureMtlsClient(WiFiClientSecure &client) {
+   // Load once into static storage so PEM pointers stay valid.
+   // NOTE: WiFiClientSecure may store PEM pointers, not copies.
+   // PEM buffers MUST outlive the TLS session.
+
+  if (!g_mtlsCacheLoaded) {
+    g_mtlsCacheLoaded = true;
+    g_mtlsCacheOk = secretsGetMtls(g_caPem, g_certPem, g_keyPem);
+
+    Serial.print("mTLS loaded from NVS: ");
+    Serial.println(g_mtlsCacheOk ? "YES" : "NO");
+
+    if (g_mtlsCacheOk) {
+      // Optional sanity checks (safe: no secret content printed)
+      dumpFirstBadBase64Char("CA", g_caPem);
+      dumpFirstBadBase64Char("CRT", g_certPem);
+      dumpFirstBadBase64Char("KEY", g_keyPem);
+    }
+  }
+
+  if (g_mtlsCacheOk) {
+    // IMPORTANT: Actually configure the secure client with the mTLS materials.
+    client.setCACert(g_caPem.c_str());
+    client.setCertificate(g_certPem.c_str());
+    client.setPrivateKey(g_keyPem.c_str());
+  } else {
+    // Optional: compiled fallback for development only.
+    // Keep this disabled in production.
+    #ifdef FOXNODE_MTLS_FALLBACK_COMPILED
+    client.setCACert(DRONE_SERVER_CA_CERT);
+    client.setCertificate(FOXNODE_CLIENT_CERT);
+    client.setPrivateKey(FOXNODE_CLIENT_KEY);
+    #endif
+  }
+
+  if (!g_mtlsCacheOk) {
+  Serial.println("FATAL: mTLS material missing");
+}
+
+  // Give the handshake more time during debug; 5s can be tight on some APs / servers.
+  client.setHandshakeTimeout(15);
+  client.setTimeout(15000);
+}
+
+// Print TLS stack error information for debugging mTLS / certificate verification issues.
+static void printTlsLastError(WiFiClientSecure &client) {
+  char errbuf[256];
+  errbuf[0] = 0;
+  client.lastError(errbuf, sizeof(errbuf));
+  Serial.print("TLS lastError: ");
+  Serial.println(errbuf[0] ? errbuf : "<none>");
+}
+
+// Print any bad PEM characters
+static void dumpFirstBadBase64Char(const char *label, const String &s) {
+  bool inBody = false;
+  int lineStart = 0;
+
+  while (lineStart < s.length()) {
+    int lineEnd = s.indexOf('\n', lineStart);
+    if (lineEnd < 0) lineEnd = s.length();
+    String line = s.substring(lineStart, lineEnd);
+
+    if (line.startsWith("-----BEGIN ")) {
+      inBody = true;
+      lineStart = lineEnd + 1;
+      continue;
+    }
+    if (line.startsWith("-----END ")) {
+      inBody = false;
+      lineStart = lineEnd + 1;
+      continue;
+    }
+
+    if (inBody) {
+      for (int i = 0; i < line.length(); i++) {
+        char c = line[i];
+        bool ok =
+          (c >= 'A' && c <= 'Z') ||
+          (c >= 'a' && c <= 'z') ||
+          (c >= '0' && c <= '9') ||
+          c == '+' || c == '/' || c == '=';
+
+        if (!ok) {
+          Serial.print(label);
+          Serial.print(" bad base64 char dec=");
+          Serial.println((int)(uint8_t)c);
+          return;
+        }
+      }
+    }
+
+    lineStart = lineEnd + 1;
+  }
+
+  Serial.print(label);
+  Serial.println(" base64 looks clean");
+}
+
+static void configureSecureClientCommon(WiFiClientSecure &client) {
+  client.setHandshakeTimeout(15);
+  client.setTimeout(15000);
+}
 
 //The following block fist tries DHCP, than falls back to static IP if Drone server
 // has AP, but no DHCP configured.
@@ -29,32 +150,73 @@ static bool waitForIP(uint32_t timeoutMs) {
   return false;
 }
 
-bool connectWiFi_DHCP_thenStaticEveryAttempt(IPAddress fallbackIp,
+bool connectWiFi_DHCP_thenStaticEveryAttempt(WifiProfile profile,
+                                             IPAddress fallbackIp,
                                              uint32_t dhcpTimeoutMs,
                                              uint32_t staticTimeoutMs) {
   WiFi.persistent(false);
-  WiFi.mode(WIFI_STA);
-  WiFi.setAutoReconnect(true);
 
-  // Always start clean so DHCP gets first shot every time
-  WiFi.disconnect(true);
+  String ssid, psk;
+  if (!secretsGetWiFi(profile, ssid, psk)) {
+    putToDebugWithNewline("WiFi secrets missing in NVS", 1);
+    return false;
+  }
+
+  // Disable auto-reconnect for this connect attempt so we control sequencing.
+  // (We can re-enable it after success if you prefer.)
+  WiFi.setAutoReconnect(false);
+
+  // -------- HARD reset WiFi stack --------
+  WiFi.disconnect(true, true);   // wifioff=true, eraseap=true
+  delay(200);
+  WiFi.mode(WIFI_OFF);
+  delay(200);
+  WiFi.mode(WIFI_STA);
   delay(100);
 
-  // Force DHCP (clears any prior static config)
-  WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE);
+  // -------- DHCP attempts --------
+  const int dhcpAttempts = 4;         // try several times before static fallback
+  const uint32_t betweenAttemptsMs = 1500;
 
-  // --- DHCP attempt ---
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  if (waitForIP(dhcpTimeoutMs)) return true;
+  for (int attempt = 1; attempt <= dhcpAttempts; attempt++) {
+    // Force DHCP mode (clears any prior static config)
+    WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE);
+    delay(50);
 
-  // --- Static fallback ---
-  WiFi.disconnect(true);
+    //WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    WiFi.begin(ssid.c_str(), psk.c_str());
+
+    if (waitForIP(dhcpTimeoutMs)) {
+      // Optional: allow WiFi library to handle future link drops
+      WiFi.setAutoReconnect(true);
+      return true;
+    }
+
+    // Failed DHCP attempt: fully stop and retry after a short wait.
+    WiFi.disconnect(true, true);
+    delay(betweenAttemptsMs);
+    WiFi.mode(WIFI_OFF);
+    delay(200);
+    WiFi.mode(WIFI_STA);
+    delay(100);
+  }
+
+  // -------- Static fallback --------
+  WiFi.disconnect(true, true);
   delay(200);
+  WiFi.mode(WIFI_STA);
+  delay(50);
 
   WiFi.config(fallbackIp, UAS_Gateway, UAS_Subnet, UAS_DNS);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  //WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  WiFi.begin(ssid.c_str(), psk.c_str());
 
-  return waitForIP(staticTimeoutMs);
+  if (waitForIP(staticTimeoutMs)) {
+    WiFi.setAutoReconnect(true);
+    return true;
+  }
+
+  return false;
 }
 
 WebServer webServer(80);				        // Initialize Server w/ def HTTP port assignment
@@ -63,7 +225,20 @@ IPAddress clientIpAddr(192,168,40,30);	// Base IP for FoxNode IP range, IPs actu
 IPAddress serverIpAddr(192,168,40,20);	// The fixed IP address of the Drone Server
 IPAddress dnsServer(8,8,8,8);			      // If client wants to reach out over the internet
 
-int httpResponseCode;					// Standard HTTP responses like 200 and 400.
+int httpResponseCode = -999;					// Standard HTTP responses like 200 and 400, -999 means not attemped.
+// TLS status for display/debug
+volatile uint8_t tlsState = TLS_STATE_NA;
+char tlsLastError[48] = {0};
+
+// Capture last TLS error into tlsLastError (short, display-safe)
+static void tlsCaptureLastError(WiFiClientSecure &client) {
+  char errbuf[256];
+  errbuf[0] = 0;
+  client.lastError(errbuf, sizeof(errbuf));
+  strncpy(tlsLastError, errbuf[0] ? errbuf : "ERROR - Generic error", sizeof(tlsLastError) - 1);
+  tlsLastError[sizeof(tlsLastError) - 1] = 0;
+}
+
 unsigned int httpWiFiState;
 unsigned int wifiDropDeadTimer;			// Loss of signal to try to connect again or "dead time"
 unsigned int WiFiHaveDhcpReply;			// True if have had a good DNS reply so the client has an IP address
@@ -120,13 +295,16 @@ bool ensureWifiConnected(IPAddress fallbackIp) {
   lastAttemptMs = millis();
 
   // Try DHCP first, then static fallback
-  return connectWiFi_DHCP_thenStaticEveryAttempt(fallbackIp);
+  //return connectWiFi_DHCP_thenStaticEveryAttempt(fallbackIp);
+  return connectWiFi_DHCP_thenStaticEveryAttempt(WifiProfile::UAS6, fallbackIp);
 }
 
 
 void WiFiInit(IPAddress foxNodeIp){
 	WiFi.setSleep(false);
   putToDebugWithNewline("WiFiInit() Starting WiFi", 2);
+  // Load WiFi SSID and PSK from NVS
+  secretsInit();
   // Attach handlers FIRST so we don't miss the initial connect event
 	WiFi.onEvent(WiFiStationConnected,    WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_CONNECTED);
 	WiFi.onEvent(WiFiStationGotIP,        WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
@@ -186,15 +364,20 @@ void handleNotFound(void) {
 unsigned int httpConnectedToWiFi(void){
   if (WiFi.status() != WL_CONNECTED) return 0;
   IPAddress ip = WiFi.localIP();
+  // Uncomment to show network config in serial monitor for debug
+  //Serial.print("IP: ");   Serial.println(WiFi.localIP());
+  //Serial.print("Mask: "); Serial.println(WiFi.subnetMask());
+  //Serial.print("GW: ");   Serial.println(WiFi.gatewayIP());
+  //Serial.print("DNS: ");  Serial.println(WiFi.dnsIP());
+
   if (ip[0] == 0) return 0;  // still 0.0.0.0 means no usable IP
   return 1;
 }
 
-// this has evelved into just a logging mechanizm for the state of the wifi connection 21mar2025 PDH
-void httpState_WiFiConnect(void){                                  // This is a state machine that deals with detecting/knowing if the foxnode client is connect to the drone sever.
-  // This provides the functionaltiy to try to get connected, and to be able to know when an "edge event"
-  // has happpend, auch as a transition from not connected to the drone WiFi to being connected.
-    char s[64];  // Dynamically allocate scrach memory char * to String conv....
+void httpState_WiFiConnect(void){   // This is a state machine that deals with detecting/knowing if the foxnode client is connect to the drone sever.
+  // This provides the functionality to try to get connected, and to be able to know when an "edge event"
+  // has happpend, such as a transition from not connected to the drone WiFi to being connected.
+    char s[64];  // Dynamically allocate memory char * to String conv....
     rssi_current_value = WiFi.RSSI();		// constantly update our receive RSSI
     switch(httpWiFiState){
       case 0:		// we are not connected, try to connect if requested
@@ -204,22 +387,22 @@ void httpState_WiFiConnect(void){                                  // This is a 
           httpWiFiState = 1;
           return;
       case 1:		// If we are here, we are connected to WiFi
-          if(glob_connectedToDrone == 0){                           // Either the WiFi droped (from IRQ handler WiFiStationDisconnected() )
+          if(glob_connectedToDrone == 0){     // Either the WiFi droped (from IRQ handler WiFiStationDisconnected() )
               putToDebugWithNewline("HTTP SM 1: Connection to Drone dropped",3);
               httpWiFiState = 3;
-              wifiDropDeadTimer = WIFI_DROP_DEAD_WAIT;                             // set in httpComms.h, typically 3 seconds
+              wifiDropDeadTimer = WIFI_DROP_DEAD_WAIT;    // set in httpComms.h, typically 3 seconds
               return;
           }
           return;
       case 3:		// the MSM requested we drop the wifi connection, or the WiFi signal got too weak.
 		// Now we go blind for WIFI_DROP_DEAD_WAIT, typically 3 seconds.
 		// note that the MSM will impost a longer delay time after
-		// requestiong a WiFi disconnect of about 1 minute. Another timeout here is a "safety"
+		// requesting a WiFi disconnect of about 1 minute. Another timeout here is a "safety"
 		// to keep things from getting crazy if the MSM is behaving badly
 		if(wifiDropDeadTimer)return;
 		putToDebugWithNewline("HTTP SM 3: Drone wait time over, resume monitoring WiFi state",2);
 		httpWiFiState = 0;                                  // After the safety time has elapsed, we go back to waiting
-		return;                                                                                                 // to connect to the server.
+		return;                 // to connect to the server.
     }
     // If we fall through, we have a bad state value
     sprintf(s,"* State %d is out of range- fell through the switch, resetting to zero", httpWiFiState);
@@ -231,33 +414,57 @@ void wifi_sendPost(const String& payload){		                     // Compatibilit
 	sendHttpPost(payload);
 }
 
-void sendHttpPost(const String& payload) {                         // The payload for the HTTP post has been created and can be sent to the Server
-	if(httpConnectedToWiFi()) {
-		HTTPClient http;
-		http.begin(UAS_Server);
-		http.addHeader("Content-Type", "application/json");
-		putToDebugWithNewline("SEND HTTP POST:"+String(payload), 4);
-		httpResponseCode = http.POST(payload);
+void sendHttpPost(const String& payload) {  // The payload for the HTTP post has been created and can be sent to the Server
+  if (!httpConnectedToWiFi()) {
+    putToDebugWithNewline("sendHttpPost(): WiFi not connected! **POST Failed**", 1);
+    return;
+  } else {
+		// Reset TLS status for this HTTPS attempt
+		tlsState = TLS_STATE_NA;
+		tlsLastError[0] = 0;
+  }
 
-		putToDebug("HTTP Response code: ",4);
-		putToDebugWithNewline(String(httpResponseCode),4);
-		if(httpResponseCode == 200) {
-			String responseJSON = http.getString();
-			putToDebug("sendHttpPost() Server POST responseJSON: ",4);
-			putToDebugWithNewline(String(responseJSON),4);putToDebugWithNewline("",4);
-			deserializeJson(postRxPayload_doc, responseJSON);		// Write JSON general HTTP-POST payload into JSON POST_doc for API processing
-			state_processSCRVReply();								// Process UAS reply based on SVAL
+  WiFiClientSecure secureClient;
+  configureMtlsClient(secureClient);
 
-		}else{														// else If POST request fails, log the error
-			putToDebug("Error: ",1);
-			putToDebugWithNewline(String(httpResponseCode),1);putToDebugWithNewline("",1);
-		}
-		http.end();
-	}else{
-		putToDebugWithNewline("sendHttpPost(): WiFi not connected! **POST Failed**",1);
-	}
+  HTTPClient http;
+  http.begin(secureClient, UAS_Server);
+  http.addHeader("Content-Type", "application/json");
+
+  // Avoid dumping full payload to serial (can stall)
+  putToDebugWithNewline("SEND HTTP POST: payload bytes=" + String(payload.length()), 4);
+  putToDebugWithNewline("About to call http.POST()", 2);
+  httpResponseCode = http.POST(payload);
+  putToDebugWithNewline("Returned from http.POST()", 2);
+  putToDebug("HTTP Response code: ", 4);
+  putToDebugWithNewline(String(httpResponseCode), 4);
+
+  if (httpResponseCode == 200) {
+    tlsState = TLS_STATE_OK;
+		tlsLastError[0] = 0;
+    String responseJSON = http.getString();
+    putToDebug("sendHttpPost() Server POST responseJSON: ", 4);
+    putToDebugWithNewline(String(responseJSON), 4);
+    putToDebugWithNewline("", 4);
+
+    deserializeJson(postRxPayload_doc, responseJSON);
+    state_processSCRVReply();
+  } else {
+    tlsState = TLS_STATE_FAIL;
+		tlsCaptureLastError(secureClient);
+    putToDebug("Error: ", 1);
+    putToDebugWithNewline(String(httpResponseCode), 1);
+
+    String httpErr = http.errorToString(httpResponseCode);
+    putToDebugWithNewline("HTTPClient error: " + httpErr, 1);
+
+    putToDebugWithNewline("WiFi.status=" + String((int)WiFi.status()) +
+                          " IP=" + WiFi.localIP().toString(), 1);
+    putToDebugWithNewline("Target=" + String(UAS_Server), 1);
+    putToDebugWithNewline("", 1);
+  }
+  http.end();
 }
-
 void state_processSCRVReply(void){					                       // process the HTTP POST reply from the Drone Server then pass into SM
 	putToDebugWithNewline("\n*** STATE PROCESS SCRVR REPLY ***",4);
 

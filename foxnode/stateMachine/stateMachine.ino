@@ -12,10 +12,13 @@
 #include "sensor.h"
 #include "display.h"
 #include "eeprom.h"
+#include <esp_system.h>
+#include "secrets.h"
 
 void setup() {
   initializeSerial();                 
-  putSetSerialLogLevel(2);                // Set Verbosity of log level 
+  putSetSerialLogLevel(1);                // Set Verbosity of log level 
+  secretsInit();
   WiFi.disconnect(true);                  // init setp, this clears the WiFi object
   eepromSetVariablesToDefault();          // set this foxnod specifc defaults, will be changed when values read in from EEPROM
   

@@ -65,6 +65,24 @@ int RingBuffer::getCount() {                                    // Method to get
   return size;
 }
 
+// Remove entries up to and including unixTimeInclusive.
+// This is intended to be called after the server has ACKed receipt of a time window.
+// Assumption: entries are generally pushed in timestamp order (typical for sensor sampling).
+int RingBuffer::dropEntriesUpTo(time_t unixTimeInclusive) {
+  int dropped = 0;
+  while (size > 0) {
+    time_t ts = buffer[tail].timestamp;
+    if (ts > unixTimeInclusive) break;
+    buffer[tail].jsonData = "";                 // free String memory earlier
+    buffer[tail].timestamp = 0;
+    tail = (tail + 1) % RING_BUFFER_SIZE;
+    size--;
+    dropped++;
+  }
+  return dropped;
+}
+
+
 int RingBuffer::getTotalSize() {                                // Method to get the total size (in bytes) of all entries in the buffer
   int totalSize = 0;
   for (int i = 0; i < size; i++) {

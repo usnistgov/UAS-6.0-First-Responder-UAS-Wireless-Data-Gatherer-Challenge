@@ -26,6 +26,7 @@ public:
   time_t getNewestTimestamp();                                        // Get the newest timestamp in the buffer
   int estimateMaxEntries(int averageStringSize);                      // Estimate max number of entries based on available memory
   DynamicJsonDocument pullEntriesByTime(time_t myUnixTime1, time_t myUnixTime2);   // Pull entries older than a specific time and send as HTTP POST (EndTime, StartTime)
+   int dropEntriesUpTo(time_t unixTimeInclusive);                     // Remove (ACK) entries <= unixTimeInclusive
 
 private:
   static const int RING_BUFFER_SIZE = 90;                             // Buffer size
