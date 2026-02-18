@@ -18,26 +18,27 @@ See License tab for licensing information.
 ## Repository Structure
 ```
 Responder UAS Wireless Data Gatherer Challenge UAS 6.0/
-├── data_ferry/                        # Drone Server / Command Server demo code
-│   ├── 3D_print_case_models/		   # 3D Printer case files for Drone Server (To-Do)
-│   ├── network_configuration/         # Configuration and apps to support network functions
-│   ├── PKI_configuration/			   # Apps and support for mTLS and HTTPS
-│   ├── server_app/					   # Drone server Python/Java application
-│   ├── server_management/			   # GUI management and how-to
-│   ├── software_installation/		   # Guide on what software to install on the Raspberry Pi
-│   ├── system_install/			       # Guide on Raspberry Pi OS installation (To-Do)
+├── data_ferry/                     	# Drone Server / Command Server demo code
+│   ├── 3D_print_case_models/		   	# 3D Printer case files for Drone Server (To-Do)
+│   ├── network_configuration/         	# Configuration and apps to support network functions
+│   ├── PKI_configuration/			   	# Apps and support for mTLS and HTTPS
+│   ├── server_app/					   	# Drone server Python/Java application
+│   ├── server_management/			   	# GUI management and how-to
+│   ├── software_installation/		   	# Guide on what software to install on the Raspberry Pi
+│   ├── system_install/			       	# Guide on Raspberry Pi OS installation (To-Do)
 │   └── README.md
 │
-├── docs/                               # Archival documentation from the challenge
+├── docs/                              	# Archival documentation from the challenge
+│   ├── FN_Connection_process.drawio
 │   ├── Network_Schema.drawio
 │   ├── UAS_6.0_Official_Rules/
 │   ├── UAS_6.0_Stage_2_Guidance/
 │   └── UAS_6.0_Stage_3_Guidance/
 │
-├── foxnode/                            # FoxNode project (Post Competition)
-│   ├── 3D_print_case_models/		    # 3D Printer case files for FoxNode
-│   ├── libraries/						# Arduino libraries used in the project
-│   ├── pcb_schematic/					# PCB Schematics and parts list for FoxNode companion board
+├── foxnode/                           	# FoxNode project (Post Competition)
+│   ├── 3D_print_case_models/		   	# 3D Printer case files for FoxNode
+│   ├── libraries/					   	# Arduino libraries used in the project
+│   ├── pcb_schematic/				   	# PCB Schematics and parts list for FoxNode companion board
 │   ├── provision_secrets/				# Supporting PKI Arduino soure code and configuration for FoxNode HTTPS capabilities
 │   ├── sample_outputs/					# JSON outputs from FoxNodes
 │   ├── stateMachine/					# FoxNode project Arduino source code
@@ -51,6 +52,7 @@ Responder UAS Wireless Data Gatherer Challenge UAS 6.0/
 │
 ├── stage3_foxnode/                     # Older FoxNode code from Stage 3
 │   ├── libraries/						# Arduino libraries to support Stage 3 FoxNode
+│   ├── live_event_datasets/			# Collected datasets (JSON) and screenshots from contestant evaluations
 │   ├── stateMachine/					# Stage 3 FoxNode project Arduino source code
 │   └── README.md
 │
@@ -59,7 +61,7 @@ Responder UAS Wireless Data Gatherer Challenge UAS 6.0/
 ```
 ## Project Components
 
-- [Data Ferry](/data_ferry/README.md)
+- [Data Ferry - PSCR Developed](/data_ferry/README.md)
 - [FoxNode Platform - Post Competition](/foxnode/README.md)
 - [Stage 2 FoxNode](/stage2_foxnode/README.md)
 - [Stage 3 FoxNode](/stage3_foxnode/README.md)
@@ -87,9 +89,9 @@ Unlike traditional data ferry architectures that rely on delayed, store-and-forw
 Results showed that UAS-based data ferries equipped with wide-area communications systems and operator-friendly interfaces provided measurable advantages in coverage, responsiveness, and situational awareness. At the same time, findings highlighted current limitations in autonomous flights, the importance of skilled human operators, and the need for expanded measurement science to evaluate communications performance, interference, and scalability. Collectively, the challenge outcomes will inform future public safety communications research and demonstrate a practical path toward deploying UAS-enabled data ferry systems using commercially available technologies.
 
 ## UAS 6.0 Competition Stages
-**Stage 1**: A proof-of-concept phase that evaluated prototypes based on academic-style paper submissions. In this and subsequent stages, participants followed the rules outlined in the [UAS 6.0 Official Rules](docs/UAS_6.0_Official_Rules.pdf) document, located in the "docs" section of this repository.
+**Stage 1**: A proof-of-concept phase that evaluated prototypes based on academic-style paper submissions. In this and subsequent stages, participants followed the rules outlined in the [UAS 6.0 Official Rules](docs/UAS_6.0_Official_Rules.pdf) document, located in the [docs](/docs) section of this repository.
 
-**Stage 2**: Stage two took place at participants' home locations, and associated tests were conducted using video assessment methods. The sensor developed in this stage was a minimal viable verification system used for basic message exchange with built-in or "canned" data-generating mechanisms. Details on how this system was implemented and associated tests can be found in the [Guidance for Stage 2](docs/UAS_6.0_Stage_2_Guidance.pdf) document, located in the "docs" section of this repository. This section is included for historical reference. Anyone looking to replicate or build on elements from UAS 6.0 should start in the FoxNode section for Stage 3.
+**Stage 2**: Stage two took place at participants' home locations, and associated tests were conducted using video assessment methods. The sensor developed in this stage was a minimal viable verification system used for basic message exchange with built-in or "canned" data-generating mechanisms. Details on how this system was implemented and associated tests can be found in the [Guidance for Stage 2](docs/UAS_6.0_Stage_2_Guidance.pdf) document, located in the [docs](/docs) section of this repository. This section is included for historical reference. Anyone looking to replicate or build on elements from UAS 6.0 should start in the [FoxNode Section](foxnode/README.md).
 
 **Stage 3**: UAS prize challenge participants competed in-person event to perform NIST-standardized tests and collect data from sensors placed throughout the competition theater. The sensor developed in this stage generated and transmitted environmental data in JSON format from various sensing components. The sensor included a communications state machine to improve data delivery. Details on how this system was implemented and the associated tests can be found in  [Guidance for Stage 3](docs/UAS_6.0_Stage_3_Guidance.pdf) document, located in the [docs](/docs) section of this repository.
 
@@ -106,11 +108,11 @@ The diagram above shows the three primary components used in UAS 6.0.
 
 - The [FoxNodes](foxnode/) connect to the Data Ferry when it is in range. FoxNodes are assigned DHCP address (first choice), and failover to "static" IP addresses 192.168.40.80 + FoxNode ID. For example, FoxNode 1 is assigned 192.168.40.81. The mask is 255.255.0.0. These values are statically set.
 
-**NOTE:** A 255.255.0.0 or /16 "classless" 192.168.0.0 network was chosen for extensiblity in the final stage 3 competition; however, this is not typical, nor scalabale in most designs. It is recommended to use a network design that fits your application and architecture.
+**NOTE:** A 255.255.0.0 or /16 "classless" 192.168.0.0 network was chosen for extensiblity in the final stage 3 competition; however, this is not typical, nor practical in most network designs. It is recommended to use a network design that fits your application and architecture.
 
-- The Command Server is assigned 192.168.40.10, mask 255.255.0.0. This is statically set. For examples in this repository, this is a simple PC client with web browsing capabilities and can be any non-conflicting address in the /16 space.
+- The Command Server is assigned 192.168.40.10, mask 255.255.0.0. This is statically set. For examples in this repository, this is a simple PC client with web browsing capabilities and can use any non-conflicting address in the /16 address space.
 
-- Internet connectivity is not considered in this architecture to limit scope and to simulate "no" or "limited" connectivity often observed in first responder scenarios, such as wildfires. However, a mobile hotspot or alternative Wi-Fi connection is recommended for provisioning purposes.
+- Internet connectivity is not considered in this architecture to limit scope and to simulate "no" or "limited" connectivity often observed in first responder scenarios, such as wildfires. However, a mobile hotspot or alternative Wi-Fi connection is recommended for development and provisioning purposes.
 
 # Project status
 Development status for PSCR - UAS 6.0 First Responder UAS Data Gatherer Challenge

@@ -1,8 +1,10 @@
 # Data Ferry PKI Infastructure Secure Comms Configuration
 
+It is assumed that [Part 1](/data_ferry/system_install/README.md) and [Part 2](/data_ferry/software_installation/README.md) and [Part 3](/data_ferry/network_configuration/README.md) is complete.  
+
 In this section we will create a Public Key Infastructure (PKI) configuration that will mutually authenticate and encrypt comms between our FoxNodes and the Drone Server and vice versa.
 
-In this section we will mostly work within the Drone Server Raspbian OS; however, we will have to "load" the generated certificates onto each FoxNode independently. This is also discussed in this section.
+We will mostly work within the Drone Server Raspbian OS; however, we will have to "load" the generated certificates onto each FoxNode independently. This is also discussed in this section.
 
 **NOTE:** This is only used to create secure HTTP/TLS sessions for encrypted HTTP data. Since the Wi-Fi network is considered a "controlled" private network, we assume all devices that connect to the network are trusted and that the Wi-Fi protocol privides lower level secure communications and device authentication.
 
@@ -24,7 +26,7 @@ openssl genrsa -out ca/ca.key 4096
 chmod 600 ca/ca.key
 ```
 
-**Step 3:** Create a self-signed CA certificate (valide 10 years)
+**Step 3:** Create a self-signed CA certificate (valid 10 years)
 
 **NOTE:** Replace "subj" parameters with your organization information
 
@@ -127,7 +129,7 @@ Example scp command:
 scp -r pscr@192.16840.20:/home/pscr/mstls/clients /local/directory/
 ```
 
-Alternatively, you may use a USB thumb drive or similar removable media to mode the certificates; however, ensure to practice safe media transfer. It is recommended to delete thumb drive contents after the trasfer.  
+Alternatively, you may use a USB thumb drive or similar removable media to mode the certificates; however, ensure to practice safe media transfer methods. It is recommended to delete thumb drive contents after the trasfer.  
 
 For configuring the client certs see the [FoxNode](/foxnode/README.md) documentation.
 

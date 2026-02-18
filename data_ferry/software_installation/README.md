@@ -1,4 +1,4 @@
-# Data Ferry (Drone Server) Software and Dependencies Instllation
+# Data Ferry (Drone Server) Software and Dependencies installation
 
 This section outlines "manual" installation of the drone server software. It is assumed that [Part 1, Rasbpian OS Install](/data_ferry/system_install/README.md) is complete.
 
@@ -6,26 +6,26 @@ This section outlines "manual" installation of the drone server software. It is 
 
 - In our setup, we disable NetworkManager in favor of systemd-networkd and netplan.
 
-- The Pi is set up in Access Point (AP) Mode. The Pi Zero's integrated Wi-Fi does not support AP mode. In addition to needing a higher-gain antenna, we found it best to use an [external USB Wi-Fi adaptor](https://www.netgear.com/support/product/a6210) that supports AP mode. External Wi-Fi adaptors typically show up as wlan1.
+- The Pi is set up in **Access Point (AP) Mode**; however, the Pi Zero's integrated Wi-Fi does not support AP mode. We found it best to use an [external USB Wi-Fi adaptor](https://www.netgear.com/support/product/a6210) that supports AP mode and higher signal gain capabalities. External Wi-Fi adaptors typically show up as wlan1.
 
-- Configure wlan0, integrated Wi-Fi, as a client (STA) to connect to the UAS_NTP hotspot or other internet connection. This is mostly for remote provisioning and downloading additional software.
+- Configure **wlan0**, integrated Wi-Fi, as a **client (STA)** to connect to the UAS_NTP hotspot or other internet connection. This is mostly for remote provisioning and downloading additional software.
 
-- For the AP software, we used hostapd
+- For the **AP software**, we used **hostapd**
 
-- isc-dhcp-server is installed for FoxNodes or devices that use DHCP
+- **isc-dhcp-server** is installed for FoxNodes or devices that use **DHCP**
 
-- caddy is installed as a reverse proxy that supports secure HTTP/LTS in our application
+- **caddy** is installed as a reverse proxy that supports **secure HTTP/TLS** in our application. Native TLS in Flask is not as extensible or secure, so caddy is used to handle secure data transfer.
 
-- Optional - install iptables for device network security (configuration for iptables is not provided in this repository)
+- Optional - install **iptables firewall** for device network security (configuration for iptables is not provided in this repository)
 
-- Optional - enable IP routing if you want the Pi to act as a router (configuration not provided)
+- Optional - enable **IP routing** if you want the Pi to act as a router (configuration not provided)
 
 ## Software Instllation
 
 **Step 1:** Update Raspberry Pi and install software servers, software, and dependencies.
 ```
 sudo apt-get update && sudo apt-get upgrade -y
-sudo apt-get install netplan.io systemd systemd-resolved hostapd dnsmasq iptables iptables-persistent python3-full git isc-dhcp-server tcpdump chrony
+sudo apt-get install -y netplan.io systemd systemd-resolved hostapd dnsmasq iptables iptables-persistent python3-full git isc-dhcp-server tcpdump chrony
 ```
 
 **Step 2:** Install Caddy reverse proxy

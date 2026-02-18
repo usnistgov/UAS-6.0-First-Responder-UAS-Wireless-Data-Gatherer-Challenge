@@ -18,7 +18,7 @@ Upon successful configuration of your FoxNode(s) and Data Ferry, the FoxNode sho
 
 Using your "Command Server" computer, set the device's Wi-Fi IP address as 192.168.50.10/16 as specified in [network architecture](/pics/Network_Schema_Example.png)
 
-Open a web browser and enter https://192.168.50.20/ui/
+Open a web browser and enter https://192.168.50.20/ui/  
 **NOTE:** It's likely you haven't imported your drone server's certificate information to your host PC, so it will likely give you an HTTPS error. Acknolege and/or "Proceed" if prompted.
 
 From here you will see various options for settings and FoxNode collection stats.
@@ -40,7 +40,7 @@ A "Clear Data" button is provided to purge the database. The "admin token" using
 A general system "health" link provides status of the Data Ferry system.
 ![Data Ferry Health](/pics/UI_Health.png)
 
-All gathered data can be viewed from the "/dump/full" link. This shows all of the gathered FoxNode data as JSON. A "Pretty-print" checkbox will display JSON in human readable format.
+All gathered data can be viewed from the "/dump/full" link. This shows all of the gathered FoxNode data as JSON. A "Pretty-print" checkbox will display JSON in human readable format.  
 ![FoxNode JSON Data](/pics/UI_Dump.png)
 
 Scroll down the the end of the dump output to see information for "first seen" or "earliestTakeOff", "sortieCount" and others.

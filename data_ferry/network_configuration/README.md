@@ -1,5 +1,7 @@
 # Data Ferry Network Configuration and Provisioning
 
+It is assumed that [Part 1, Rasbpian OS Install](/data_ferry/system_install/README.md) and [Part 2, Data Ferry Software and Dependencies installation](/data_ferry/software_installation/README.md) is complete.  
+
 In this section we detail how to configure networking services, Wi-Fi AP mode or "hotspot", and create associated automatic startup services on boot.
 
 ## USB Device Paths and External Wi-Fi Adaptor
@@ -21,7 +23,13 @@ sudo ip link show
 ```
 OUTPUT
 ```
-To-Do - Put ip link show here
+pscr@dronesvr:~ $ sudo ip link show
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: wlan0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc pfifo_fast state DOWN mode DORMANT group default qlen 1000
+    link/ether d8:3a:dd:fe:7a:94 brd ff:ff:ff:ff:ff:ff
+3: wlan1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DORMANT group default qlen 1000
+    link/ether 8c:3b:ad:bb:b6:89 brd ff:ff:ff:ff:ff:ff
 ```
 
 and/or
@@ -31,7 +39,18 @@ sudo iwconfig
 ```
 OUTPUT
 ```
-To-Do Put iwconfig output Here
+pscr@dronesvr:~ $ sudo iwconfig
+lo        no wireless extensions.
+
+wlan0     IEEE 802.11  ESSID:off/any
+          Mode:Managed  Access Point: Not-Associated   Tx-Power=31 dBm
+          Retry short limit:7   RTS thr:off   Fragment thr:off
+          Encryption key:off
+          Power Management:on
+
+wlan1     IEEE 802.11  Mode:Master  Tx-Power=18 dBm
+          Retry short limit:7   RTS thr:off   Fragment thr:off
+          Power Management:off
 ```
 
 - Typically the new interface shows up as **wlan1**, but you may have to run the command(s) before and after you plug it in to determine the interface name designation.
@@ -44,7 +63,11 @@ sudo lsusb
 ```
 OUTPUT
 ```
-To-Do put output here
+pscr@dronesvr:~ $ sudo lsusb
+Bus 001 Device 004: ID 0846:9053 NetGear, Inc. A6210
+Bus 001 Device 003: ID 3151:5026  2.4G Wireless Keyboard
+Bus 001 Device 002: ID 214b:7250 Huasheng Electronics USB2.0 HUB
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 ```
 
 In the above lsusb output we notice that the OS detects a four port USB Hub connected to Port 1 and Port 4 contains our USB Wi-Fi adaptor. This can be determined by the "NetGear, Inc. A6219" designation.
@@ -53,6 +76,11 @@ We can correlate the "A6219" information by using the following command:
 
 ```
 cat /sys/class/net/wlan1/device/interface
+```
+OUTPUT
+```
+pscr@dronesvr:~ $ sudo cat /sys/class/net/wlan1/device/interface
+A6210
 ```
 
 ## Netplan Configuration
@@ -76,7 +104,7 @@ sudo cp ~/data_ferry/dataferry.yaml /etc/netplan/dataferry.yaml
 sudo chmod 600 /etc/netplan/dataferry.yaml
 ```
 
-**NOTE:** You may need to edit the wlan interface designation if yours differs from wlan1 as discussed in the previous step.
+**NOTE**: You may need to edit the wlan interface designation if yours differs from wlan1 as discussed in the previous step.
 
 **Step 4**: Apply network configuration
 
@@ -84,7 +112,7 @@ sudo chmod 600 /etc/netplan/dataferry.yaml
 sudo netplan apply
 ```
 
-**NOTE:**Netplan may warn "Cannot call openvswitch..." ignore this warning message as it does not impact our server setup.
+**NOTE:** Netplan may warn "Cannot call openvswitch..." ignore this warning message as it does not impact our server setup.
 
 ## Access Point or "Hotspot" configuration
 
@@ -93,7 +121,7 @@ To do this we need to disable
 
 **Step 5**: Disable RFkill so that you can run in AP mode
 
-RFKill is a Linux kernel subsystem designed to disable radio transmitters to save power or comply with safety regulations (like airplane mode). It prevents you from running in Access Point (AP) mode because its primary function is to cut power to the physical radio, making the hardware unavailable to access point programs like hostapd.
+RFKill is a Linux kernel subsystem designed to disable radio transmitters to save power or comply with safety regulations (like airplane mode). It prevents you from running in Access Point (AP) mode because its primary function is to cut power to the physical radio, making the hardware unavailable to access point programs like hostapd. We need to deactivate this function to run in AP mode.
 
 ```
 sudo /usr/sbin/rfkill unblock wifi
@@ -127,7 +155,7 @@ sudo chmod 600 /etc/hostapd.conf
 
 **Step 7:** Configure our Pi as an DHCP server
 
-Copy DHCP Server [dhcpd.conf](/data_ferry/raspbian_files/dhcpd.conf)
+Copy DHCP Server [dhcpd.conf](/data_ferry/network_configuration/dhcpd.conf)
 **NOTE:** Change parameters to match your network schema or copy file from repositiory
 ```
 sudo cp ~/data_ferry/raspbian_files/dhcpd.conf /etc/dhcp/dhcpd.conf
@@ -135,7 +163,7 @@ sudo cp ~/data_ferry/raspbian_files/dhcpd.conf /etc/dhcp/dhcpd.conf
 
 **Step 8:** Configure Data Ferry to be NTP server  
 
-Copy chrony configuration file from repository to system directory
+Copy chrony configuration file from repository to system directory  
 **NOTE:** Change parameters to match your network schema or copy file from repositiory
 
 ```
@@ -143,12 +171,12 @@ sudo cp ~data_ferry/network_configuration/chrony.conf /etc/chrony/chrony.conf
 sudo chmod 600 /etc/chrony/chrony.conf
 ```
 
-**Step 8**: Enable, start/restart services
+**Step 9**: Enable, start/restart services
 
 Before we preceed further, we need to enable, start and restart services. The following commands will: 
-- Line 1. Enable the DHCP server at boot and start the service.
-- Lines 2-4. You have to unblock hostapd at boot because the Linux kernel defaults to a "safe" state where radio transmitters are soft-blocked to conserve power or meet regulatory requirements. hostapd cannot initialize the radio if this block is active. Since we have created a startup service that unblock wifi, this is safe to "unmask" and enable at boot.
-- Line 4. Restart networking service 
+- Enable the DHCP server at boot and start the service.
+- Unblock hostapd at boot because the Linux kernel defaults to a "safe" state where radio transmitters are soft-blocked to conserve power or meet regulatory requirements. hostapd cannot initialize the radio if this block is active. Since we have created a startup service that unblock wifi, this is safe to "unmask" and enable at boot.
+- Restart chrony, droneserver and networking services
 
 ```
 sudo systemctl enable isc-dhcp-server.service
@@ -162,4 +190,4 @@ sudo systemctl restart systemd-networkd
 sudo systemctl restart droneserver.service
 ```
 
-**Next:** Proceed to secure communications configuration for our HTTP server. [PKI_configuration](/data_ferry/PKI_configuration/README.md)
+**Next:** Proceed to secure communications configuration for our HTTP server in [PKI_configuration](/data_ferry/PKI_configuration/README.md).
