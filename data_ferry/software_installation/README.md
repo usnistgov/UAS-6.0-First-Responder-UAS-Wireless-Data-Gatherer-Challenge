@@ -1,6 +1,13 @@
 # Data Ferry (Drone Server) Software and Dependencies installation
 
-This section outlines "manual" installation of the drone server software. It is assumed that [Part 1, Rasbpian OS Install](/data_ferry/system_install/README.md) is complete.
+This section outlines "manual" installation of the drone server software.
+
+1. [Raspbian OS Installation](/data_ferry/system_install/README.md)
+2. [Software and Dependencies Installation](/data_ferry/software_installation/README.md) <--You are here
+3. [Network Configuration and Component Servers](/data_ferry/network_configuration/README.md)
+4. [PKI_configuration](/data_ferry/PKI_configuration/README.md)
+5. [Data Ferry Usage, Server Management, and Debugging](/data_ferry/server_management/README.md)
+
 
 ## Data Ferry Configuration Overview (Raspberry Pi Zero 2 W)
 
@@ -12,7 +19,7 @@ This section outlines "manual" installation of the drone server software. It is 
 
 - For the **AP software**, we used **hostapd**
 
-- **isc-dhcp-server** is installed for FoxNodes or devices that use **DHCP**
+- **isc-dhcp-server** is installed for FoxNodes or devices that use **DHCP** IP configuration
 
 - **caddy** is installed as a reverse proxy that supports **secure HTTP/TLS** in our application. Native TLS in Flask is not as extensible or secure, so caddy is used to handle secure data transfer.
 
@@ -20,15 +27,15 @@ This section outlines "manual" installation of the drone server software. It is 
 
 - Optional - enable **IP routing** if you want the Pi to act as a router (configuration not provided)
 
-## Software Instllation
+## Software installation
 
-**Step 1:** Update Raspberry Pi and install software servers, software, and dependencies.
+### Step 1:* Update Raspberry Pi and install software servers, software, and dependencies.
 ```
 sudo apt-get update && sudo apt-get upgrade -y
 sudo apt-get install -y netplan.io systemd systemd-resolved hostapd dnsmasq iptables iptables-persistent python3-full git isc-dhcp-server tcpdump chrony
 ```
 
-**Step 2:** Install Caddy reverse proxy
+### Step 2: Install Caddy reverse proxy
 Install as follows:
 ```
 sudo apt update
@@ -44,13 +51,13 @@ sudo apt update
 sudo apt install -y caddy
 ```
 
-**Step 3:** Change to your user's home directory and download/clone GitHub repository to the Pi
+### Step 3: Change to your user's home directory and download/clone GitHub repository to the Pi
 ```
 cd ~
 git clone https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data-Gatherer-Challenge.git
 ```
 
-**Step 4:** Create a copy of the data_ferry code to a separate working directory.
+### Step 4: Create a copy of the data_ferry code to a separate working directory.
 
 - This step helps streamline installation by matching paths in configuraiton files and reducing path length while preserving the "base" reference code.
 ```
@@ -64,14 +71,16 @@ or
 ```
 Adjust paths according to your deployment.
 
-**Step 5:** Install Python Flask
+### Step 5: Install Python Flask
 
 **Note:** For this project we are using a dedicated device and install for a single Python app. If you plan to run other Python projects on your device it is recommended to use Python virtual environments (venv). For this project we are choosing to "break system packages." Acknowlege/confirm any warnings against doing so.
 ```
 sudo /bin/python pip install flask --break-system-packages
 ```
 
-**Step 6:** Configure the Pi to start the Data Ferry automatically on startup by creating a startup service. For this step you will be modifying the [droneserver.service](/data_ferry/network_configuration/droneserver.service) file.
+### Step 6: Configure the Pi to start the Data Ferry automatically on startup by creating a startup service.
+
+For this step you will be modifying the [droneserver.service](/data_ferry/network_configuration/droneserver.service) file.
 
 - Optional - Add your Google Maps API key in the placeholder value <your API key> using the command below. Replace "AIzaSyBwV_B_B_B_B_B_B_B_B_B_B_B_B" in the command below with your actual key. It will still work without it or if left unchanged.
 
@@ -104,10 +113,12 @@ sudo systemctl enable droneserver.service
 sudo systemctl start droneserver.service
 ```
 
-**Step 7:** Optional - Enable ssh for remote administration
+### Step 8: Optional - Enable ssh for remote administration
 ```
 sudo systemctl enable ssh
 sudo systemctl start ssh
 ```
 
-Next proceed to [Network Configuration](/data_ferry/network_configuration/README.md)
+## Next Steps
+
+Proceed to [Network Configuration](/data_ferry/network_configuration/README.md)

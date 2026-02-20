@@ -1,5 +1,11 @@
 ## Data Ferry Usage
 
+1. [Raspbian OS Installation](/data_ferry/system_install/README.md)
+2. [Software and Dependencies Installation](/data_ferry/software_installation/README.md)
+3. [Network Configuration and Component Servers](/data_ferry/network_configuration/README.md)
+4. [PKI_configuration](/data_ferry/PKI_configuration/README.md)
+5. [Data Ferry Usage, Server Management, and Debugging](/data_ferry/server_management/README.md) <--You are here
+
 If you have made it this far in the guide, we generally recommend rebooting the Data Ferry system to make sure all of the services start and are working.
 
 Use the following commands to determine current running services of the Data Ferry:
@@ -9,6 +15,7 @@ sudo systemctl status droneserver.service
 sudo systemctl status isc-dhcp-server.service
 sudo systemctl status hostapd
 sudo systemctl status chrony
+sudo systemctl status caddy
 sudo systemctl status systemd-networkd
 ```
 

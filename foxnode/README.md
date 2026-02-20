@@ -5,9 +5,11 @@ Instruction is not provided on pcb fabrication, but details can be found in [par
 
 **NOTE:** PSCR posesses a limited number of "complete" FoxNode sensors. If you wish to develop on this platform or want to borrow our FoxNode sensors for your experimentation, please contact psprizes@nist.gov
 
+**NOTE:** Portions of the FoxNode, Post Competition code was generated with assistance from ChatGPT (OpenAI) and Gemini (Google). The code has been reviewed and integrated by the project authors.
+
 ## FoxNode Folder Structure
 ```
-├── foxnode/            	 <-- FoxNode project (Stage 3)
+├── foxnode/            	 <-- FoxNode project (Post Competition)
 │   ├── 3D_print_case_models <-- gcode, 3mf and dxf files for 3d printing FoxNode cases
 │   ├── libraries            <-- Arduino libraries required for Foxnode
 │   ├── pcb_schematic        <-- Schematics for FoxNode I2C companion board
@@ -51,10 +53,10 @@ Instruction is not provided on pcb fabrication, but details can be found in [par
 
 ## FoxNode Installation & Setup
 
-**Prerequisites:**
+### Prerequisites
 It is highly recommended to have a functional [data ferry (drone server)](/data_ferry/README.md) before provisioning your FoxNode(s). 
 
-**Step 1:** Download repository to local host
+### Step 1: Download repository to local host
 
 Download or clone the UAS 6.0 Github repository to your target "host PC"
 
@@ -62,7 +64,7 @@ Download or clone the UAS 6.0 Github repository to your target "host PC"
 git clone https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data-Gatherer-Challenge.git
 ```
 
-**Step 2:** Install Arduino IDE, ESP32 drivers, and project libraries
+### Step 2: Install Arduino IDE, ESP32 drivers, and project libraries
 
 - Install the [Arduino IDE ](https://www.arduino.cc/en/software) on the target to build project source code and program ESP32 hardware.  
 
@@ -74,7 +76,7 @@ git clone https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data
 
 **NOTE:** Ensure that the project support files "RingBuffer.cpp, httpComms.cpp, etc.", are in the same directory with stateMachine.ino. Typically when you confirm the creation of the directory it will create another directory inside of you current directory. This may incidently create a "nested" directory without the required Arduino C files. You will need to work from the newly created directory because that is where the Arduino IDE expects the files to be.
 
-**Step 3:** Move/Copy [libraries](/foxnode/libraries) directory and contents from the cloned repository to the "Arduino" directory in your home directory.
+### Step 3: Move/Copy [libraries](/foxnode/libraries) directory and contents from the cloned repository to the "Arduino" directory in your home directory.
 
 The "libraries" file directory is different from the stateMachine one you created in the previous step. These libraries need to go into the Arduino IDE libraries directory. Alternatively, the libraries can be installed within the Arduino IDE; however, we have included them in this project for compatiblity and time savings. Note that the libraries included here will likely be out of date and not the most current version. Since this is more of an "archival" project, do not expect future updates that support updated libraries.
 
@@ -118,7 +120,7 @@ IPAddress getFoxNodeIP(unsigned short thisFoxNodeId){			// Formulate IP address 
 ```
 The FoxNode ID is manually configured in the [eeprrom.cpp](/foxnode/stateMachine/eeprrom.cpp) file.  
 
-**Step 4:** Change the FoxNodeId (repeated step for each foxnode)
+### Step 4: Change the FoxNodeId (repeated step for each foxnode)
 
 **THIS VALUE MUST BE CHANGED FOR EACH FOXNODE**
 ```
@@ -136,7 +138,7 @@ void eepromSetVariablesToDefault(void){
 
 The FoxNode and Data Ferry (Drone Server) system uses mutual Transport Layer Security (mTLS) for both device authentication and HTTP payload encryption. Before starting this step you will need a Certificate Authority (CA) and a Certificate Server capable of creating client certificates and/or generating Certificate Signing Requests (CSR). If you are using this guide and creating your own drone server, this is covered in the [data ferry PKI Configuration](/data_ferry/PKI_configuration/README.md) section.
 
-**Step 5:** 
+### Step 5:
 
 Open and create the "provision_secrets.ino" Arduino project into the Arduino IDE.
 
@@ -144,11 +146,11 @@ Open [provision_secrets.ino](/foxnode/provision_secrets/provision_secrets.ino) f
 
 **NOTE:** As before, ensure that the project support files "secrets.cpp", "secrets.h", and "serial.h" are in the same directory with provision_secrets.ino.
 
-**Step 6:** Generate Client FoxNode Certificates
+### Step 6: Generate Client FoxNode Certificates
 
 On your signing server, create client certificates. A separate certificate is required for each FoxNode in order to uniquely identify them. However, if you are using this in a test environment, you can use a single certificate that all of your FoxNodes use to save time (not recommended), but this defeats per-device identification and authentication.
 
-**Step 7:** Copy Privacy Enhanced Mail (PEM) or X.509 information from your drone server
+### Step 7: Copy Privacy Enhanced Mail (PEM) or X.509 information from your drone server
 
 - Generation of the client certificates is cover in [data ferry PKI Configuration](/data_ferry/PKI_configuration/README.md)
 
@@ -157,7 +159,7 @@ You will copy three files from your certificate server to your host PC running A
 - clients/foxnodeX.crt - This is the FoxNode client certificate
 - clients/foxnodeX.key - This is the FoxNode Key
 
-**Step 8:** Copy certificate information into provision_secrets.ino
+### Step 8: Copy certificate information into provision_secrets.ino
 
 - From Arduino IDE in the provision_secrets.ino project, make sure provision_secrets.ino is selected.  
 
@@ -172,13 +174,13 @@ Scroll down to the first block that shows:
 
 - Repeat these steps for "PROV_CLIENT_CERT" using the information in foxnodeX.crt and "PROV_CLIENT_KEY_PEM" using the information in foxnodeX.key.
 
-**Step 9:** Modify or update Wi-Fi secrets (if changed)
+### Step 9: Modify or update Wi-Fi secrets (if changed)
 
 - Scroll back up to before the first certificate block in provision_secrets.ino.  
 - Locate the code section with the WiFi SSIDs and PSKs for both the NTP WiFi and UAS "operational network" networks.
 - Confirm or update the SSID and PSK parameters according to your architecture.
 
-**Step 10:** Program FoxNode with provision_secrets ino file
+### Step 10: Program FoxNode with provision_secrets ino file
 
 In this step you will "upload" the PEM certificate information to the FoxNode's Non-Volatile Memory (NVM) storage. Information stored in this part of memory will persist through reboots and subsequent programming.
 
@@ -194,7 +196,7 @@ In this step you will "upload" the PEM certificate information to the FoxNode's 
 
 With the certificate information in place, we can now proceed to programming the FoxNode stateMachine software.
 
-**Step 11:** Program the stateMachine software
+### Step 11: Program the stateMachine software
 
 In step 4, you should have changed the FoxNode's ID to match your current node.  
 - Reopen the Arduino IDE project containing the stateMachine project.  
@@ -249,152 +251,209 @@ By default we have set the logging level to level 1, which is the lowest logging
 
 ## Basic Logging Messages
 
-**TO-DO:** This section does not currently reflect current code and needs updating, but follows very similar format.
-
 With the FoxNode connected to your target PC, from the Arduino IDE make sure your ESP's COM port is selected in the top dropdown box, then select Tools > Serial Monitor
 ![Arduino Serial Monitor](/pics/ARD_Serial_Monitor.png)  
 
-A successful FoxNode bootup will go throught the following processes:  
+### A successful FoxNode bootup will go throught the following processes:  
 
-- FoxNode NTP Connect  
+1. FoxNode NTP Connect  
 ```
+Reset reason: 1
 **FN-NTP RV-3032 Setup Initiated**
 Entering init
 Found RV3032
-RTC init Success
-RTC type = RV-3032
-Set ESP time to RTC mem:
-2026-1-22 17:52:28
-Attempting NTP-WiFi Connection to SSID UAS_NTP
-password iswhatTime!
-....NTP Setup procTime=3765
-
-NTP WiFi Connected
-FN-NTP Time Set:175231
+Attempting NTP WiFi Connection to SSID UAS_NTP
+.......................................NTP WiFi Connected
+FN-NTP Time Set:191351Internet NTP sync OK
 ```
-- FoxNode INIT, assigns ID set in httpComms.cpp in thisFoxNodeId  
 
+2. FoxNode INIT, assigns ID set in httpComms.cpp in thisFoxNodeId  
 ```
 **Fox-Node Init**
-FoxNode ID: 4
+FoxNode ID: 14
 **I2C**
 Latched interrupt configured.
 setup_webserver_routing() done
-RingBuffer DataPayload Size: 106
-Estimated max number of entries possible in Ringbuffer: 1093
-Allocating 90 RingBuffer max entries.
 ```
-- FoxNode Connecting to Drone Server  
 
+3. Buffered data queued and sent to Ringbuffer
 ```
-WiFiInit() Starting WiFi
-WiFiInit() Looking for SSID: uas6
-WiFiInit()    with Password: hello123
-WiFiStationConnected () - WiFi-STA Tx Power: 28
-WiFiInit(): Exiting
+RingBuffer DataPayload Size: 106
+Estimated max number of entries possible in Ringbuffer: 1068
 ```
-- FoxNode POST "hi" and receive 'sval'  
+
+4. WiFi connected, IP assigned
 ```
-takeSaveSensorData() Pushed data to RingBuffer, next sample in:30000 mS
-MSM 0  Idle: Have connection to WiFi Net, going to state 1
-MSM 1  POST hi: POSTing 'core' JSON to drone, ccmd='hi'
-MSM 5  'hi' Post recived 'sval' reply: start TS=1073645108, end TS=1073645108
+HTTP gate glob_connectedToDrone=1 WiFi.status=3 IP=192.168.41.4
 ```
-- FoxNode sending data entries  
+
+5. mTLS configuration loaded and certificate checks
+```
+mTLS loaded from NVS: YES
+CA base64 looks clean
+CRT base64 looks clean
+KEY base64 looks clean
+```
+
+6. First data entry sent and acknowleged
 ```
 Sending 1 Data Entries
 
-MSM case 5: {"core":{"ccmd":"rval","fox":4,"fip":"192.168.40.84","fts":1769104354,"fbv":"F","fcnt":1,"ftso":1769104353,"ftsr":1769104353,"wrxs":-36,"lat":64.83,"lon":-147.77,"elev":137},"data":{"fox":4,"dlen":1,"ftso":1769104353,"dump":[{"rts":1769104353,"t":28.81483,"c":62.8,"h":41.70596,"l":423.68,"p":832.9751,"x":36,"y":-119,"z":928}]}}
-MSM 5  POSTing core 'rval' JSON and 'data' to drone
-```
-- FoxNode recieve acknowlegement from Drone Server "buby" and send "bye" to close connection  
-```
-MSM 5  POSTing core 'rval' JSON and 'data' to drone
-MSM 6  Recived POST from sending data, got drone srep'='buby', procTime=104
-MSM 25  Recieved POST reply of 'buby', replying 'bye' to UAS Server
-MSM 26  Recived 'bye' reply: got drone srep 'done', procTime=95 
-** Transaction completed **
-```
-- FoxNode initiates wait timer till next transaction  
-```
-MSM 35: Going Blind
-MSM 36: wifiDroneBlindTimer: 1500
-MSM 36: wifiDroneBlindTimer: 0
-MSM 36: Blind time expired, back to talking to Drone Server
+MSM case 5 payload bytes=324
 ```
 
-Unsucessful FoxNode Attempts:  
 
--Failed to connect to NTP  
+### Unsucessful NTP Connections
+
+FoxNode will fail to connect to NTP provisioning WiFi, but will fall back to Drone Server.
+
+1. Failed to connect to NTP  
 ```
+Reset reason: 1
 **FN-NTP RV-3032 Setup Initiated**
 Entering init
 Found RV3032
-RTC init Success
-RTC type = RV-3032
-Set ESP time to RTC mem:
-2026-1-22 20:58:28
-Attempting NTP-WiFi Connection to SSID UAS_NTP
-password iswhatTime!
-........................................
-Timeout reached, proceeding with regular code flow. NTP unable to set
+Attempting NTP WiFi Connection to SSID UAS_NTP
+............................................................UAS_NTP timeout, switching to Drone Server NTP fallback
 ```
-- Failed to connect to Drone Server  
+
+2. Fall back to drone Server
+```
+Attempting Drone Server NTP fallback (uas6)...
+....uas6 WiFi Connected (fallback)
+FN-NTP Time Set:191658Drone Server NTP fallback OK
+```
+
+### Uncessful connection to Drone Server
+
+1. Regular boot with NTP provision Server
+```
+Reset reason: 1
+**FN-NTP RV-3032 Setup Initiated**
+Entering init
+Found RV3032
+Attempting NTP WiFi Connection to SSID UAS_NTP
+...........NTP WiFi Connected
+FN-NTP Time Set:191910Internet NTP sync OK
+```
+
+2. FoxNode Initializes and data set to Ring buffer
 ```
 **Fox-Node Init**
-FoxNode ID: 4
+FoxNode ID: 14
 **I2C**
 Latched interrupt configured.
 setup_webserver_routing() done
 RingBuffer DataPayload Size: 106
-Estimated max number of entries possible in Ringbuffer: 1095
-Allocating 90 RingBuffer max entries.
-WiFiInit() Starting WiFi
-WiFiInit() Looking for SSID: uas6
-WiFiInit()    with Password: hello123
-WiFiStationConnected () - WiFi-STA Tx Power: 28
-WiFiInit(): Exiting
-
-takeSaveSensorData() Pushed data to RingBuffer, next sample in:30000 mS
-MSM Check: Attempting WiFi reconnect
-MSM Check: Attempting WiFi reconnect
-MSM Check: Attempting WiFi reconnect
-MSM Check: Attempting WiFi reconnect
-takeSaveSensorData() Pushed data to RingBuffer, next sample in:30000 mS
+Estimated max number of entries possible in Ringbuffer: 1068
 ```
+
+3. FoxNode will continute to attempt reconnect
+```
+WiFi disconnected, reason=201
+WiFi disconnected, reason=201
+WiFi disconnected, reason=201
+WiFi disconnected, reason=201
+WiFi disconnected, reason=201
+WiFi disconnected, reason=201
+WiFi disconnected, reason=201
+```
+
+This process will continue until a Drone Server is within range.
+```
+HTTP gate glob_connectedToDrone=1 WiFi.status=3 IP=192.168.40.94
+```
+
+FoxNode will complete it's TLS connection and send buffered data.
+```
+mTLS loaded from NVS: YES
+CA base64 looks clean
+CRT base64 looks clean
+KEY base64 looks clean
+WiFi.status=3 IP=192.168.40.94
+Target=https://192.168.40.20:8443
+
+Sending 4 Data Entries
+
+MSM case 5 payload bytes=624
+Sending 0 Data Entries
+
+MSM case 5 payload bytes=203
+```
+
+The FoxNode will retain the self-assigned IP address until either:
+a. The Drone Server goes out of range, than back into range (reconnect)
+b. The FoxNode is rebooted.
+
+### FoxNode Disconnect
+FoxNode disconnects occur because of the following reasons
+a. The Drone Server goes out of range
+b. Weak signal
+c. RF Interference
+d. AP issues on the Drone Server, such as reboot, overload, power issues
+e. FoxNode ESP power instabality, such as low battery, poor or damaged USB or power connector, poor decoupling interface
+
+The logging error that you will get will be:
+```
+WiFi disconnected, reason=200
+```
+
+### FoxNode Self-Assigns IP and comes into range of Drone server
+
+After about 1 minute, the FoxNode will self-assign an IP based on it's FoxNode ID.
+Note that glob_connectedToDrone=0 means it's not connected to a Drone Server
+The FoxNode will continute to search for a Drone Server
+```
+WiFi disconnected, reason=201
+WiFi disconnected, reason=201
+WiFi disconnected, reason=201
+WiFi disconnected, reason=201
+WiFi disconnected, reason=201
+HTTP gate glob_connectedToDrone=0 WiFi.status=3 IP=192.168.40.94
+WiFi disconnected, reason=201
+```
+
+Once a Drone Server comes into range it will connect, glob_connectedToDrone=1, means it connected.
 
 ## FoxNode Display and Operational States
 
-FoxNode display states:
+FoxNode LCD display states.
 
-- NTP Connection at powerup/boot (Yellow)
+### NTP Connection at powerup/boot (Yellow)
+- Displays FoxNode ID
+- NTP connection status
+- Timestamp aquired (if connected)
+- Subsequnt disconnect
 
 ![FoxNode NTP Connection](/pics/FoxNode_NTP_Connect.jpg)
 
-- Not connected to Data Ferry or searching for network (Orange)
-Display shows connection status  
-Drone Server SSID  
-Drone Server PSK  
-Timestamp  
-Drone Server URI  
+### Not connected to Data Ferry or searching for network (Orange) 
+- Timestamp  
+- FoxNode ID
+- Network search status
+- SSID of Drone Server
+- SSID PSK Provision status
+- IP of Drone Server and secure socket port  
 
 ![FoxNode Searching for Data Ferry Network](/pics/FoxNode_Searching.jpg)
 
-- Connected to Wi-Fi, set IP, handshaking for data exchange (Blue)
-Wi-Fi Conection state  
-Display shows Drone Server IP
-RSSI reading  
-Timestamp
+### Connected to Wi-Fi, set IP, handshaking for data exchange (Blue)
+- Timestamp
+- FoxNode ID
+- Wi-Fi Conection state  
+- FoxNode IP
+- RSSI reading  
 
 ![FoxNode Connected to Data Ferry, no Data Transfer](/pics/FoxNode_WiFi_Connect.jpg)
 
-- Fully connected to Data Ferry and receiving data (Green)
-Display show Timestamp  
-RSSI reading    
-Foxnode Transmit power (STA_TX_PWR)  
-Drone Server IP (S)  
-Drone Server HTTP Response Code (HTTP Resp)  
-FoxNode IP (F)  
+### Fully connected to Data Ferry and receiving data (Green)
+- Display show Timestamp  
+- FoxNode ID
+- RSSI reading    
+- Foxnode Transmit power (STA_TX_PWR)  
+- Drone Server IP and HTTPS socket port (S)  
+- Drone Server HTTP Response Code (HTTP Resp)  
+- TLS status
 
 ![FoxNode Fully Connected, Data Exchange](/pics/FoxNode_Fully_Connected_ALT.jpg) 
 

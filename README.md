@@ -72,7 +72,7 @@ Responder UAS Wireless Data Gatherer Challenge UAS 6.0/
 - The drone collecting the data (from the FoxNodes) is referred to as "data ferry", "drone server", or simply "server."
 - The device receiving the data from the data ferry is referred to as the "command server".
 
-Note that conflicts may be present regarding terminology and alignment between the reference code and historical documentation. Above terms will be used interchangeably throughout.
+Note that conflicts may be present regarding terminology and alignment between the reference code, associated publications, and historical documentation. Above terms will be used interchangeably throughout.
 
 ## Scope
 This repository contains the reference software for the FoxNode (Ground-based IoT-Sensor), hardware schematics, 3D-print files, and challenge documentation for the UAS 6.0 Challenge. It also includes PSCR-developed servers (data ferry and command server) for system testing. The intent of this repository is not only to preserve the software and hardware schematics used in UAS 6.0, but also to serve as a guide for building and replicating the sensor hardware and associated software components used in the competition. Documentation includes UAS 6.0 Official Rules and Guidance documents for Stages 2 and 3. With this information, one could replicate and run the entire UAS 6.0 challenge. Stage 2 and 3 FoxNode code is provided for historical reference and "Post Competition" code is provided that contains additional added enhancements since the compeition conculded.
@@ -84,9 +84,9 @@ A secondary "product" is a Python-based Flask web server for replicating the Dat
 ## Competition Background
 The First Responder Uncrewed Aircraft Systems (UAS) Wireless Data Gatherer Challenge, otherwise known as UAS 6.0, was the sixth competition in the National Institute of Standards and Technology (NIST) Public Safety Communications Research (PSCR) Division’s UAS prize challenge series, which took place between May 2024 and concluded in April of 2025. The challenge evaluated the feasibility and operational value of using UAS as mobile data ferries to support situational awareness in public safety scenarios characterized by sparse, partitioned, or infrastructure-limited communications environments.
 
-Unlike traditional data ferry architectures that rely on delayed, store-and-forward data delivery between disconnected network segments, UAS 6.0 demonstrated how modern commercial UAS platforms, combined with high-power radios, modular payloads, and standardized application interfaces, can enable near real-time data collection and delivery to incident command. During live field evaluations, multiple teams successfully located distributed wireless sensors, collected environmental data, and delivered actionable information to a command server within minutes, and in some cases, seconds, of acquisition. These capabilities significantly reduced latency compared to legacy data ferry concepts, enabling time-critical decision-making for first responders.
+Unlike traditional data ferry architectures that rely on delayed, store-and-forward data delivery between disconnected network segments, UAS 6.0 demonstrated how modern commercial UAS platforms, combined with high-power radios, modular payloads, and standardized application interfaces, can enable near real-time data collection and delivery to incident command. During live field evaluations, multiple teams successfully located distributed wireless sensors, [collected environmental data](stage3_foxnode/live_event_datasets/), and delivered actionable information to a command server within minutes, and in some cases, seconds, of acquisition. Results and associated datasets from Stage 3 can be found [here](stage3_foxnode/live_event_datasets/). These capabilities significantly reduced latency compared to legacy data ferry concepts, enabling time-critical decision-making for first responders.
 
-Results showed that UAS-based data ferries equipped with wide-area communications systems and operator-friendly interfaces provided measurable advantages in coverage, responsiveness, and situational awareness. At the same time, findings highlighted current limitations in autonomous flights, the importance of skilled human operators, and the need for expanded measurement science to evaluate communications performance, interference, and scalability. Collectively, the challenge outcomes will inform future public safety communications research and demonstrate a practical path toward deploying UAS-enabled data ferry systems using commercially available technologies.
+Results from the competition showed that UAS-based data ferries equipped with wide-area communications systems and operator-friendly interfaces provided measurable advantages in coverage, responsiveness, and situational awareness. At the same time, findings highlighted current limitations in autonomous flights, the importance of skilled human operators, and the need for expanded measurement science to evaluate communications performance, interference, and scalability. Collectively, the challenge outcomes will inform future public safety communications research and demonstrate a practical path toward deploying UAS-enabled data ferry systems using commercially available technologies.
 
 ## UAS 6.0 Competition Stages
 **Stage 1**: A proof-of-concept phase that evaluated prototypes based on academic-style paper submissions. In this and subsequent stages, participants followed the rules outlined in the [UAS 6.0 Official Rules](docs/UAS_6.0_Official_Rules.pdf) document, located in the [docs](/docs) section of this repository.
@@ -94,6 +94,14 @@ Results showed that UAS-based data ferries equipped with wide-area communication
 **Stage 2**: Stage two took place at participants' home locations, and associated tests were conducted using video assessment methods. The sensor developed in this stage was a minimal viable verification system used for basic message exchange with built-in or "canned" data-generating mechanisms. Details on how this system was implemented and associated tests can be found in the [Guidance for Stage 2](docs/UAS_6.0_Stage_2_Guidance.pdf) document, located in the [docs](/docs) section of this repository. This section is included for historical reference. Anyone looking to replicate or build on elements from UAS 6.0 should start in the [FoxNode Section](foxnode/README.md).
 
 **Stage 3**: UAS prize challenge participants competed in-person event to perform NIST-standardized tests and collect data from sensors placed throughout the competition theater. The sensor developed in this stage generated and transmitted environmental data in JSON format from various sensing components. The sensor included a communications state machine to improve data delivery. Details on how this system was implemented and the associated tests can be found in  [Guidance for Stage 3](docs/UAS_6.0_Stage_3_Guidance.pdf) document, located in the [docs](/docs) section of this repository.
+
+# How to Use this Repository
+
+This repository consist of three major parts.  
+
+1. The [Data Ferry](data_ferry/README.md), which is the post-competition, PSCR developed, data ferry that interoperates best with the post-competition FoxNode. This is the best place to start; however, we recommend reviewing the FoxNode requirements and build guide before embarking on this project.
+2. The [FoxNode](foxnode/README.md) sensor reference code and associated hardware component support files. This is the post-competition FoxNode that is most compatible with the post-competition Data Ferry.
+3. Historical reference code and datasets. One for [Stage 2](/stage2_foxnode/README.md) and one for [Stage 3](/stage3_foxnode/README.md). Developers interested in replicating the UAS 6.0 competition may reference these sections; however, this does not include a functional drone server or associated drone server reference code. Additional documentation for building a drone server can be found in the [docs](docs/) section in [Guidance for Stage 2](docs/UAS_6.0_Stage_2_Guidance.pdf) and [Guidance for Stage 3](docs/UAS_6.0_Stage_3_Guidance.pdf).
 
 # UAS 6.0 Network Architecture
 
@@ -106,9 +114,9 @@ The diagram above shows the three primary components used in UAS 6.0.
 
 - The [Data Ferry](data_ferry/) is the central component configured as a Wi-Fi access point or hotspot. The IP assigned (static provisioning) to the Data Ferry is 192.168.40.20. The mask is 255.255.0.0.
 
-- The [FoxNodes](foxnode/) connect to the Data Ferry when it is in range. FoxNodes are assigned DHCP address (first choice), and failover to "static" IP addresses 192.168.40.80 + FoxNode ID. For example, FoxNode 1 is assigned 192.168.40.81. The mask is 255.255.0.0. These values are statically set.
+- The [FoxNodes](foxnode/) connect to the Data Ferry when it is in range. FoxNodes are assigned DHCP address (first choice), and failover to "static" IP addresses 192.168.40.80 + FoxNode ID. For example, FoxNode 1 is assigned 192.168.40.81. The mask is 255.255.0.0 or /16. These values are statically set.
 
-**NOTE:** A 255.255.0.0 or /16 "classless" 192.168.0.0 network was chosen for extensiblity in the final stage 3 competition; however, this is not typical, nor practical in most network designs. It is recommended to use a network design that fits your application and architecture.
+**NOTE:** A 255.255.0.0 mask or /16 "classless" 192.168.0.0 network was chosen for extensiblity in the final stage 3 competition; however, this is not typical, nor practical in most network designs. It is recommended to use a network design that fits your application and architecture. An important factor to consider is how many FoxNodes you plan to deploy, and how many other devices may share the address space. Multi-segment, multi-network, segmentation, and routed architecture is not addressed in this network architecture.
 
 - The Command Server is assigned 192.168.40.10, mask 255.255.0.0. This is statically set. For examples in this repository, this is a simple PC client with web browsing capabilities and can use any non-conflicting address in the /16 address space.
 
@@ -122,6 +130,16 @@ Development status for PSCR - UAS 6.0 First Responder UAS Data Gatherer Challeng
 
 # Recommended To-dos and Implementations
 - Deployment package or iso of Data Ferry
+
+- Additional security hardening of Data Ferry
+	- Disk encryption (LUKS)
+	- Firewall (ufw or iptables)
+	- Encrypted secrets in configuration files
+	- Disable passwords for SSH and use keys for remote administration
+	
+- Encrypted secrets on FoxNode NV Ram and associated decryption key in eFuse memory.
+
+- Security audit of Data Ferry and FoxNode code
 
 # Contact
 psprizes@nist.gov

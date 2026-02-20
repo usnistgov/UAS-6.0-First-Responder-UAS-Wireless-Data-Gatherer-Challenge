@@ -1,6 +1,10 @@
 # Data Ferry Network Configuration and Provisioning
 
-It is assumed that [Part 1, Rasbpian OS Install](/data_ferry/system_install/README.md) and [Part 2, Data Ferry Software and Dependencies installation](/data_ferry/software_installation/README.md) is complete.  
+1. [Raspbian OS Installation](/data_ferry/system_install/README.md)
+2. [Software and Dependencies Installation](/data_ferry/software_installation/README.md)
+3. [Network Configuration and Component Servers](/data_ferry/network_configuration/README.md) <--You are here
+4. [PKI_configuration](/data_ferry/PKI_configuration/README.md)
+5. [Data Ferry Usage, Server Management, and Debugging](/data_ferry/server_management/README.md) 
 
 In this section we detail how to configure networking services, Wi-Fi AP mode or "hotspot", and create associated automatic startup services on boot.
 
@@ -17,7 +21,7 @@ It is important to understand USB device paths in correlation with physical port
   
 - Care must be taken to ensure that the WiFi adaptor is consistently connected to the same physical port, rather it directly connected to the Pi or though a USB hub.
 
-**Step 1**: Plug in the external USB Wi-Fi adaptor and determine what interface it is assigned.
+### Step 1: Plug in the external USB Wi-Fi adaptor and determine what interface it is assigned.
 ```
 sudo ip link show
 ```
@@ -87,7 +91,7 @@ A6210
 
 This section describes how to disable the default Network Manager and enable Netplan
 
-**Step 2**: Stop and disable NetworkManager service
+### Step 2: Stop and disable NetworkManager service
 
 Instead of uninstalling NetworkManager, we will instead disable it. This is useful if you ever need to reenable it at a later time.
 ```
@@ -95,7 +99,7 @@ sudo systemctl stop NetworkManager
 sudo systemctl disable NetworkManager
 ```
 
-**Step 3**: Create or copy a new network configuration
+### Step 3: Create or copy a new network configuration
 
 Create or copy the .yaml file from [dataferry.yaml](/data_ferry/network_configuration/dataferry.yaml) to /etc/netplan/
 
@@ -104,9 +108,9 @@ sudo cp ~/data_ferry/dataferry.yaml /etc/netplan/dataferry.yaml
 sudo chmod 600 /etc/netplan/dataferry.yaml
 ```
 
-**NOTE**: You may need to edit the wlan interface designation if yours differs from wlan1 as discussed in the previous step.
+**NOTE**: You may need to edit the wlan interface designation if yours differs from wlan1 as discussed in the previous step. .yaml files are white space delimited and will prompt an error if not properly formatted.
 
-**Step 4**: Apply network configuration
+### Step 4: Apply network configuration
 
 ```
 sudo netplan apply
@@ -117,9 +121,8 @@ sudo netplan apply
 ## Access Point or "Hotspot" configuration
 
 In this section we will configure the new USB Wi-Fi adaptor as an access point or "AP" mode.
-To do this we need to disable 
 
-**Step 5**: Disable RFkill so that you can run in AP mode
+### Step 5: Disable RFkill so that you can run in AP mode
 
 RFKill is a Linux kernel subsystem designed to disable radio transmitters to save power or comply with safety regulations (like airplane mode). It prevents you from running in Access Point (AP) mode because its primary function is to cut power to the physical radio, making the hardware unavailable to access point programs like hostapd. We need to deactivate this function to run in AP mode.
 
@@ -142,7 +145,7 @@ sudo systemctl enable rfkill-unblock-wifi.service
 sudo systemctl start rfkill-unblock-wifi.service
 ```
 
-**Step 6** Configure hostapd
+### Step 6: Configure hostapd
 
 Hostapd is the AP management software that allows our network inteface to function as a Wi-Fi access point.
 
@@ -153,15 +156,15 @@ sudo chmod 600 /etc/hostapd.conf
 ```
 **NOTE:** Change SSIDs and wpa_password to match your architecture.
 
-**Step 7:** Configure our Pi as an DHCP server
+### Step 7: Configure our Pi as an DHCP server
 
-Copy DHCP Server [dhcpd.conf](/data_ferry/network_configuration/dhcpd.conf)
+Copy DHCP Server [dhcpd.conf](/data_ferry/network_configuration/dhcpd.conf)  
 **NOTE:** Change parameters to match your network schema or copy file from repositiory
 ```
 sudo cp ~/data_ferry/raspbian_files/dhcpd.conf /etc/dhcp/dhcpd.conf
 ```
 
-**Step 8:** Configure Data Ferry to be NTP server  
+### Step 8: Configure Data Ferry to be NTP server  
 
 Copy chrony configuration file from repository to system directory  
 **NOTE:** Change parameters to match your network schema or copy file from repositiory
@@ -171,11 +174,11 @@ sudo cp ~data_ferry/network_configuration/chrony.conf /etc/chrony/chrony.conf
 sudo chmod 600 /etc/chrony/chrony.conf
 ```
 
-**Step 9**: Enable, start/restart services
+### Step 9: Enable, start/restart services
 
 Before we preceed further, we need to enable, start and restart services. The following commands will: 
 - Enable the DHCP server at boot and start the service.
-- Unblock hostapd at boot because the Linux kernel defaults to a "safe" state where radio transmitters are soft-blocked to conserve power or meet regulatory requirements. hostapd cannot initialize the radio if this block is active. Since we have created a startup service that unblock wifi, this is safe to "unmask" and enable at boot.
+- Unblock hostapd at boot because the Linux kernel defaults to a "safe" state where radio transmitters are soft-blocked to conserve power or meet regulatory requirements, similar to rfkill. hostapd cannot initialize the radio if this block is active. Since we have created a startup service that unblocks wifi, this is safe to "unmask" and enable at boot.
 - Restart chrony, droneserver and networking services
 
 ```
@@ -190,4 +193,5 @@ sudo systemctl restart systemd-networkd
 sudo systemctl restart droneserver.service
 ```
 
-**Next:** Proceed to secure communications configuration for our HTTP server in [PKI_configuration](/data_ferry/PKI_configuration/README.md).
+## Next Step
+Proceed to secure communications configuration for our HTTP server in [PKI_configuration](/data_ferry/PKI_configuration/README.md).
