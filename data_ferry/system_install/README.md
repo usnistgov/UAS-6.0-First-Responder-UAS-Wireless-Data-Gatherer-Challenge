@@ -8,7 +8,7 @@ This guide describes how to install and provision Raspberry Pi OS for the Data F
 4. [PKI_configuration](/data_ferry/PKI_configuration/README.md)
 5. [Data Ferry Usage, Server Management, and Debugging](/data_ferry/server_management/README.md)
 
-**Note:** Portions of this section were generated with the assistance of ChatGPT (OpenAI). Authors have reviewed and approved steps outlined in this section.
+**Note:** Portions of this section was generated with the assistance of ChatGPT (OpenAI). Authors have reviewed and approved steps outlined in this section. Some steps and procedures may deviate depending on your specific hardware and OS version. For reference, this was last tested in February of 2026.
 
 ## 1. Hardware Requirements
 
@@ -39,8 +39,9 @@ Optional for secure deployments:
 4.  Flash the SD card and boot the device.
 
 5.  Update the system:
-
-    sudo apt update sudo apt upgrade -y
+```
+sudo apt update && sudo apt upgrade -y
+```
 
 **NOTE:** Everything beyond this point is for system security hardening. If you do not require enhanced security in your deployment (such as testing and lab environments) you may proceed to the next section [Software and Dependencies Installation](/data_ferry/software_installation/README.md).
 
@@ -48,17 +49,18 @@ Optional for secure deployments:
 
 If enhanced physical security is required, encrypt the root partition.
 
-Important: Backup all data before proceeding.
+**Important:** Backup all data or clone your SD Card before proceeding if your are using an existing installation or system.
 
 ### 3.1 Install Required Tools
 ```
-sudo apt install cryptsetup cryptsetup-initramfs
+sudo apt install -y cryptsetup cryptsetup-initramfs
 ```
 
 ### 3.2 Identify Root Partition
 
+```
 lsblk
-
+```
 Typically the root partition is:
 
 /dev/mmcblk0p2
@@ -98,7 +100,7 @@ Add:
 cryptroot UUID=`<your-luks-uuid>` none luks
 ```
 
-Field explanation:
+Explanation:
 
 -   cryptroot: mapped device name
 -   UUID: encrypted partition identifier
@@ -142,7 +144,7 @@ If successful, encryption is configured properly.
 
 ## 4. Advanced Unlock Options
 
-Choose unlock method based on operational requirements.
+Choose ONE unlock method based on operational requirements.
 
 ### 4.1 USB Keyfile Auto-Unlock
 
@@ -155,11 +157,12 @@ lsblk sudo mkfs.ext4 /dev/sda1
 ````
 2. Mount and Create Keyfile
 ```
-sudo mkdir /mnt/usbkey sudo mount /dev/sda1 /mnt/usbkey
+sudo mkdir /mnt/usbkey
+sudo mount /dev/sda1 /mnt/usbkey
 ```
 ```
-sudo dd if=/dev/urandom of=/mnt/usbkey/cryptkey.bin bs=4096 count=1 sudo
-chmod 600 /mnt/usbkey/cryptkey.bin
+sudo dd if=/dev/urandom of=/mnt/usbkey/cryptkey.bin bs=4096 count=1
+sudo chmod 600 /mnt/usbkey/cryptkey.bin
 ```
 
 3. Add Key to LUKS
@@ -266,6 +269,194 @@ sudo systemctl restart sshd
 -   initramfs updated
 -   Unlock method tested
 -   Network connectivity verified
+
+# Optional Full Disk Copy Backup
+
+This part of the guide explains how to create a full disk image of a Raspberry Pi SD
+card as a `.img` file for backup, cloning, or deployment.
+
+This creates a raw, sector-by-sector image of the entire SD card.
+
+## Overview
+
+A full disk image:
+
+-   Captures the entire operating system
+-   Preserves partition structure
+-   Preserves bootloader and filesystem
+-   Allows exact cloning to another SD card
+
+The output file will match the full size of the SD card unless
+compressed.
+
+## Linux Method (Recommended)
+
+Using a different Linux installation (not the Raspberry Pi install you just made), do the following.
+
+### 1. Insert the SD Card
+
+Insert the Raspberry Pi SD card using a USB adapter.
+
+### 2. Identify the Device
+
+Run:
+
+``` bash
+lsblk
+```
+
+or:
+
+``` bash
+sudo fdisk -l
+```
+
+Look for the SD card device, for example:
+
+    /dev/sdb      64G
+    ├─/dev/sdb1
+    ├─/dev/sdb2
+
+Use the whole device:
+
+    /dev/sdb
+
+Do NOT use:
+
+    /dev/sdb1
+
+### 3. Unmount Mounted Partitions
+
+``` bash
+sudo umount /dev/sdb*
+```
+
+### 4. Create the Disk Image
+
+``` bash
+sudo dd if=/dev/sdb of=raspberrypi_backup.img bs=4M status=progress conv=fsync
+```
+
+***Explanation***
+
+-   `if=` input file (SD card device)
+-   `of=` output image file
+-   `bs=4M` improves performance
+-   `status=progress` shows progress
+-   `conv=fsync` ensures data is written safely
+
+This process may take several minutes depending on card size.
+
+### 5. Verify the Image (Optional but Recommended)
+
+``` bash
+sudo fdisk -l raspberrypi_backup.img
+```
+
+You should see the partition table listed.
+
+## macOS Method
+
+### 1. Insert the SD Card
+
+### 2. Identify the Disk
+
+``` bash
+diskutil list
+```
+
+Look for something like:
+
+    /dev/disk4 (external)
+
+### 3. Unmount the Disk
+
+``` bash
+diskutil unmountDisk /dev/disk4
+```
+
+### 4. Create the Image
+
+Use raw disk (`rdisk`) for better performance:
+
+``` bash
+sudo dd if=/dev/rdisk4 of=raspberrypi_backup.img bs=4m status=progress
+```
+
+## Windows Method (GUI)
+
+### Using Win32 Disk Imager
+
+1.  Install Win32 Disk Imager
+
+2.  Insert SD card
+
+3.  Select the correct drive letter
+
+4.  Choose output file name, for example:
+
+        raspberrypi_backup.img
+
+5.  Click **Read**
+
+This creates a full raw image.
+
+## Compressing the Image (Recommended)
+
+Raw images are full SD card size.
+
+If using a 64 GB card, the image will be 64 GB even if mostly empty.
+
+### Using gzip
+
+``` bash
+gzip raspberrypi_backup.img
+```
+
+### Using xz (Better Compression)
+
+``` bash
+xz -z -T0 raspberrypi_backup.img
+```
+
+This can significantly reduce file size.
+
+## Restoring an Image
+
+### Linux or macOS
+
+``` bash
+sudo dd if=raspberrypi_backup.img of=/dev/sdb bs=4M status=progress conv=fsync
+```
+
+Replace `/dev/sdb` with your SD card device.
+
+------------------------------------------------------------------------
+
+### Windows
+
+Use Win32 Disk Imager and click **Write**.
+
+## Safety Notes
+
+-   Always verify the correct device before running `dd`
+-   Writing to the wrong disk will erase it
+-   Use the full device (`/dev/sdb`), not a partition (`/dev/sdb1`)
+-   Ensure the SD card is not mounted before imaging
+
+## Optional: Deployment Workflow Tip
+
+For reproducible Raspberry Pi deployments:
+
+-   Configure a master SD card
+-   Fully update and test it
+-   Create a clean disk image
+-   Compress and store versioned backups
+-   Use the image for field cloning
+
+Example naming convention:
+
+    drone_server_v1.3_2026-03-02.img.xz
 
 # Next Step
 

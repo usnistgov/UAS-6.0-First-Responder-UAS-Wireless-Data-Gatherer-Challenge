@@ -68,9 +68,9 @@ Responder UAS Wireless Data Gatherer Challenge UAS 6.0/
 
 
 ## Terminology
-- The sensor device or "IoT-sensor" is referred to as "sensor(s)" or "FoxNode(s)".
-- The drone collecting the data (from the FoxNodes) is referred to as "data ferry", "drone server", or simply "server."
-- The device receiving the data from the data ferry is referred to as the "command server".
+- The sensor device or "FoxNode" is referred to as "sensor", "sensor client", or "IoT-sensor", implied as "ground based" and not airborne.
+- The (airborne) drone collecting the data (from the FoxNodes) is referred to as "data ferry", "drone server", or simply "server."
+- The device receiving the data from the data ferry is explicitly referred to as the "command server".
 
 Note that conflicts may be present regarding terminology and alignment between the reference code, associated publications, and historical documentation. Above terms will be used interchangeably throughout.
 
@@ -118,7 +118,7 @@ The diagram above shows the three primary components used in UAS 6.0.
 
 **NOTE:** A 255.255.0.0 mask or /16 "classless" 192.168.0.0 network was chosen for extensiblity in the final stage 3 competition; however, this is not typical, nor practical in most network designs. It is recommended to use a network design that fits your application and architecture. An important factor to consider is how many FoxNodes you plan to deploy, and how many other devices may share the address space. Multi-segment, multi-network, segmentation, and routed architecture is not addressed in this network architecture.
 
-- The Command Server is assigned 192.168.40.10, mask 255.255.0.0. This is statically set. For examples in this repository, this is a simple PC client with web browsing capabilities and can use any non-conflicting address in the /16 address space.
+- The Command Server is assigned 192.168.40.10, mask 255.255.0.0. This is statically set. For example, in this repository, this is a simple PC client with web browsing capabilities and can use any non-conflicting address in the /16 address space.
 
 - Internet connectivity is not considered in this architecture to limit scope and to simulate "no" or "limited" connectivity often observed in first responder scenarios, such as wildfires. However, a mobile hotspot or alternative Wi-Fi connection is recommended for development and provisioning purposes.
 

@@ -29,7 +29,7 @@ This section outlines "manual" installation of the drone server software.
 
 ## Software installation
 
-### Step 1:* Update Raspberry Pi and install software servers, software, and dependencies.
+### Step 1: Update Raspberry Pi and install software servers, software, and dependencies.
 ```
 sudo apt-get update && sudo apt-get upgrade -y
 sudo apt-get install -y netplan.io systemd systemd-resolved hostapd dnsmasq iptables iptables-persistent python3-full git isc-dhcp-server tcpdump chrony
@@ -59,7 +59,7 @@ git clone https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data
 
 ### Step 4: Create a copy of the data_ferry code to a separate working directory.
 
-- This step helps streamline installation by matching paths in configuraiton files and reducing path length while preserving the "base" reference code.
+- This step helps streamline installation by matching paths in configuration files and reducing path length while preserving the "base" reference code.
 ```
 cp -R ~/UAS-6.0-First-Responder-UAS-Wireless-Data-Gatherer-Challenge/data_ferry/* ~/data_ferry/
 ```
@@ -82,7 +82,7 @@ sudo /bin/python pip install flask --break-system-packages
 
 For this step you will be modifying the [droneserver.service](/data_ferry/network_configuration/droneserver.service) file.
 
-- Optional - Add your Google Maps API key in the placeholder value <your API key> using the command below. Replace "AIzaSyBwV_B_B_B_B_B_B_B_B_B_B_B_B" in the command below with your actual key. It will still work without it or if left unchanged.
+- Optional - Add your Google Maps API key in the placeholder value <your API key> using the command below. Replace "AIzaSyBwV_B_B_B_B_B_B_B_B_B_B_B_B" in the command below with your actual key. It will still work without it or if left unchanged, you just won't see any maps.
 
 ```
 sed -i "s/<your API key>/AIzaSyBwV_B_B_B_B_B_B_B_B_B_B_B_B/g" ~/data_ferry/raspbian_files/droneserver.service

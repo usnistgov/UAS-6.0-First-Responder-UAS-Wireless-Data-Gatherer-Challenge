@@ -1,5 +1,5 @@
 # Data Ferry (Drone Server) and Command Server
-The Data Ferry presented in this section is used for proof-of-concept (lab) testing. In the UAS 6.0 challenge competition, the Data Ferry was a required deliverable, and only [API documentation]([Stage 3](/stage3_foxnode/README.md) was provided to competing teams. The Data Ferry has a functional web server so that a PC client can view collected data that is processed by the Data Ferry and uses a Python Flask server with Javascript components and sqlite3 for data storage and retrieval. For the purposes of testing the "command server," data post-processing functionality is performed on the Data Ferry instead of a dedicated command server device. The PC or other computing platform that would normally be used for the command server is only used to view the data though a web browser. Implementation of the Command Server was also a contest deliverable.
+The Data Ferry presented in this section is used for proof-of-concept (lab) testing. In the UAS 6.0 challenge competition, the Data Ferry was a required deliverable, and only [API documentation](/docs/UAS_6.0_Stage_3_Guidance.pdf) was provided to competing teams. The Data Ferry has a functional web server so that a PC client can view collected data that is processed by the Data Ferry and uses a Python Flask server with Javascript components and sqlite3 for data storage and retrieval. For the purposes of testing the "command server," data post-processing functionality is performed on the Data Ferry instead of a dedicated command server device. The PC or other computing platform that would normally be used for the command server is only used to view the data though a web browser. Implementation of the Command Server was also a contest deliverable.
 
 The network schema can be viewed [here](/pics/Network_Schema_Example.png) for reference.
 
@@ -24,7 +24,7 @@ The network schema can be viewed [here](/pics/Network_Schema_Example.png) for re
 
 The following includes a list of recommended hardware components to build the data ferry server system. All instruction in this respository assumes the use of the exact hardware components listed here.
 
-1. A "target PC" or "command server" used to "view" web pages on Data Ferry, perferm configuration tasks, and general debugging.
+1. A "target PC" or "command server" used to "view" web pages on Data Ferry, perform configuration tasks, and general debugging.
 	- Any OS flavor as long as it has a web browser, and you can manually change network configuration settings.
 	- A laptop or portable computer is also preferred if you plan to field test the Data Ferry on a drone.
 	- It is recommended to have a secure terminal application capable of initiating ssh sessions, such as Putty (Windows) or sshd (Linux and Mac)
@@ -45,7 +45,7 @@ The following includes a list of recommended hardware components to build the da
 7. Optional (Recommended), [mini-HDMI to HDMI cable](https://www.adafruit.com/product/2775), keyboard, and monitor to configure your Pi.
 
 Prototype Example of Data Ferry:
-<img src="pics/Data_Ferry_Prototype.png" width="50%" />
+<img src="https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data-Gatherer-Challenge/blob/main/pics/Data_Ferry_Prototype.png"/>
 
 # Data Ferry system build and configuration
 
