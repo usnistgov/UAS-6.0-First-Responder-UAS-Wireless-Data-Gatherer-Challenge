@@ -90,13 +90,13 @@ Unlike traditional data ferry architectures that rely on delayed, store-and-forw
 Results from the competition showed that UAS-based data ferries equipped with wide-area communications systems and operator-friendly interfaces provided measurable advantages in coverage, responsiveness, and situational awareness. At the same time, findings highlighted current limitations in autonomous flights, the importance of skilled human operators, and the need for expanded measurement science to evaluate communications performance, interference, and scalability. Collectively, the challenge outcomes will inform future public safety communications research and demonstrate a practical path toward deploying UAS-enabled data ferry systems using commercially available technologies.
 
 ## UAS 6.0 Competition Stages
-> [!Stage 1]
+> Stage 1
 > A proof-of-concept phase that evaluated prototypes based on academic-style paper submissions. In this and subsequent stages, participants followed the rules outlined in the [UAS 6.0 Official Rules](docs/UAS_6.0_Official_Rules.pdf) document, located in the [docs](/docs) section of this repository.
 
-> [!Stage 2]
+> Stage 2
 > Stage two took place at participants' home locations, and associated tests were conducted using video assessment methods. The sensor developed in this stage was a minimal viable verification system used for basic message exchange with built-in or "canned" data-generating mechanisms. Details on how this system was implemented and associated tests can be found in the [Guidance for Stage 2](docs/UAS_6.0_Stage_2_Guidance.pdf) document, located in the [docs](/docs) section of this repository. This section is included for historical reference. Anyone looking to replicate or build on elements from UAS 6.0 should start in the [FoxNode Section](foxnode/README.md).
 
-> [!Stage 3]
+> Stage 3
 > UAS prize challenge participants competed in-person event to perform NIST-standardized tests and collect data from sensors placed throughout the competition theater. The sensor developed in this stage generated and transmitted environmental data in JSON format from various sensing components. The sensor included a communications state machine to improve data delivery. Details on how this system was implemented and the associated tests can be found in  [Guidance for Stage 3](docs/UAS_6.0_Stage_3_Guidance.pdf) document, located in the [docs](/docs) section of this repository.
 
 # How to Use this Repository
