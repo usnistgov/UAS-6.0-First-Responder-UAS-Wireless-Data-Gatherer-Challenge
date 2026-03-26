@@ -90,14 +90,14 @@ Unlike traditional data ferry architectures that rely on delayed, store-and-forw
 Results from the competition showed that UAS-based data ferries equipped with wide-area communications systems and operator-friendly interfaces provided measurable advantages in coverage, responsiveness, and situational awareness. At the same time, findings highlighted current limitations in autonomous flights, the importance of skilled human operators, and the need for expanded measurement science to evaluate communications performance, interference, and scalability. Collectively, the challenge outcomes will inform future public safety communications research and demonstrate a practical path toward deploying UAS-enabled data ferry systems using commercially available technologies.
 
 ## UAS 6.0 Competition Stages
-> Stage 1
-> A proof-of-concept phase that evaluated prototypes based on academic-style paper submissions. In this and subsequent stages, participants followed the rules outlined in the [UAS 6.0 Official Rules](docs/UAS_6.0_Official_Rules.pdf) document, located in the [docs](/docs) section of this repository.
+**Stage 1**
+A proof-of-concept phase that evaluated prototypes based on academic-style paper submissions. In this and subsequent stages, participants followed the rules outlined in the [UAS 6.0 Official Rules](docs/UAS_6.0_Official_Rules.pdf) document, located in the [docs](/docs) section of this repository.
 
-> Stage 2
-> Stage two took place at participants' home locations, and associated tests were conducted using video assessment methods. The sensor developed in this stage was a minimal viable verification system used for basic message exchange with built-in or "canned" data-generating mechanisms. Details on how this system was implemented and associated tests can be found in the [Guidance for Stage 2](docs/UAS_6.0_Stage_2_Guidance.pdf) document, located in the [docs](/docs) section of this repository. This section is included for historical reference. Anyone looking to replicate or build on elements from UAS 6.0 should start in the [FoxNode Section](foxnode/README.md).
+**Stage 2**
+Stage two took place at participants' home locations, and associated tests were conducted using video assessment methods. The sensor developed in this stage was a minimal viable verification system used for basic message exchange with built-in or "canned" data-generating mechanisms. Details on how this system was implemented and associated tests can be found in the [Guidance for Stage 2](docs/UAS_6.0_Stage_2_Guidance.pdf) document, located in the [docs](/docs) section of this repository. This section is included for historical reference. Anyone looking to replicate or build on elements from UAS 6.0 should start in the [FoxNode Section](foxnode/README.md).
 
-> Stage 3
-> UAS prize challenge participants competed in-person event to perform NIST-standardized tests and collect data from sensors placed throughout the competition theater. The sensor developed in this stage generated and transmitted environmental data in JSON format from various sensing components. The sensor included a communications state machine to improve data delivery. Details on how this system was implemented and the associated tests can be found in  [Guidance for Stage 3](docs/UAS_6.0_Stage_3_Guidance.pdf) document, located in the [docs](/docs) section of this repository.
+**Stage 3**
+UAS prize challenge participants competed in-person event to perform NIST-standardized tests and collect data from sensors placed throughout the competition theater. The sensor developed in this stage generated and transmitted environmental data in JSON format from various sensing components. The sensor included a communications state machine to improve data delivery. Details on how this system was implemented and the associated tests can be found in  [Guidance for Stage 3](docs/UAS_6.0_Stage_3_Guidance.pdf) document, located in the [docs](/docs) section of this repository.
 
 # How to Use this Repository
 
@@ -120,7 +120,7 @@ The diagram above shows the three primary components used in UAS 6.0.
 
 - The [FoxNodes](foxnode/) connect to the Data Ferry when it is in range. FoxNodes are assigned DHCP address (first choice), and failover to "static" IP addresses 192.168.40.80 + FoxNode ID. For example, FoxNode 1 is assigned 192.168.40.81. The mask is 255.255.0.0 or /16. These values are statically set.
 
-> [!SNOTE] A 255.255.0.0 mask or /16 "classless" 192.168.0.0 network was chosen for extensiblity in the final stage 3 competition; however, this is not typical, nor practical in most network designs. It is recommended to use a network design that fits your application and architecture. An important factor to consider is how many FoxNodes you plan to deploy, and how many other devices may share the address space. Multi-segment, multi-network, segmentation, and routed architecture is not addressed in this network architecture.
+> [!NOTE] A 255.255.0.0 mask or /16 "classless" 192.168.0.0 network was chosen for extensiblity in the final stage 3 competition; however, this is not typical, nor practical in most network designs. It is recommended to use a network design that fits your application and architecture. An important factor to consider is how many FoxNodes you plan to deploy, and how many other devices may share the address space. Multi-segment, multi-network, segmentation, and routed architecture is not addressed in this network architecture.
 
 - The Command Server is assigned 192.168.40.10, mask 255.255.0.0. This is statically set. For example, in this repository, this is a simple PC client with web browsing capabilities and can use any non-conflicting address in the /16 address space.
 
