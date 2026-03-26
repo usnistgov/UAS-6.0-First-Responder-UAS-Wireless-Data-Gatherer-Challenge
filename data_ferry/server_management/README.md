@@ -26,7 +26,8 @@ Upon successful configuration of your FoxNode(s) and Data Ferry, the FoxNode sho
 Using your "Command Server" computer, set the device's Wi-Fi IP address as 192.168.50.10/16 as specified in [network architecture](/pics/Network_Schema_Example.png)
 
 Open a web browser and enter https://192.168.50.20/ui/  
-**NOTE:** It's likely you haven't imported your drone server's certificate information to your host PC, so it will likely give you an HTTPS error. Acknolege and/or "Proceed" if prompted.
+> [!NOTE]
+> It's likely you haven't imported your drone server's certificate information to your host PC, so it will likely give you an HTTPS error. Acknolege and/or "Proceed" if prompted.
 
 From here you will see various options for settings and FoxNode collection stats.
 ![Data Ferry UI Home Page](/pics/UI_Homepage.png)

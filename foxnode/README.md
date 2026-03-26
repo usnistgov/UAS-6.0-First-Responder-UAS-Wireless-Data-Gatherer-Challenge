@@ -3,9 +3,11 @@ The following provides component list and instuction for building and programmin
 Note that individuals that intend to replicate the pcb companion board will need to source a pcb fabrication facility and associated board components.
 Instruction is not provided on pcb fabrication, but details can be found in [parts list](/foxnode/pcb_schematic/esp32_I2C_Parts_List.csv) and [pcb_schematic](/foxnode/pcb_schematic/)
 
-**NOTE:** PSCR posesses a limited number of "complete" FoxNode sensors. If you wish to develop on this platform or want to borrow our FoxNode sensors for your experimentation, please contact psprizes@nist.gov
+> [!NOTE]
+> PSCR posesses a limited number of "complete" FoxNode sensors. If you wish to develop on this platform or want to borrow our FoxNode sensors for your experimentation, please contact psprizes@nist.gov
 
-**NOTE:** Portions of the FoxNode, Post Competition code was generated with assistance from ChatGPT (OpenAI) and Gemini (Google). The code has been reviewed and integrated by the project authors.
+> [!NOTE]
+> Portions of the FoxNode, Post Competition code was generated with assistance from ChatGPT (OpenAI) and Gemini (Google). The code has been reviewed and integrated by the project authors.
 
 ## FoxNode Folder Structure
 ```
@@ -37,9 +39,9 @@ Instruction is not provided on pcb fabrication, but details can be found in [par
 - The window should be a .125” thick Lexan or other polycarbonate. The minimum hole size is .125”, so many of the on-line services can create the windows.
 - All hardware is 20mm M2.5.  You’ll need 6 per chassis to put the chassis together, and two 8mm to hold in the window on the left side. The M2.5 nylon cap nuts should be used.
 
-**Important Notes**:
-- The ESP32 family of embedded microcontrollers has many different purchasing options that often use different/incompatible displays, bus connections, peripherals, etc. To avoid confusion, it is highly advisable to purchase the specific ESP32 "flavor" mentioned above for the best compatibility with the provided source code. 
-- The I2C Companion Board schematics and [parts list](/foxnode/pcb_schematic/esp32_I2C_Parts_List.csv) are provided in the [pcb_schematic](/foxnode/pcb_schematic/) directory. 
+> [!NOTE]
+> - The ESP32 family of embedded microcontrollers has many different purchasing options that often use different/incompatible displays, bus connections, peripherals, etc. To avoid confusion, it is highly advisable to purchase the specific ESP32 "flavor" mentioned above for the best compatibility with the provided source code. 
+> - The I2C Companion Board schematics and [parts list](/foxnode/pcb_schematic/esp32_I2C_Parts_List.csv) are provided in the [pcb_schematic](/foxnode/pcb_schematic/) directory. 
 
 **Software**: 
 - Host PC or target to program FoxNode(s), laptop recommended if you are taking it outside
@@ -49,7 +51,8 @@ Instruction is not provided on pcb fabrication, but details can be found in [par
 - Optional - [KiCad](https://www.kicad.org/) For reading pcb and case CAD files
 - Optional - Slicing software for your 3D printer or application, e.g. Bambu Studio, Prusa Slicer
 
-**NOTE:** Up-to-date or current Arduino libraries may also be downloaded via the Arduino IDE libraries interface. For quick deployment and compatibility, the required libaries have been included in this repository, but does not ensure future compatibility, software bug patches, or security patches.
+> [!NOTE]
+> Up-to-date or current Arduino libraries may also be downloaded via the Arduino IDE libraries interface. For quick deployment and compatibility, the required libaries have been included in this repository, but does not ensure future compatibility, software bug patches, or security patches.
 
 ## FoxNode Installation & Setup
 
@@ -74,13 +77,15 @@ git clone https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data
 	
 - Open [stateMachine.ino](/foxnode/stateMachine/stateMachine.ino) file, confirm/acknowlege the creation of "stateMachine" directory.
 
-**NOTE:** Ensure that the project support files "RingBuffer.cpp, httpComms.cpp, etc.", are in the same directory with stateMachine.ino. Typically when you confirm the creation of the directory it will create another directory inside of you current directory. This may incidently create a "nested" directory without the required Arduino C files. You will need to work from the newly created directory because that is where the Arduino IDE expects the files to be.
+> [!NOTE]
+> Ensure that the project support files "RingBuffer.cpp, httpComms.cpp, etc.", are in the same directory with stateMachine.ino. Typically when you confirm the creation of the directory it will create another directory inside of you current directory. This may incidently create a "nested" directory without the required Arduino C files. You will need to work from the newly created directory because that is where the Arduino IDE expects the files to be.
 
 ### Step 3: Move/Copy [libraries](/foxnode/libraries) directory and contents from the cloned repository to the "Arduino" directory in your home directory.
 
 The "libraries" file directory is different from the stateMachine one you created in the previous step. These libraries need to go into the Arduino IDE libraries directory. Alternatively, the libraries can be installed within the Arduino IDE; however, we have included them in this project for compatiblity and time savings. Note that the libraries included here will likely be out of date and not the most current version. Since this is more of an "archival" project, do not expect future updates that support updated libraries.
 
-**NOTE:** The specific path for your cloned GitHub repository and Arduino libraries may differ depending on your system OS and environments. The following commands may be used with modification to match your environment:
+> [!NOTE]
+> The specific path for your cloned GitHub repository and Arduino libraries may differ depending on your system OS and environments. The following commands may be used with modification to match your environment:
 
 Windows: 
 ```
@@ -132,7 +137,8 @@ void eepromSetVariablesToDefault(void){
 - In the previous example, the FoxNode will be assigned a IP of 192.168.40.90.
 - Even if you are using DHCP, this value still needs to be changed to uniquely identify your FoxNodes.
 
-**NOTE:** Do not program your foxnode at this time. You will return to this after PKI configuration in the following steps.
+> [!NOTE]
+> Do not program your foxnode at this time. You will return to this after PKI configuration in the following steps.
 
 ## FoxNode Public Key Infastructure (PKI) Configuration and Wi-Fi Secrets
 
@@ -144,7 +150,8 @@ Open and create the "provision_secrets.ino" Arduino project into the Arduino IDE
 
 Open [provision_secrets.ino](/foxnode/provision_secrets/provision_secrets.ino) file, confirm/acknowlege the creation of "stateMachine" directory.
 
-**NOTE:** As before, ensure that the project support files "secrets.cpp", "secrets.h", and "serial.h" are in the same directory with provision_secrets.ino.
+> [!NOTE]
+> As before, ensure that the project support files "secrets.cpp", "secrets.h", and "serial.h" are in the same directory with provision_secrets.ino.
 
 ### Step 6: Generate Client FoxNode Certificates
 
@@ -190,9 +197,10 @@ In this step you will "upload" the PEM certificate information to the FoxNode's 
 
 - The "Output" screen should appear in the bottom part of the IDE, and will show the compilation and upload progress. Any compilation errors will appear here.
 
-**NOTE:** The FoxNode LCD may will not show any relevant informaiton at this time.
+> [!NOTE]
+> The FoxNode LCD may will not show any relevant informaiton at this time.
 
-**WARNING:** While the certificate and secrets are stored in a separate memory space, it is **NOT stored on encrypted media**; meaning, it can be retreaved if the physical device is compromised. For production devices it is recommended to encrypt PEM blocks in NVM and store a read-only decryption key within the ESP32's eFuse memory space. The eFuse memory space can only be written to once and never changed back. This configuration is not covered in this guide, but is recommended for production deployments. See more about eFuses [here](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/efuse.html)
+> [!WARNING] While the certificate and secrets are stored in a separate memory space, it is **NOT stored on encrypted media**; meaning, it can be retreaved if the physical device is compromised. For production devices it is recommended to encrypt PEM blocks in NVM and store a read-only decryption key within the ESP32's eFuse memory space. The eFuse memory space can only be written to once and never changed back. This configuration is not covered in this guide, but is recommended for production deployments. See more about eFuses [here](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/efuse.html)
 
 With the certificate information in place, we can now proceed to programming the FoxNode stateMachine software.
 
@@ -218,15 +226,18 @@ During nominal operation, the FoxNode will operate as follows:
 7. FoxNode will continue to send HTTP-POST updates every 10 seconds
 
 - See Appendix B and C of the [UAS_6.0_Stage_3_Guidance](/docs/UAS_6.0_Stage_3_Guidance.pdf) for full FoxNode state machine operation.  
-**NOTE:** Stage 3 Guidance does not support DHCP configuration or mTLS, only static addressing and unencrypted HTTP; however the state machine and order of operations remain the same as Stage 3.
+> [!NOTE]
+> Stage 3 Guidance does not support DHCP configuration or mTLS, only static addressing and unencrypted HTTP; however the state machine and order of operations remain the same as Stage 3.
 
-**NOTE:** HTTPS mTLS authentication requires that the FoxNode and Drone Server's clock match, therefore it is crutial that NTP sync occur when the FoxNode boots up.
+> [!NOTE]
+> HTTPS mTLS authentication requires that the FoxNode and Drone Server's clock match, therefore it is crutial that NTP sync occur when the FoxNode boots up.
 
 ## FoxNode verification
 
 The Arduino IDE provides easy access to a serial interface connection. Setting your serial speed to **230400 baud** displays relevant runtime information. Similar relevant information is also pushed/displayed in a minimal output via an ESP TFT display (unique to the Adafruit ESP32-S2 TFT Feather). From the Arduino IDE, Select Tools > Serial Monitor or Ctrl+Shift+M to display the serial monitor terminal. We have set the baud rate to a higher value of 230400, so not to miss any messages. Ensure that this baud rate is selected in the IDE dropdown in the terminal monitor section.
 
-**NOTE:** Be aware of opening multiple Arduino "projects" and enabling serial monitoring on both instance. If multiple instances are open you may encounter "COM port busy" errors if you try to flash from another instance.
+> [!NOTE]
+> Be aware of opening multiple Arduino "projects" and enabling serial monitoring on both instance. If multiple instances are open you may encounter "COM port busy" errors if you try to flash from another instance.
 
 ## Logging levels
 

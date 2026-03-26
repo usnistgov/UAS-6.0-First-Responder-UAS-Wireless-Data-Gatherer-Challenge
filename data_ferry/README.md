@@ -3,9 +3,11 @@ The Data Ferry presented in this section is used for proof-of-concept (lab) test
 
 The network schema can be viewed [here](/pics/Network_Schema_Example.png) for reference.
 
-**WARNING:** Pre-populated values such as SSIDs, pre-shared keys, certificates, and passwords presented in this repository are not secure, are considered compromised, should not be used, and are only shown as examples or placeholders.  
+> [!WARNING] 
+> Pre-populated values such as SSIDs, pre-shared keys, certificates, and passwords presented in this repository are not secure, are considered compromised, should not be used, and are only shown as examples or placeholders.  
 
-**NOTE:** Portions of the Data Ferry code was generated with assistance from ChatGPT (OpenAI) and Gemini (Google). The code has been reviewed and integrated by the project authors.
+> [!NOTE]
+> Portions of the Data Ferry code was generated with assistance from ChatGPT (OpenAI) and Gemini (Google). The code has been reviewed and integrated by the project authors.
 
 ## FoxNode Repository Structure
 ```
@@ -57,4 +59,5 @@ PSCR designed this section as an instructional step-by-step "build" to be follow
 4. [PKI_configuration](/data_ferry/PKI_configuration/README.md)
 5. [Data Ferry Usage, Server Management, and Debugging](/data_ferry/server_management/README.md)
 
-**NOTE:** For the 3D-printed case, we used a modified version of the [Pwnagotchi WaveshareV4 PiSugar2 Case](https://makerworld.com/en/models/219507-pwnagotchi-wavesharev4-pisugar2-case?appSharePlatform=copy#profileId-238242). The Pwnagotchi case has a window intended for a WaveshareV4 screen. We used a 3D model editor to fill in the screen window since we didn't incorporate the Waveshare screen in this project. Due to licensing limitations on derivative works originating from the Pwnagotchi case, we can not include the modified 3D printer files in this repository for the Data Ferry. A future update may include an updated case using the NIST software license that may be freely distributed. 
+> [!NOTE]
+> For the 3D-printed case, we used a modified version of the [Pwnagotchi WaveshareV4 PiSugar2 Case](https://makerworld.com/en/models/219507-pwnagotchi-wavesharev4-pisugar2-case?appSharePlatform=copy#profileId-238242). The Pwnagotchi case has a window intended for a WaveshareV4 screen. We used a 3D model editor to fill in the screen window since we didn't incorporate the Waveshare screen in this project. Due to licensing limitations on derivative works originating from the Pwnagotchi case, we can not include the modified 3D printer files in this repository for the Data Ferry. A future update may include an updated case using the NIST software license that may be freely distributed. 

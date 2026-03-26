@@ -10,9 +10,10 @@ In this section we will create a Public Key Infastructure (PKI) configuration th
 
 We will mostly work within the Drone Server Raspbian OS; however, we will have to "load" the generated certificates onto each FoxNode independently. This is also discussed in this section.
 
-**NOTE:** This is only used to create secure HTTP/TLS sessions for encrypted HTTP data. Since the Wi-Fi network is considered a "controlled" private network, we assume all devices that connect to the network are trusted and that the Wi-Fi protocol privides lower level secure communications and device authentication.
+> [!NOTE]
+> This is only used to create secure HTTP/TLS sessions for encrypted HTTP data. Since the Wi-Fi network is considered a "controlled" private network, we assume all devices that connect to the network are trusted and that the Wi-Fi protocol privides lower level secure communications and device authentication.
 
-**WARNING:** For all of the steps below, we use the NIST OU configuration for certificate subject creation. If you want to chage these to your specific OU, you will need to edit each of the command line command and/or configuration files to match your OU. It is permissible to use the "NIST" configuration below for testing purposes only, but you will need to change it if you plan to use this in a production network.
+> [!WARNING] For all of the steps below, we use the NIST OU configuration for certificate subject creation. If you want to chage these to your specific OU, you will need to edit each of the command line command and/or configuration files to match your OU. It is permissible to use the "NIST" configuration below for testing purposes only, but you will need to change it if you plan to use this in a production network.
 	
 ## Generate CA, Server certificates, and FoxNode client certificates
 
@@ -32,7 +33,8 @@ chmod 600 ca/ca.key
 
 ### Step 3: Create a self-signed CA certificate (valid 10 years)
 
-**NOTE:** Replace "subj" parameters with your organization information
+> [!NOTE]
+> Replace "subj" parameters with your organization information
 
 ```
 openssl req -x509 -new -nodes -key ca/ca.key -sha256 -days 3650 \
@@ -70,7 +72,8 @@ chmod 600 server/server.key
 
 ### Step 6: Create the server Certificate Signing Request (CSR)
 
-**NOTE:** Replace "subj" parameters with your organization information
+> [!NOTE]
+> Replace "subj" parameters with your organization information
 
 ```
 openssl req -new -key server/server.key -out server/server.csr \
@@ -174,7 +177,8 @@ sed -i 's/\r$//' generate_foxnode_client_certs.sh
 
 Follow on-screen prompts.
 
-**NOTE:** Replace "subj" parameters with your organization information. You will need to edit the [FoxNode Cert Generator](/data_ferry/PKI_configuration/generate_foxnode_client_certs.sh) file. The cofiguration in the script can be found near **Line 146** near the bottom of the script.
+> [!NOTE]
+> Replace "subj" parameters with your organization information. You will need to edit the [FoxNode Cert Generator](/data_ferry/PKI_configuration/generate_foxnode_client_certs.sh) file. The cofiguration in the script can be found near **Line 146** near the bottom of the script.
 
 ### ALT Step 12: Manual Method, create FoxNode client certificates (one per FoxNode)
 

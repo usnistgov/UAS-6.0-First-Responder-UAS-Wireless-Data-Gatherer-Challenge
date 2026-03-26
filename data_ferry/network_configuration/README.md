@@ -12,10 +12,10 @@ In this section we detail how to configure networking services, Wi-Fi AP mode or
 
 It is important to understand USB device paths in correlation with physical ports, and how these attributes determine the interface designation of your Wi-Fi Adaptor.
 
-**Note about USB Device Paths:**
-- When using a USB hub, the Pi OS assigns an "ID" to the USB peripheral, called the USB Device Path or USB Port Address.
-- Moving a device between different hub ports or to a port directly to the Pi will assign it a different ID and therefore a different port designation.
-- Any provisioning for an external Wi-Fi adaptor will subsequently have to be updated to reflect its new or current port assignment.
+> [!NOTE]
+> - When using a USB hub, the Pi OS assigns an "ID" to the USB peripheral, called the USB Device Path or USB Port Address.
+> - Moving a device between different hub ports or to a port directly to the Pi will assign it a different ID and therefore a different port designation.
+> - Any provisioning for an external Wi-Fi adaptor will subsequently have to be updated to reflect its new or current port assignment.
 
 **For example:** Initially an external Wi-Fi adaptor is plugged into the first port of the USB Hub. The OS assigns it an id of "wlan1." After you finish the install, you remove the USB hub and plug the external Wi-Fi adaptor directly to the Pi. Even though it's the same port that the hub was plugged into, it now has a designation of "wlan2"
   
@@ -108,7 +108,8 @@ sudo cp ~/data_ferry/dataferry.yaml /etc/netplan/dataferry.yaml
 sudo chmod 600 /etc/netplan/dataferry.yaml
 ```
 
-**NOTE**: You may need to edit the wlan interface designation if yours differs from wlan1 as discussed in the previous step. .yaml files are white space delimited and will prompt an error if not properly formatted.
+> [!NOTE]
+>  You may need to edit the wlan interface designation if yours differs from wlan1 as discussed in the previous step. .yaml files are white space delimited and will prompt an error if not properly formatted.
 
 ### Step 4: Apply network configuration
 
@@ -116,7 +117,8 @@ sudo chmod 600 /etc/netplan/dataferry.yaml
 sudo netplan apply
 ```
 
-**NOTE:** Netplan may warn "Cannot call openvswitch..." ignore this warning message as it does not impact our server setup.
+> [!NOTE]
+> Netplan may warn "Cannot call openvswitch..." ignore this warning message as it does not impact our server setup.
 
 ## Access Point or "Hotspot" configuration
 
@@ -154,12 +156,14 @@ Create or copy [hostapd.conf](/data_ferry/network_configuration/hostapd.conf) to
 sudo cp ~/data_ferry/hostapd.conf /etc/hostapd.conf
 sudo chmod 600 /etc/hostapd.conf
 ```
-**NOTE:** Change SSIDs and wpa_password to match your architecture.
+> [!NOTE]
+> Change SSIDs and wpa_password to match your architecture.
 
 ### Step 7: Configure our Pi as an DHCP server
 
 Copy DHCP Server [dhcpd.conf](/data_ferry/network_configuration/dhcpd.conf)  
-**NOTE:** Change parameters to match your network schema or copy file from repositiory
+> [!NOTE]
+> Change parameters to match your network schema or copy file from repositiory
 ```
 sudo cp ~/data_ferry/raspbian_files/dhcpd.conf /etc/dhcp/dhcpd.conf
 ```
@@ -167,7 +171,8 @@ sudo cp ~/data_ferry/raspbian_files/dhcpd.conf /etc/dhcp/dhcpd.conf
 ### Step 8: Configure Data Ferry to be NTP server  
 
 Copy chrony configuration file from repository to system directory  
-**NOTE:** Change parameters to match your network schema or copy file from repositiory
+> [!NOTE]
+> Change parameters to match your network schema or copy file from repositiory
 
 ```
 sudo cp ~data_ferry/network_configuration/chrony.conf /etc/chrony/chrony.conf

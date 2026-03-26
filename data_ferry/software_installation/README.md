@@ -63,7 +63,8 @@ git clone https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data
 ```
 cp -R ~/UAS-6.0-First-Responder-UAS-Wireless-Data-Gatherer-Challenge/data_ferry/* ~/data_ferry/
 ```
-**Note:** For the remaining instructions we presume that you cloned the repository to your user's home directory and created a copy of the data_ferry directory
+> [!NOTE]
+> For the remaining instructions we presume that you cloned the repository to your user's home directory and created a copy of the data_ferry directory
 ```
 /home/pscr/data_ferry
 or
@@ -73,7 +74,8 @@ Adjust paths according to your deployment.
 
 ### Step 5: Install Python Flask
 
-**Note:** For this project we are using a dedicated device and install for a single Python app. If you plan to run other Python projects on your device it is recommended to use Python virtual environments (venv). For this project we are choosing to "break system packages." Acknowlege/confirm any warnings against doing so.
+> [!NOTE]
+> For this project we are using a dedicated device and install for a single Python app. If you plan to run other Python projects on your device it is recommended to use Python virtual environments (venv). For this project we are choosing to "break system packages." Acknowlege/confirm any warnings against doing so.
 ```
 sudo /bin/python pip install flask --break-system-packages
 ```
