@@ -8,7 +8,8 @@ This guide describes how to install and provision Raspberry Pi OS for the Data F
 4. [PKI_configuration](/data_ferry/PKI_configuration/README.md)
 5. [Data Ferry Usage, Server Management, and Debugging](/data_ferry/server_management/README.md)
 
-**Note:** Portions of this section was generated with the assistance of ChatGPT (OpenAI). Authors have reviewed and approved steps outlined in this section. Some steps and procedures may deviate depending on your specific hardware and OS version. For reference, this was last tested in February of 2026.
+> [!NOTE]
+> Portions of this section was generated with the assistance of ChatGPT (OpenAI). Authors have reviewed and approved steps outlined in this section. Some steps and procedures may deviate depending on your specific hardware and OS version. For reference, this was last tested in February of 2026.
 
 ## 1. Hardware Requirements
 
@@ -43,7 +44,8 @@ Optional for secure deployments:
 sudo apt update && sudo apt upgrade -y
 ```
 
-**NOTE:** Everything beyond this point is for system security hardening. If you do not require enhanced security in your deployment (such as testing and lab environments) you may proceed to the next section [Software and Dependencies Installation](/data_ferry/software_installation/README.md).
+> [!NOTE]
+> Everything beyond this point is for system security hardening. If you do not require enhanced security in your deployment (such as testing and lab environments) you may proceed to the next section [Software and Dependencies Installation](/data_ferry/software_installation/README.md).
 
 ## 3. Optional: Enable Full Disk Encryption Using LUKS
 
@@ -213,7 +215,8 @@ sudo cryptsetup luksAddKey /dev/mmcblk0p2 /mnt/keypart/cryptkey.bin
 
 Update /etc/crypttab accordingly and rebuild initramfs.
 
-Note: Storing key on same physical medium reduces physical security.
+> [!WARNING]
+> Storing key on same physical medium reduces physical security.
 
 ### 4.3 Remote Unlock via SSH in initramfs
 
@@ -345,7 +348,7 @@ sudo dd if=/dev/sdb of=raspberrypi_backup.img bs=4M status=progress conv=fsync
 -   `status=progress` shows progress
 -   `conv=fsync` ensures data is written safely
 
-This process may take several minutes depending on card size.
+This process may take several minutes or hours depending on card size.
 
 ### 5. Verify the Image (Optional but Recommended)
 
@@ -401,11 +404,21 @@ sudo dd if=/dev/rdisk4 of=raspberrypi_backup.img bs=4m status=progress
 
 This creates a full raw image.
 
-## Compressing the Image (Recommended)
+## Compressing the Image (Recommended but optional)
 
 Raw images are full SD card size.
 
-If using a 64 GB card, the image will be 64 GB even if mostly empty.
+If using a 64 GB card, the image will be 64 GB even if a small percentage of the disk is used.
+
+Compressing or reducing the size of the image allows for expidited cloning, reduced file transfer and stoarge of disk images. 
+These operations are imperative for system backups and development environments where iterative code updates and regression testing require a "clean" working image.
+
+### Using PiShrink  (Recommended method)
+
+PiShrink is a open source utility that will resize Raspberry Pi images by removing and reallocating unused image space.
+For reference the 64 GB image from the project drone server was reduced to 6 GB with this utility.
+
+For guidance, download and usage of this application please see the author's [GitHub project page.](https://github.com/Drewsif/PiShrink)
 
 ### Using gzip
 
@@ -419,7 +432,9 @@ gzip raspberrypi_backup.img
 xz -z -T0 raspberrypi_backup.img
 ```
 
-This can significantly reduce file size.
+### Windows
+
+Use build in .zip utlity or 7zip utility for better compression.
 
 ## Restoring an Image
 
@@ -437,12 +452,11 @@ Replace `/dev/sdb` with your SD card device.
 
 Use Win32 Disk Imager and click **Write**.
 
-## Safety Notes
-
--   Always verify the correct device before running `dd`
--   Writing to the wrong disk will erase it
--   Use the full device (`/dev/sdb`), not a partition (`/dev/sdb1`)
--   Ensure the SD card is not mounted before imaging
+> [!NOTE]
+> -   Always verify the correct device before running `dd`
+> -   Writing to the wrong disk will erase it
+> -   Use the full device (`/dev/sdb`), not a partition (`/dev/sdb1`)
+> -   Ensure the SD card is not mounted before imaging
 
 ## Optional: Deployment Workflow Tip
 
