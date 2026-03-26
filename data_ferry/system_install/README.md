@@ -452,7 +452,7 @@ Replace `/dev/sdb` with your SD card device.
 
 Use Win32 Disk Imager and click **Write**.
 
-> [!NOTE]
+> [!WARNING]
 > -   Always verify the correct device before running `dd`
 > -   Writing to the wrong disk will erase it
 > -   Use the full device (`/dev/sdb`), not a partition (`/dev/sdb1`)
