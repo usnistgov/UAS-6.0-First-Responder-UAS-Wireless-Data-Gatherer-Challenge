@@ -1,0 +1,6 @@
+# /etc/default/isc-dhcp-server
+# Path to dhcpd's config file
+DHCPv4_CONF=/etc/dhcp/dhcpd.conf
+# Specify interfaces the DHCP server should listen on.
+# Example: INTERFACESv4="eth0"
+INTERFACESv4="wlan1"

@@ -4,12 +4,12 @@ After=network.target
 
 [Service]
 # Path to Python and your app
-ExecStart=/usr/bin/python3 /home/pscr/data_ferry/app.py
-WorkingDirectory=/home/pscr/data_ferry/
+ExecStart=/usr/bin/python3 /home/pscr/data_ferry/server_app/app.py
+WorkingDirectory=/home/pscr/data_ferry/server_app/
 Restart=always
 Environment=TEAM_NAME="Flying Data Miners"
 Environment=SERVER_FIXED_IP=192.168.40.20
-Environment=DB_PATH=/home/pscr/data_ferry/drone_server.db
+Environment=DB_PATH=/home/pscr/data_ferry/server_app/drone_server.db
 Environment=ADMIN_TOKEN=clearme
 Environment=PORT=80
 Environment=GOOGLE_MAPS_API_KEY="<your API key>"

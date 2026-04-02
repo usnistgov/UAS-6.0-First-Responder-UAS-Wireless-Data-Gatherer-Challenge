@@ -1,5 +1,8 @@
 # Data Ferry (Drone Server) and Command Server
-The Data Ferry presented in this section is used for proof-of-concept (lab) testing. In the UAS 6.0 challenge competition, the Data Ferry was a required deliverable, and only [API documentation](/docs/UAS_6.0_Stage_3_Guidance.pdf) was provided to competing teams. The Data Ferry has a functional web server so that a PC client can view collected data that is processed by the Data Ferry and uses a Python Flask server with Javascript components and sqlite3 for data storage and retrieval. For the purposes of testing the "command server," data post-processing functionality is performed on the Data Ferry instead of a dedicated command server device. The PC or other computing platform that would normally be used for the command server is only used to view the data though a web browser. Implementation of the Command Server was also a contest deliverable.
+
+In the UAS 6.0 challenge competition, the Data Ferry was a required deliverable from competing teams, and only [API documentation](/docs/UAS_6.0_Stage_3_Guidance.pdf) was provided to them for data ferry development.  The Data Ferry presented in this section is a post-competition example used for proof-of-concept (lab) testing and continuded project development. 
+
+The Data Ferry has a functional web server so that a PC client can view collected data that is processed onboard by the Data Ferry. This implementation uses a Python Flask server with Javascript components and sqlite3 for data storage and retrieval. For the purposes of testing the "command server," data post-processing functionality is performed on the Data Ferry instead of a dedicated command server device. The PC or other computing platform that would normally be used for the command server is only used to view the data though a web browser. Implementation of the Command Server was also a contest deliverable.
 
 The network schema can be viewed [here](/pics/Network_Schema_Example.png) for reference.
 
@@ -9,7 +12,7 @@ The network schema can be viewed [here](/pics/Network_Schema_Example.png) for re
 > [!NOTE]
 > Portions of the Data Ferry code was generated with assistance from ChatGPT (OpenAI) and Gemini (Google). The code has been reviewed and integrated by the project authors.
 
-## FoxNode Repository Structure
+## Data Ferry (Post Competition) Repository Structure
 ```
 ├── data_ferry/                        # Drone Server / Command Server demo code
 │   ├── 3D_print_case_models/		   # 3D Printer case files for Drone Server (To-Do - See NOTE below)
@@ -30,6 +33,7 @@ The following includes a list of recommended hardware components to build the da
 	- Any OS flavor as long as it has a web browser, and you can manually change network configuration settings.
 	- A laptop or portable computer is also preferred if you plan to field test the Data Ferry on a drone.
 	- It is recommended to have a secure terminal application capable of initiating ssh sessions, such as Putty (Windows) or sshd (Linux and Mac)
+	- Other development software, text editors, or IDEs you may use for code modification.
 
 2. Raspberry Pi or a lightweight compute platform that can be mounted to a drone. We use the [Raspberry Pi Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/).
 

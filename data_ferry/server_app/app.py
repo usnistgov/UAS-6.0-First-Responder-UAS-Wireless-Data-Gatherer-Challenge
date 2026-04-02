@@ -13,7 +13,7 @@
 from pathlib import Path
 
 # Base directory where templates/ and static/ files are expected to live.
-base = Path("/home/pete/cmdsvr/prod/")
+base = Path("/home/pscr/cmdsvr/prod/")
 tpl = base / "templates"
 st  = base / "static"
 tpl.mkdir(parents=True, exist_ok=True)

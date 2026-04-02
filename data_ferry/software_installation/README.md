@@ -32,7 +32,8 @@ This section outlines "manual" installation of the drone server software.
 ### Step 1: Update Raspberry Pi and install software servers, software, and dependencies.
 ```
 sudo apt-get update && sudo apt-get upgrade -y
-sudo apt-get install -y netplan.io systemd systemd-resolved hostapd dnsmasq iptables iptables-persistent python3-full git isc-dhcp-server tcpdump chrony
+sudo apt-get install -y netplan.io systemd systemd-resolved hostapd dnsmasq iptables iptables-persistent python3-full git isc-dhcp-server tcpdump chrony pip
+sudo systemctl restart systemd-resolved
 ```
 
 ### Step 2: Install Caddy reverse proxy
@@ -61,6 +62,7 @@ git clone https://github.com/usnistgov/UAS-6.0-First-Responder-UAS-Wireless-Data
 
 - This step helps streamline installation by matching paths in configuration files and reducing path length while preserving the "base" reference code.
 ```
+mkdir ~/data_ferry
 cp -R ~/UAS-6.0-First-Responder-UAS-Wireless-Data-Gatherer-Challenge/data_ferry/* ~/data_ferry/
 ```
 > [!NOTE]
@@ -74,10 +76,10 @@ Adjust paths according to your deployment.
 
 ### Step 5: Install Python Flask
 
-> [!NOTE]
+> [!WARNING]
 > For this project we are using a dedicated device and install for a single Python app. If you plan to run other Python projects on your device it is recommended to use Python virtual environments (venv). For this project we are choosing to "break system packages." Acknowlege/confirm any warnings against doing so.
 ```
-sudo /bin/python pip install flask --break-system-packages
+/bin/python pip install flask --break-system-packages
 ```
 
 ### Step 6: Configure the Pi to start the Data Ferry automatically on startup by creating a startup service.

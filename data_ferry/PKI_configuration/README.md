@@ -80,7 +80,7 @@ openssl req -new -key server/server.key -out server/server.csr \
   -subj "/C=US/ST=CO/L=Boulder/O=NIST-PSCR/OU=UAS/CN=drone-server.local"
 ```
 
-## Step 7: Sign the server CSR with your CA
+### Step 7: Sign the server CSR with your CA
 
 ```
 openssl x509 -req -in server/server.csr -CA ca/ca.crt -CAkey ca/ca.key \
@@ -88,16 +88,28 @@ openssl x509 -req -in server/server.csr -CA ca/ca.crt -CAkey ca/ca.key \
   -extfile server/server.ext
 ```
 
+### Step 8: Create a client cert extension file
+
+```
+cd ~/mtls/clients
+cat > clients/client.ext <<'EOF'
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, keyEncipherment
+extendedKeyUsage = clientAuth
+EOF
+```
+
 ## Configure Caddy for Mutual TLS
 
-### Step 8: Install Caddy
+### Step 9: Install Caddy
 
 ``` bash
 sudo apt update
 sudo apt install -y caddy
 ```
 
-### Step 9: Copy Certificates
+### Step 10: Copy Certificates
 
 ``` bash
 sudo mkdir -p /etc/caddy/certs
@@ -108,7 +120,7 @@ sudo chown -R caddy:caddy /etc/caddy/certs
 sudo chmod 600 /etc/caddy/certs/server.key
 ```
 
-### Step 10: Edit or Copy Caddyfile
+### Step 11: Edit or Copy Caddyfile
 
 ``` bash
 sudo nano /etc/caddy/Caddyfile
@@ -153,7 +165,7 @@ sudo cp ~/data_ferry/PKI_configuration/Caddyfile /etc/caddy/Caddyfile
 sudo chmod 600 /etc/caddy/Caddyfile
 ```
 
-### Step 11: Enable and Restart Caddy
+### Step 12: Enable and Restart Caddy
 
 ``` bash
 sudo systemctl enable caddy
@@ -163,7 +175,7 @@ sudo systemctl status caddy
 
 ## FoxNode Certificate Generation 
 
-### Step 12: Copy and run the shell script to generate all of your FoxNode certificates
+### Step 13: Copy and run the shell script to generate all of your FoxNode certificates
 
 These commands will copy the generate_foxnode_client_certs.sh file to the ~mtls directory, change permissions, make executable, and remove CRLFs that may stop it from running.
 
@@ -180,7 +192,7 @@ Follow on-screen prompts.
 > [!NOTE]
 > Replace "subj" parameters with your organization information. You will need to edit the [FoxNode Cert Generator](/data_ferry/PKI_configuration/generate_foxnode_client_certs.sh) file. The cofiguration in the script can be found near **Line 146** near the bottom of the script.
 
-### ALT Step 12: Manual Method, create FoxNode client certificates (one per FoxNode)
+### ALT Step 13: Manual Method, create FoxNode client certificates (one per FoxNode)
 
 The below example uses FoxNode 19 as an example.
 
@@ -201,7 +213,7 @@ openssl x509 -req -in clients/${FN}.csr -CA ca/ca.crt -CAkey ca/ca.key \
   -extfile clients/client.ext
 ```
 
-### Step 13: Copy client certificates to FoxNodes
+### Step 14: Copy client certificates to FoxNodes
 
 You will have to manually copy the client certificate for each FoxNode one at a time. To help expidite the transfer it is recommended to copy the client certificates from the Drone Server to a PC running the Arduino IDE. The copy process can be done using a secure transfer client such as WinSCP (Windows) or scp for Linux or MacOS systems.  
 

@@ -91,20 +91,24 @@ A6210
 
 This section describes how to disable the default Network Manager and enable Netplan
 
-### Step 2: Stop and disable NetworkManager service
+### Step 2: Stop and disable NetworkManager service and enable and start systemd-networkd
 
 Instead of uninstalling NetworkManager, we will instead disable it. This is useful if you ever need to reenable it at a later time.
 ```
 sudo systemctl stop NetworkManager
 sudo systemctl disable NetworkManager
+sudo systemctl enable systemd-networkd.service
+sudo systemctl start systemd-networkd.service
 ```
 
 ### Step 3: Create or copy a new network configuration
 
+Remove any existing netplan configuration files
 Create or copy the .yaml file from [dataferry.yaml](/data_ferry/network_configuration/dataferry.yaml) to /etc/netplan/
 
 ```
-sudo cp ~/data_ferry/dataferry.yaml /etc/netplan/dataferry.yaml
+sudo rm /etc/netplan/*
+sudo cp ~/data_ferry/network_configuration/dataferry.yaml /etc/netplan/dataferry.yaml
 sudo chmod 600 /etc/netplan/dataferry.yaml
 ```
 
@@ -137,7 +141,7 @@ In order to persist through reboot we need to create a .service file and tell sy
 
 Copy [rfkill startup service](/data_ferry/network_configuration/rfkill-unblock-wifi.service) to the /etc/systemd/system directory
 ```
-sudo cp ~/data_ferry/rfkill-unblock-wifi.service /etc/systemd/system/rfkill-unblock-wifi.service
+sudo cp ~/data_ferry/network_configuration/rfkill-unblock-wifi.service /etc/systemd/system/rfkill-unblock-wifi.service
 ```
 
 To enable the rfkill service to start at boot, and run service issue the following commands:
@@ -153,7 +157,7 @@ Hostapd is the AP management software that allows our network inteface to functi
 
 Create or copy [hostapd.conf](/data_ferry/network_configuration/hostapd.conf) to /etc/hostapd/hostapd.conf
 ```
-sudo cp ~/data_ferry/hostapd.conf /etc/hostapd.conf
+sudo cp ~/data_ferry/network_configuration/hostapd.conf /etc/hostapd/hostapd.conf
 sudo chmod 600 /etc/hostapd.conf
 ```
 > [!NOTE]
@@ -165,7 +169,13 @@ Copy DHCP Server [dhcpd.conf](/data_ferry/network_configuration/dhcpd.conf)
 > [!NOTE]
 > Change parameters to match your network schema or copy file from repositiory
 ```
-sudo cp ~/data_ferry/raspbian_files/dhcpd.conf /etc/dhcp/dhcpd.conf
+sudo cp ~/data_ferry/network_configuration/dhcpd.conf /etc/dhcp/dhcpd.conf
+sudo cp ~/data_ferry/network_configuration/isc-dhcp-server /etc/default/isc-dhcp-server
+```
+
+Remove any previous IPv6 configuration (if IPv6 is not used)
+```
+sudo rm /var/run/dhcpd6.pid
 ```
 
 ### Step 8: Configure Data Ferry to be NTP server  
@@ -175,7 +185,7 @@ Copy chrony configuration file from repository to system directory
 > Change parameters to match your network schema or copy file from repositiory
 
 ```
-sudo cp ~data_ferry/network_configuration/chrony.conf /etc/chrony/chrony.conf
+sudo cp ~/data_ferry/network_configuration/chrony.conf /etc/chrony/chrony.conf
 sudo chmod 600 /etc/chrony/chrony.conf
 ```
 

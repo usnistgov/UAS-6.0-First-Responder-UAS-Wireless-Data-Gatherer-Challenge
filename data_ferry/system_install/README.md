@@ -26,6 +26,9 @@ Optional for secure deployments:
 
 ## 2. Install Raspberry Pi OS
 
+> [!WARNING]
+> This build is based on Rasbian "Bookworm" or Debian 12. This repository will not be updated for subsequent versions, as a result, this guide may not accuractly reflect the most current installation procedures, software and network configuration to support the latest Rasbian release.  
+
 1.  Download Raspberry Pi Imager: https://www.raspberrypi.com/software/
 
 2.  Select: Raspberry Pi OS Lite
@@ -406,17 +409,15 @@ This creates a full raw image.
 
 ## Compressing the Image (Recommended but optional)
 
-Raw images are full SD card size.
+Raw images are full SD card size. If using a 64 GB card, the image will be 64 GB even if a small percentage of the disk is used.
 
-If using a 64 GB card, the image will be 64 GB even if a small percentage of the disk is used.
-
-Compressing or reducing the size of the image allows for expidited cloning, reduced file transfer and stoarge of disk images. 
+Compressing or reducing the size of the image allows for expidited cloning and reduced stoarge requirements of disk images. 
 These operations are imperative for system backups and development environments where iterative code updates and regression testing require a "clean" working image.
 
 ### Using PiShrink  (Recommended method)
 
 PiShrink is a open source utility that will resize Raspberry Pi images by removing and reallocating unused image space.
-For reference the 64 GB image from the project drone server was reduced to 6 GB with this utility.
+For reference the 64 GB image from the drone server in the project was reduced to 6 GB with this utility.
 
 For guidance, download and usage of this application please see the author's [GitHub project page.](https://github.com/Drewsif/PiShrink)
 
@@ -438,6 +439,12 @@ Use build in .zip utlity or 7zip utility for better compression.
 
 ## Restoring an Image
 
+> [!WARNING]
+> -   Always verify the correct device before running `dd` or other disk imagers
+> -   Writing to the wrong disk will erase it
+> -   Use the full device (`/dev/sdb`), not a partition (`/dev/sdb1`)
+> -   Ensure the SD card is not mounted before imaging
+
 ### Linux or macOS
 
 ``` bash
@@ -450,13 +457,7 @@ Replace `/dev/sdb` with your SD card device.
 
 ### Windows
 
-Use Win32 Disk Imager and click **Write**.
-
-> [!WARNING]
-> -   Always verify the correct device before running `dd`
-> -   Writing to the wrong disk will erase it
-> -   Use the full device (`/dev/sdb`), not a partition (`/dev/sdb1`)
-> -   Ensure the SD card is not mounted before imaging
+Use Win32 Disk Imager, Rufus, or Raspberry Pi imager accoding to imager documentation.
 
 ## Optional: Deployment Workflow Tip
 
