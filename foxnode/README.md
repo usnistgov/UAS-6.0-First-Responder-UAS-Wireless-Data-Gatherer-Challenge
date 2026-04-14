@@ -109,12 +109,13 @@ rsync -av \
 ## FoxNode Configuration Variables
 The FoxNode must be configured for your specific network architecture and it is recommended to change Wi-Fi SSID passwords before proceeding. The network schema can be viewed [here] (/pics/Network_Schema_Example.png). Pre-populated values in this repository are not not secure, are considered compromised, and should not be used.  
 
-IP configuration of the FoxNode follows the following process:
+IP configuration of the FoxNode follows the following process:  
+
 ![FoxNode IP Config](/pics/FN_Connection_Process.drawio.png)
 
 - FoxNode network configuration is found in the [httpComms.cpp](/foxnode/stateMachine/httpComms.cpp) file and [httpComms.h](/foxnode/stateMachine/httpComms.h) files.
 
-If you are replicating the uas6 FoxNode architecture, than you do not have to modify these files; however you will have to update the FoxNode ID for each of your FoxNodes.
+If you are replicating the UAS6 FoxNode architecture, than you do not have to modify these files; however you will have to update the FoxNode ID for each of your FoxNodes.
 
 The FoxNode ID must be unique for each FoxNode and has to be manually configured. The Static FoxNode IP address is formulated using this following function call in [httpComms.h](/foxnode/stateMachine/httpComms.h). This output is for informational purposes:
 
@@ -155,7 +156,7 @@ Open [provision_secrets.ino](/foxnode/provision_secrets/provision_secrets.ino) f
 
 ### Step 6: Generate Client FoxNode Certificates
 
-On your signing server, create client certificates. A separate certificate is required for each FoxNode in order to uniquely identify them. However, if you are using this in a test environment, you can use a single certificate that all of your FoxNodes use to save time (not recommended), but this defeats per-device identification and authentication.
+On your signing server (data ferry), create client certificates. A separate certificate is required for each FoxNode in order to uniquely identify them. However, if you are using this in a test environment, you can use a single certificate that all of your FoxNodes use to save time (not recommended), but this defeats per-device identification and authentication.
 
 ### Step 7: Copy Privacy Enhanced Mail (PEM) or X.509 information from your drone server
 
@@ -200,7 +201,8 @@ In this step you will "upload" the PEM certificate information to the FoxNode's 
 > [!NOTE]
 > The FoxNode LCD may will not show any relevant informaiton at this time.
 
-> [!WARNING] While the certificate and secrets are stored in a separate memory space, it is **NOT stored on encrypted media**; meaning, it can be retreaved if the physical device is compromised. For production devices it is recommended to encrypt PEM blocks in NVM and store a read-only decryption key within the ESP32's eFuse memory space. The eFuse memory space can only be written to once and never changed back. This configuration is not covered in this guide, but is recommended for production deployments. See more about eFuses [here](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/efuse.html)
+> [!WARNING]
+> While the certificate and secrets are stored in a separate memory space, it is **NOT stored on encrypted media**; meaning, it can be retreaved if the physical device is compromised. For production devices it is recommended to encrypt PEM blocks in NVM and store a read-only decryption key within the ESP32's eFuse memory space. The eFuse memory space can only be written to once and never changed back. This configuration is not covered in this guide, but is recommended for production deployments. See more about eFuses [here](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/efuse.html)
 
 With the certificate information in place, we can now proceed to programming the FoxNode stateMachine software.
 
@@ -211,7 +213,8 @@ In step 4, you should have changed the FoxNode's ID to match your current node.
 - As before, make sure your FoxNode is selected in the COMs dropdown.  
 - Next press the arrow "upload" button to compile and load the stateMachine software.
 
-**NOTE:** This complete's the FoxNode programming portion. If you have additional FoxNodes to program, you will need to repeat steps 4 through 11 for each FoxNode.
+> [!NOTE]
+> This complete's the FoxNode programming portion. If you have additional FoxNodes to program, you will need to repeat steps 4 through 11 for each FoxNode.
 
 # FoxNode Operation and Debugging  
 
@@ -397,12 +400,12 @@ a. The Drone Server goes out of range, than back into range (reconnect)
 b. The FoxNode is rebooted.
 
 ### FoxNode Disconnect
-FoxNode disconnects occur because of the following reasons
-a. The Drone Server goes out of range
-b. Weak signal
-c. RF Interference
-d. AP issues on the Drone Server, such as reboot, overload, power issues
-e. FoxNode ESP power instabality, such as low battery, poor or damaged USB or power connector, poor decoupling interface
+FoxNode disconnects occur because of the following reasons  
+a. The Drone Server goes out of range  
+b. Weak signal  
+c. RF Interference  
+d. AP issues on the Drone Server, such as reboot, overload, power issues  
+e. FoxNode ESP power instabality, such as low battery, poor or damaged USB or power connector, poor decoupling interface  
 
 The logging error that you will get will be:
 ```

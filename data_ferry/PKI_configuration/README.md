@@ -13,7 +13,8 @@ We will mostly work within the Drone Server Raspbian OS; however, we will have t
 > [!NOTE]
 > This is only used to create secure HTTP/TLS sessions for encrypted HTTP data. Since the Wi-Fi network is considered a "controlled" private network, we assume all devices that connect to the network are trusted and that the Wi-Fi protocol privides lower level secure communications and device authentication.
 
-> [!WARNING] For all of the steps below, we use the NIST OU configuration for certificate subject creation. If you want to chage these to your specific OU, you will need to edit each of the command line command and/or configuration files to match your OU. It is permissible to use the "NIST" configuration below for testing purposes only, but you will need to change it if you plan to use this in a production network.
+> [!WARNING] 
+> For all of the steps below, we use the NIST OU configuration for certificate subject creation. If you want to chage these to your specific OU, you will need to edit each of the command line command and/or configuration files to match your OU. It is permissible to use the "NIST" configuration below for testing purposes only, but you will need to change it if you plan to use this in a production network.
 	
 ## Generate CA, Server certificates, and FoxNode client certificates
 
